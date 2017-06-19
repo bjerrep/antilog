@@ -34,7 +34,7 @@ Next a input is configured, the source is a file filereader set up to load a log
 
 For instance the regex processor configuration dialog looks like this:
 
-![](/home/claus/src/antilog/misc/regexdialog.png) 
+![](misc/regexdialog.png) 
 
 The final screenshot is the actual logview. The formatting implementation is not quite there yet. Whenever a formatting rule has hit on a line no further formatting rules are applied to the specific line. That needs to get fixed as a alot of other things do.
 
