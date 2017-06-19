@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="664.30499mm"
+   height="597.52277mm"
+   viewBox="0 0 664.30499 597.52278"
+   version="1.1"
+   id="svg4597"
+   inkscape:version="0.92.1 r"
+   sodipodi:docname="button_format.svg">
+  <defs
+     id="defs4591">
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect5358"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect5350"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect5362"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect4614-3-7-3"
+       is_visible="true" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.087500002"
+     inkscape:cx="3905.9457"
+     inkscape:cy="-391.1352"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1600"
+     inkscape:window-height="878"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4594">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(1704.0777,677.46544)">
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:493.8888855px;line-height:1000%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold Italic';letter-spacing:0px;word-spacing:0px;fill:#009f00;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="-1672.0039"
+       y="-317.41852"
+       id="text4502"><tspan
+         sodipodi:role="line"
+         id="tspan4500"
+         x="-1672.0039"
+         y="-317.41852"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:493.8888855px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold Italic';stroke-width:0.26458332px;fill:#009f00;fill-opacity:1;">A</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:493.8888855px;line-height:1000%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold Italic';letter-spacing:0px;word-spacing:0px;fill:#0057b4;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="-1385.1091"
+       y="-79.94268"
+       id="text4502-3"><tspan
+         sodipodi:role="line"
+         id="tspan4500-6"
+         x="-1385.1091"
+         y="-79.94268"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:493.8888855px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold Italic';stroke-width:0.26458332px;fill:#0057b4;fill-opacity:1;">B</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4522"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1000%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(0.26458333,0,0,0.26458333,-607.62305,-69.229107)"><flowRegion
+         id="flowRegion4524"><rect
+           id="rect4526"
+           width="3965.7141"
+           height="4720"
+           x="-514.28571"
+           y="-1349.4673" /></flowRegion><flowPara
+         id="flowPara4528"></flowPara></flowRoot>  </g>
+</svg>

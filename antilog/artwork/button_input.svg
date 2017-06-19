@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="396.05569mm"
+   height="486.49805mm"
+   viewBox="0 0 396.05569 486.49805"
+   version="1.1"
+   id="svg4597"
+   inkscape:version="0.92.1 r"
+   sodipodi:docname="button_input.svg">
+  <defs
+     id="defs4591">
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect5358"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect5350"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect5362"
+       is_visible="true" />
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter4577-1-9">
+      <feBlend
+         inkscape:collect="always"
+         mode="darken"
+         in2="BackgroundImage"
+         id="feBlend4579-27-3" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter4577-1">
+      <feBlend
+         inkscape:collect="always"
+         mode="darken"
+         in2="BackgroundImage"
+         id="feBlend4579-27" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="872.84617"
+     inkscape:cy="676.20911"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1600"
+     inkscape:window-height="878"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4594">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(314.85126,158.75106)">
+    <path
+       sodipodi:type="star"
+       style="opacity:1;fill:#030303;fill-opacity:1;stroke:#0eac21;stroke-width:42.79169464;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter4577-1);enable-background:new"
+       id="path4714-35-0"
+       sodipodi:sides="3"
+       sodipodi:cx="-986.33148"
+       sodipodi:cy="-1241.6172"
+       sodipodi:r1="184.24728"
+       sodipodi:r2="92.12365"
+       sodipodi:arg1="0"
+       sodipodi:arg2="1.0471976"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m -802.0842,-1241.6172 -138.18546,79.7814 -138.18544,79.7814 0,-159.5628 0,-159.5628 138.18545,79.7814 z"
+       inkscape:transform-center-x="-42.954462"
+       inkscape:transform-center-y="2.2602876e-05"
+       transform="matrix(0.93253999,0,0,0.93698703,716.62397,1184.0381)" />
+    <path
+       sodipodi:type="star"
+       style="opacity:1;fill:#00f81e;fill-opacity:1;stroke:#0eac21;stroke-width:42.79169464;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter4577-1-9);enable-background:new"
+       id="path4714-35-0-6"
+       sodipodi:sides="3"
+       sodipodi:cx="-986.33148"
+       sodipodi:cy="-1241.6172"
+       sodipodi:r1="184.24728"
+       sodipodi:r2="92.12365"
+       sodipodi:arg1="0"
+       sodipodi:arg2="1.0471976"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m -802.0842,-1241.6172 -138.18546,79.7814 -138.18544,79.7814 0,-159.5628 0,-159.5628 138.18545,79.7814 z"
+       inkscape:transform-center-x="-42.954462"
+       inkscape:transform-center-y="2.2602876e-05"
+       transform="matrix(0.93253999,0,0,0.93698703,803.4073,1311.7162)" />
+  </g>
+</svg>

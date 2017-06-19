@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 3.1.0)
+
+add_subdirectory(antilog antilog/build)
+add_subdirectory(antitestgui antitestgui/build)
+add_subdirectory(antiudp antiudp/build)
+
+add_custom_target( doc ALL
+  SOURCES README.md
+)

@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/artwork">
+        <file>artwork/file.svg</file>
+        <file>artwork/tcp.svg</file>
+        <file>artwork/udp.svg</file>
+        <file>artwork/pass.svg</file>
+        <file>artwork/arrow.svg</file>
+        <file>artwork/off.svg</file>
+        <file>artwork/on.svg</file>
+        <file>artwork/regex.svg</file>
+        <file>artwork/button_close.svg</file>
+        <file>artwork/button_new.svg</file>
+        <file>artwork/button_input.svg</file>
+        <file>artwork/button_format.svg</file>
+        <file>artwork/button_setup.svg</file>
+        <file>artwork/icon.svg</file>
+        <file>artwork/button_ok.svg</file>
+        <file>artwork/b_cancel.svg</file>
+    </qresource>
+</RCC>

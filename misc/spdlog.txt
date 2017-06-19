@@ -1,0 +1,8 @@
+[2017-06-09 00:09:46.850] [console] [info] Welcome to spdlog!
+[2017-06-09 00:09:46.850] [console] [error] Some error message with arg1..
+[2017-06-09 00:09:46.850] [console] [warning] Easy padding in numbers like 00000012
+[2017-06-09 00:09:46.850] [console] [critical] Support for int: 42;  hex: 2a;  oct: 52; bin: 101010
+[2017-06-09 00:09:46.850] [console] [info] Support for floats 1.23
+[2017-06-09 00:09:46.850] [console] [info] Positional args are supported too..
+[2017-06-09 00:09:46.850] [console] [info] left aligned                  
+[2017-06-09 00:09:46.850] [console] [info] loggers can be retrieved from a global registry using the spdlog::get(logger_name) function
