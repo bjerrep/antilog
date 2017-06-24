@@ -45,6 +45,7 @@ struct Options
 
     void setLogFont(const QString& family, int point);
     QFontMetrics logFontMetrics() const;
+    int logFontWidth(int length) const;
 
     int m_maxRowsInLogModel = 100000;
     int m_numberOfLinesToLoad = 10000;
@@ -52,6 +53,7 @@ struct Options
     QFont m_logFont;
     QFont m_appFont;
     int m_logFontHeight;
+    int m_logViewSpacing = 2;
     QString m_style;
     CellNames m_cellNames;
     bool m_showSource = false;

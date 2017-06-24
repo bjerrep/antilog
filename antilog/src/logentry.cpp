@@ -107,11 +107,18 @@ QString LogEntry::getHtml()
     QString source;
     if (Statics::options->m_showSource)
     {
-        QString fixit = "40";
-        source = "<td width=" + fixit + ">" + m_sourceName + "</td>";
+        const int sourceLength = 10;
+        int widthInPixels = Statics::options->logFontWidth(sourceLength + Statics::options->m_logViewSpacing);
+        source = QString("<td width=%1>").arg(widthInPixels) +
+                 m_sourceName.left(sourceLength).rightJustified(sourceLength, ' ') + "</td>";
     }
     QString html = source + m_formatScheme->getTableFormat().getEntryCellsAsHtml(subMessages);
     return m_htmlCached = "<html>" + css + "<table><tr>" + html + "</tr></table></html>";
+}
+
+QString LogEntry::getText() const
+{
+    return m_formatScheme->getTableFormat().getEntryCellsAsText(getEntriesList());
 }
 
 void LogEntry::invalidateCachedHtml()

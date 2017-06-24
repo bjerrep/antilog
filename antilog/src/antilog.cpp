@@ -11,6 +11,8 @@
 #include <QScrollBar>
 #include <QStandardPaths>
 #include <QDir>
+#include <QMenu>
+#include <QClipboard>
 
 
 AntiLog::AntiLog(QWidget *parent) :
@@ -34,6 +36,10 @@ AntiLog::AntiLog(QWidget *parent) :
 
     ui->tableView->verticalHeader()->setDefaultSectionSize(
                 Statics::options->m_logFontHeight + Statics::LogViewMargin);
+    ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+
+    ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotShowContextMenu(QPoint)));
 
     ui->checkBoxScroll->setChecked(m_scrollToBottom);
     ui->checkBoxShowSource->setChecked(Statics::options->m_showSource);
@@ -42,6 +48,8 @@ AntiLog::AntiLog(QWidget *parent) :
     ui->comboBoxLogThreshold->clear();
     ui->comboBoxLogThreshold->addItems(Statics::logLevels->getCategoryNames());
     ui->comboBoxLogThreshold->setCurrentText(currentLogLevel);
+
+    installEventFilter(this);
 }
 
 AntiLog::~AntiLog()
@@ -106,6 +114,20 @@ void AntiLog::on_checkBoxScroll_clicked(bool checked)
     {
         ui->tableView->scrollToBottom();
     }
+}
+
+bool AntiLog::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress || event->type() == QEvent::ShortcutOverride)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if (keyEvent->matches(QKeySequence::Copy) && ui->tableView->model()->rowCount())
+        {
+            copySelectionToClipboard(HTML);
+            return true;
+        }
+    }
+    return false;
 }
 
 /// Automatically enable scroll-to-end if the user scrolled to the last row
@@ -179,6 +201,58 @@ void AntiLog::inputWidgetClosed()
     m_inputDialog = nullptr;
 }
 
+void AntiLog::slotShowContextMenu(const QPoint &pos)
+{
+    if (!ui->tableView->model()->rowCount())
+    {
+        return;
+    }
+    auto globalPos = ui->tableView->mapToGlobal(pos);
+    QMenu contextMenu;
+    contextMenu.addSection("Copy selection");
+    contextMenu.addAction("As text", this, &AntiLog::slotCopyTextToClipboard);
+    contextMenu.addAction("As html", this, &AntiLog::slotCopyHtmlToClipboard);
+    contextMenu.exec(globalPos);
+}
+
+void AntiLog::slotCopyTextToClipboard()
+{
+    copySelectionToClipboard(TEXT);
+}
+
+void AntiLog::slotCopyHtmlToClipboard()
+{
+    copySelectionToClipboard(HTML);
+}
+
+void AntiLog::copySelectionToClipboard(CopyFormat format)
+{
+    QString data;
+
+    for (int i = 0; i < ui->tableView->model()->rowCount(); i++)
+    {
+        if (!ui->tableView->selectionModel()->isRowSelected(i, QModelIndex()))
+        {
+            continue;
+        }
+        auto logEntryPtr = static_cast<LogEntryPtr>(ui->tableView->model()->index(i, 0).data().value<LogEntryPtr>());
+        switch (format)
+        {
+        case HTML:
+            data += logEntryPtr->getHtml();
+            break;
+        case TEXT:
+            data += logEntryPtr->getText() + '\n';
+            break;
+        }
+    }
+
+    if (data.count())
+    {
+        QApplication::clipboard()->setText(data);
+    }
+}
+
 void AntiLog::on_setupButton_clicked()
 {
     OptionsDialog optionsDialog(*Statics::options, this);
@@ -187,7 +261,7 @@ void AntiLog::on_setupButton_clicked()
 
 void AntiLog::on_pushButtonFormat_clicked()
 {
-    FormatDialog formatDialog("None", this, &m_inputList);
+    FormatDialog formatDialog(Statics::NoneScheme, this, &m_inputList);
     formatDialog.exec();
 }
 

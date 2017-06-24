@@ -21,17 +21,6 @@ const LogCellFormatter& LogEntryFormatter::getItemScheme(int column) const
     return m_logCellFormats.at(column);
 }
 
-QString LogEntryFormatter::logStringsAsHtml(const QStringList& texts, const TableFormat& tableFormat)
-{
-    QString html;
-
-    for(int i = 0; i < texts.size() && i < m_logCellFormats.size(); i++)
-    {
-        html += tableFormat.getHtml(m_logCellFormats.at(i).getCellHtml(texts.at(i)), i);
-    }
-    return html;
-}
-
 QStringList LogEntryFormatter::textsAsHtml(const QStringList& texts) const
 {
     QStringList html;

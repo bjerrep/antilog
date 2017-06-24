@@ -11,11 +11,11 @@ TableCellFormat::TableCellFormat()
 {
 }
 
-TableCellFormat::TableCellFormat(const QString& rowName, const QString& html1, const QString& html2, int width)
+TableCellFormat::TableCellFormat(const QString& rowName, const QString& html1, const QString& html2, int length)
     : m_name(rowName),
       m_html1(html1),
       m_html2(html2),
-      m_width(width)
+      m_length(length)
 {
 }
 
@@ -25,7 +25,7 @@ TableCellFormat::TableCellFormat(const QJsonObject& json)
     m_html1 = json["html1"].toString();
     m_html2 = json["html2"].toString();
     m_enabled = json["enabled"].toBool();
-    m_width = json["width"].toInt();
+    m_length = json["length"].toInt();
 }
 
 void TableCellFormat::save(QJsonObject& json) const
@@ -34,12 +34,12 @@ void TableCellFormat::save(QJsonObject& json) const
     json["html1"] = m_html1;
     json["html2"] = m_html2;
     json["enabled"] = m_enabled;
-    json["width"] = m_width;
+    json["length"] = m_length;
 }
 
 QString TableCellFormat::getHtmlStart() const
 {
-    return m_width ? m_html1.arg(m_width) : m_html1;
+    return m_length ? m_html1.arg(pixelWidth()) : m_html1;
 }
 
 bool TableCellFormat::operator == (const TableCellFormat& other) const
@@ -47,6 +47,10 @@ bool TableCellFormat::operator == (const TableCellFormat& other) const
     return other.m_name == m_name;
 }
 
+int TableCellFormat::pixelWidth() const
+{
+    return Statics::options->logFontWidth(m_length);
+}
 
 // ------ TableFormat -------
 
@@ -167,23 +171,56 @@ void TableFormat::setActiveCells(const QStringList& names)
 
 QString TableFormat::getHtml(const QString& text, int row) const
 {
+    if (row >= m_cellFormats.count())
+    {
+        throw std::out_of_range("exception in getHtml");
+    }
     return m_cellFormats.at(row).getHtmlStart() + text + m_cellFormats.at(row).getHtmlEnd();
+}
+
+QString TableFormat::getText(const QString& text, int row) const
+{
+    if (row >= m_cellFormats.count())
+    {
+        throw std::out_of_range("exception in getText");
+    }
+    return text.leftJustified(m_cellFormats.at(row).m_length, ' ');
 }
 
 QString TableFormat::getEntryCellsAsHtml(const QStringList& cells)
 {
     QString html;
-    auto cellFormat_it = m_cellFormats.cbegin();
-    foreach (auto cell, cells)
+    try
     {
-        html += cellFormat_it->getHtmlStart() + cell + cellFormat_it->getHtmlEnd();
-        if (cellFormat_it == m_cellFormats.cend())
+        int i = 0;
+        foreach (auto cell, cells)
         {
-            return html;
+            html += getHtml(cell, i++);
         }
-        ++cellFormat_it;
+    }
+    catch(std::out_of_range e)
+    {
+        warn(e.what());
     }
     return html;
+}
+
+QString TableFormat::getEntryCellsAsText(const QStringList& cells)
+{
+    QString text;
+    try
+    {
+        int i = 0;
+        foreach (auto cell, cells)
+        {
+            text += getText(cell, i++);
+        }
+    }
+    catch(std::out_of_range e)
+    {
+        warn(e.what());
+    }
+    return text;
 }
 
 void TableFormat::add(const QString& name, const QString& html1, const QString& html2, int width)
@@ -198,7 +235,7 @@ void TableFormat::recalculate(const QFontMetrics& fontMetrics)
 
 void TableFormat::constructDefaultSetup(const QFontMetrics& fontMetrics)
 {
-    const int space = 10;
+    const int space = Statics::options->m_logViewSpacing;
     m_cellFormats.clear();
 
     foreach (auto cell, Statics::options->m_cellNames.m_cells)
@@ -207,23 +244,19 @@ void TableFormat::constructDefaultSetup(const QFontMetrics& fontMetrics)
 
         if (name == Statics::Date)
         {
-            int w = space + fontMetrics.width("0000-00-00");
-            add(Statics::Date, "<td width=%1>", "</td>", w);
+            add(Statics::Date, "<td width=%1>", "</td>", space + strlen("0000-00-00"));
         }
         else if (name == Statics::Time)
         {
-            int w = space + fontMetrics.width("00:00:00:000");
-            add(Statics::Time, "<td width=%1>", "</td>", w);
+            add(Statics::Time, "<td width=%1>", "</td>", space + strlen("00:00:00:000"));
         }
         else if (name == Statics::Level)
         {
-            int w = space + fontMetrics.width("warning");
-            add(Statics::Level, "<td width=%1>", "</td>", w);
+            add(Statics::Level, "<td width=%1>", "</td>", space + strlen("warning"));
         }
         else if (name == Statics::Id)
         {
-            int w = space + fontMetrics.width("console");
-            add(Statics::Id, "<td width=%1>", "</td>", w);
+            add(Statics::Id, "<td width=%1>", "</td>", space + strlen("console"));
         }
         else if (name == Statics::Message)
         {

@@ -36,6 +36,7 @@ public:
     QStringList getEntriesList() const;
     int getNofRows() const;
     QString getHtml();
+    QString getText() const;
     int getSerial() const;
     void invalidateCachedHtml();
 

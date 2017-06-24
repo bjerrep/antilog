@@ -21,12 +21,13 @@ public:
     QString getName() const { return m_name; }
     bool operator == (const TableCellFormat& other) const;
     bool isEnabled() const { return m_enabled; }
+    int pixelWidth() const;
 
 private:
     QString m_name;
     QString m_html1;
     QString m_html2;
-    int m_width;
+    int m_length;
     bool m_enabled = true;
 
     friend class TableFormat;
@@ -51,7 +52,9 @@ public:
     QStringList getEnabledColumns() const;
     TableCellFormatList const& getCells() const;
     QString getHtml(const QString& text, int row) const;
+    QString getText(const QString& text, int row) const;
     QString getEntryCellsAsHtml(const QStringList& texts);
+    QString getEntryCellsAsText(const QStringList& texts);
     int getLogLevelIndex();
     void setActiveCells(const QStringList& names);
     void recalculate(const QFontMetrics& fontMetrics);

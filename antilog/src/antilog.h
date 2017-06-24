@@ -3,6 +3,7 @@
 #include "inputlist.h"
 #include "logentry.h"
 
+#include <QObject>
 #include <QWidget>
 
 class InputDialog;
@@ -28,11 +29,24 @@ public:
     void load();
     static QString getConfigFilePath();
 
+    enum CopyFormat
+    {
+        TEXT,
+        HTML
+    };
+
+    bool eventFilter(QObject *obj, QEvent *event);
+    void copySelectionToClipboard(AntiLog::CopyFormat format);
+
 public slots:
     void slotFormatRuleChanged();
     void slotNewLogEntry(InputItemBase* processor, LogEntryPtr logEntry);
 
 private slots:
+    void slotShowContextMenu(const QPoint &pos);
+    void slotCopyTextToClipboard();
+    void slotCopyHtmlToClipboard();
+
     void slotTableUpdated();
     void slotLogViewSliderChanged(int);
     void inputWidgetClosed();
@@ -53,3 +67,4 @@ private:
     InputList m_inputList;
     bool m_scrollToBottom = true;
 };
+

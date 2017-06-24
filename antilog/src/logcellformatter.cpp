@@ -67,5 +67,5 @@ void LogCellFormatter::setBackgroundColor(const QString& color)
 {
     m_preHtml += "<span class=\"" + color + "\">";
     m_postHtml += "</span>";
-    m_styleSheet = "<style> span." + color + " { background-color: " + color + "; } </style>";
+    m_styleSheet = "<style> span." + color + "{background-color: " + color + ";}</style>";
 }

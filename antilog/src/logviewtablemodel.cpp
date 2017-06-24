@@ -20,6 +20,8 @@ void LogViewDelegate::paint(QPainter *painter,
 {
     auto logEntryPtr = static_cast<LogEntryPtr>(index.data().value<LogEntryPtr>());
 
+    QStyledItemDelegate::paint(painter, option, index);
+
     if (logEntryPtr)
     {
         QTextDocument doc;
@@ -27,14 +29,10 @@ void LogViewDelegate::paint(QPainter *painter,
         doc.setHtml(html);
 
         painter->save();
-        painter->translate(option.rect.topLeft() + QPoint(0, 0 * Statics::LogViewMargin / 2));
+        painter->translate(option.rect.topLeft() + QPoint(0, -2));
         doc.setDefaultFont(Statics::options->m_logFont);
         doc.drawContents(painter, QRect(QPoint(0, 0), option.rect.size()));
         painter->restore();
-    }
-    else
-    {
-        QStyledItemDelegate::paint(painter, option, index);
     }
 }
 

@@ -11,7 +11,6 @@ public:
     LogEntryFormatter(const QString& formatschemeName);
 
     const LogCellFormatter& getItemScheme(int column) const;
-    QString logStringsAsHtml(const QStringList& texts, const TableFormat& tableFormat);
     QStringList textsAsHtml(const QStringList& texts) const;
     QString getStylesheets() const;
     void setEditable(bool editable);

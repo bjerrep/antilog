@@ -33,6 +33,11 @@ QFontMetrics Options::logFontMetrics() const
     return QFontMetrics(m_logFont);
 }
 
+int Options::logFontWidth(int length) const
+{
+    return logFontMetrics().width(QString(length, '0'));
+}
+
 void Options::load(const QJsonObject& json)
 {
     if (json.empty() || json["options"].toObject().isEmpty())
