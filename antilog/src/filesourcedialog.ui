@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>706</width>
-    <height>211</height>
+    <width>600</width>
+    <height>229</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Antilog - File source</string>
+   <string>File source configuration</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -85,7 +85,7 @@
         <item>
          <widget class="QRadioButton" name="radioButtonRead">
           <property name="text">
-           <string>&amp;Read &amp;&amp; tail</string>
+           <string>Rea&amp;d &amp;&amp; tail</string>
           </property>
          </widget>
         </item>
@@ -180,6 +180,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonCancel">
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Cancel</string>
        </property>

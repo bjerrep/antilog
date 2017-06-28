@@ -85,8 +85,8 @@ QString SourceAndProcessor::cleanMessage(QString message)
     return message;
 }
 
-void SourceAndProcessor::slotSourceData(InputItemBase* source, QString message)
+void SourceAndProcessor::slotSourceData(InputItemBase* source, QString message, QString sourceIdentifier)
 {
     QString cleaned = cleanMessage(message);
-    emit signalDataToProcessor(source, cleaned);
+    emit signalDataToProcessor(source, cleaned, sourceIdentifier);
 }

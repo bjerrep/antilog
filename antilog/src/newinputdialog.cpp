@@ -68,3 +68,9 @@ void NewInputDialog::on_pushButtonOk_clicked()
     close();
     setResult(QDialog::Accepted);
 }
+
+void NewInputDialog::on_pushButtonCancel_clicked()
+{
+    close();
+    setResult(QDialog::Rejected);
+}

@@ -15,7 +15,7 @@ FileSourceDialog::FileSourceDialog(FileSource& fileSource, QWidget *parent) :
     ui->setupUi(this);
 
     m_name = fileSource.getName();
-    m_filename = fileSource.getFilename();
+    m_filename = fileSource.m_filepath;
     m_tailOnly = fileSource.m_tailOnly;
 
     ui->iconLayout->addWidget(Statics::widgetIcon(Statics::FileResource));
@@ -31,14 +31,14 @@ FileSourceDialog::FileSourceDialog(FileSource& fileSource, QWidget *parent) :
     {
         bool modified =
                 m_name != fileSource.getName() ||
-                m_filename != fileSource.getFilename() ||
+                m_filename != fileSource.m_filepath ||
                 m_tailOnly != fileSource.m_tailOnly;
 
         if (modified)
         {
-            fileSource.setName(m_name);
-            fileSource.setFilename(m_filename);
             fileSource.m_tailOnly = ui->radioButtonTail->isChecked();
+            fileSource.setName(m_name);
+            fileSource.setFilenameAndConfigure(m_filename);
         }
     }
 }

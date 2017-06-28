@@ -1,43 +1,113 @@
 #include "filereader.h"
 
 #include <QFile>
+#include <QDir>
+#include <QFileInfo>
 #include <QApplication>
 #include <QFileSystemWatcher>
 #include <QThread>
 
-FileReader::FileReader(const QString& filename, int lastNumlines)
+FileReader::FileReader(const QString& filename, const QString& sourceName, int lastNumlines)
     : m_filename(filename),
-      m_lastNumLines(lastNumlines)
+      m_sourceName(sourceName),
+      m_lastNumLines(lastNumlines),
+      m_mode(FILE)
 {
+    setup();
+}
+
+FileReader::FileReader(const QString& rootDir, bool recursive, const QString& mask, const QString& sourceName)
+    : m_rootDir(rootDir),
+      m_recursive(recursive),
+      m_mask(mask),
+      m_sourceName(sourceName),
+      m_mode(DIR)
+{
+    setup();
+}
+
+void FileReader::setup()
+{
+    m_watcher = new QFileSystemWatcher();
+    connect(m_watcher, &QFileSystemWatcher::fileChanged,
+            this, &FileReader::slotFileChanged);
+
     m_thread = new QThread;
     moveToThread(m_thread);
-        m_thread->start();
+    m_thread->start();
 }
 
 void FileReader::systemReady()
 {
-    start();
+    startReader();
 }
 
-void FileReader::start()
+QString FileReader::sourceIdentification(const QString& filename) const
 {
-    if (QFile(m_filename).exists())
-    {
-        m_pos = QFile(m_filename).size();
+    return m_sourceName + " " + QFileInfo(filename).fileName();
+}
 
-        if (m_lastNumLines)
+int FileReader::glob(const QString& dir, QStringList& files, QStringList& directories, const QString& filter, bool recurse)
+{
+    QDir dirObj(dir);
+    QStringList filterList = {filter};
+    QFileInfoList fileInfoList = dirObj.entryInfoList(filterList, QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files);
+    foreach (auto fileInfo, fileInfoList)
+    {
+        if (fileInfo.isDir() && recurse)
         {
-            QStringList lines = tailFileByLines(m_filename, m_lastNumLines, m_pos);
-            foreach (auto line, lines)
-            {
-                emit signalNewData(line);
-            }
+            glob(fileInfo.absoluteFilePath(), files, directories, filter, recurse);
         }
 
-        m_watcher = new QFileSystemWatcher();
-        m_watcher->addPath(m_filename);
-        connect(m_watcher, &QFileSystemWatcher::fileChanged,
-                this, &FileReader::slotFileChanged);
+        if (fileInfo.isFile())
+        {
+            files.append(fileInfo.absoluteFilePath());
+        }
+        else if (fileInfo.isDir())
+        {
+            directories.append(fileInfo.absoluteFilePath());
+        }
+    }
+
+    int noAccess = 0;
+    foreach (auto file, files)
+    {
+        noAccess += !QFileInfo(file).isReadable();
+    }
+    return noAccess;
+}
+
+void FileReader::startReader()
+{
+    QStringList files;
+    QStringList directories;
+
+    if (m_mode == FILE)
+    {
+        files << m_filename;
+    }
+    else
+    {
+        glob(m_rootDir, files, directories, m_mask, m_recursive);
+    }
+
+    foreach (auto file, files)
+    {
+        if (QFile(file).exists())
+        {
+            m_positions[file] = QFile(file).size();
+
+            if (m_lastNumLines)
+            {
+                QStringList lines = tailFileByLines(file, m_lastNumLines, m_positions[file]);
+                foreach (auto line, lines)
+                {
+                    emit signalNewData(line, sourceIdentification(file));
+                }
+            }
+
+            m_watcher->addPath(file);
+        }
     }
 }
 
@@ -100,19 +170,21 @@ QStringList FileReader::tailFileByLines(const QString& filename, int lines, qint
     return QStringList();
 }
 
-void FileReader::slotFileChanged(const QString &path)
+void FileReader::slotFileChanged(const QString& filename)
 {
-    QFile file(m_filename);
+    QFile file(filename);
     if (file.open(QIODevice::ReadOnly))
     {
-        file.seek(m_pos);
+        qint64 pos = m_positions[filename];
+
+        file.seek(pos);
         while (true)
         {
             QString data = file.readLine();
-            m_pos = file.pos();
+            pos = file.pos();
             if (!data.isEmpty())
             {
-                emit signalNewData(data);
+                emit signalNewData(data, sourceIdentification(filename));
             }
             else
             {
@@ -120,6 +192,7 @@ void FileReader::slotFileChanged(const QString &path)
             }
         }
         file.close();
+        m_positions[filename] = pos;
     }
 }
 

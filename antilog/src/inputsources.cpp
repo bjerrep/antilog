@@ -9,66 +9,90 @@
 #include <QDebug>
 #include <QUdpSocket>
 #include <QJsonObject>
+#include <QDir>
+#include <QFileInfoList>
 
-// ------ FileSource -------
 
-FileSource::FileSource(const QJsonObject& json)
+// ------ DirSource -------
+
+DirSource::DirSource(const QJsonObject& json)
     : SourceBase(__func__, json)
 {
     if (json.empty())
     {
-        setName("File");
+        setName("Dir");
+        m_dir = "/var/log";
+        m_mask = "*";
         return;
     }
 
-    m_filePath = json.value(Statics::FilePath).toString();
-    m_tailOnly = json[Statics::TailOnly].toBool();
-    if (m_filePath.isEmpty())
+    m_dir = json.value(Statics::FilePath).toString();
+    m_recursive = json.value("recursive").toBool();
+    m_mask = json.value("mask").toString();
+    if (m_dir.isEmpty())
         setDescription("not configured");
     else
-        setDescription(m_filePath);
+        setDescription(m_dir);
     configureFileReaderProcess();
 }
 
-FileSource::~FileSource()
+DirSource::DirSource(const QString& type, const QJsonObject& json)
+    : SourceBase(type, json)
+{
+}
+
+DirSource::~DirSource()
 {
     delete m_fileReader;
 }
 
-void FileSource::save(QJsonObject& json) const
+void DirSource::save(QJsonObject& json) const
 {
     SourceBase::save(json);
-    json[Statics::FilePath] = m_filePath;
-    json[Statics::TailOnly] = m_tailOnly;
+    json[Statics::FilePath] = m_dir;
+    json["recursive"] = m_recursive;
+    json["mask"] = m_mask;
 }
 
-void FileSource::slotNewFileReaderData(QString data)
+void DirSource::slotNewFileReaderData(QString data, QString sourceIdentifier)
 {
-    emit signalNewSourceData(this, data);
+    emit signalNewSourceData(this, data, sourceIdentifier);
 }
 
-void FileSource::slotSystemReady()
+void DirSource::slotSystemReady()
 {
     QMetaObject::invokeMethod(m_fileReader, "systemReady", Qt::QueuedConnection);
 }
 
-void FileSource::accept(InputVisitorBase* v)
+void DirSource::accept(InputVisitorBase* v)
 {
     v->visit(this);
 }
 
-void FileSource::configureFileReaderProcess()
+void DirSource::configureFileReaderProcess()
 {
     if (enabled())
     {
         delete m_fileReader;
-        const int linesToLoad = Statics::options->m_numberOfLinesToLoad * !m_tailOnly;
-        m_fileReader = new FileReader(m_filePath, linesToLoad);
+
+        if (!m_dir.isEmpty())
+        {
+            m_fileReader = new FileReader(m_dir, true, "*", getName());
+        }
+        else
+        {
+            const int linesToLoad = Statics::options->m_numberOfLinesToLoad * !m_tailOnly;
+            m_fileReader = new FileReader(m_filepath, getName(), linesToLoad);
+        }
+
         connect(m_fileReader, &FileReader::signalNewData,
-                this, &FileSource::slotNewFileReaderData,
+                this, &DirSource::slotNewFileReaderData,
                 Qt::QueuedConnection);
         if (Statics::SystemReady)
-            m_fileReader->start();
+        {
+            m_fileReader->startReader();
+        }
+
     }
     else
     {
@@ -77,21 +101,55 @@ void FileSource::configureFileReaderProcess()
     }
 }
 
-void FileSource::setFilename(QString filename)
+void DirSource::setDir(QString dir)
 {
-    setDescription(filename);
-    m_filePath = filename;
+    setDescription(dir);
+    m_dir = dir;
     configureFileReaderProcess();
 }
 
-QString FileSource::getFilename() const
-{
-    return m_filePath;
-}
-
-void FileSource::setEnabled(bool enabled)
+void DirSource::setEnabled(bool enabled)
 {
     SourceBase::setEnabled(enabled);
+    configureFileReaderProcess();
+}
+
+// ------ FileSource -------
+
+FileSource::FileSource(const QJsonObject& json)
+    : DirSource(__func__, json)
+{
+    if (json.empty())
+    {
+        setName("File");
+        return;
+    }
+
+    m_filepath = json.value(Statics::FilePath).toString();
+    m_tailOnly = json[Statics::TailOnly].toBool();
+    if (m_filepath.isEmpty())
+        setDescription("not configured");
+    else
+        setDescription(m_filepath);
+    configureFileReaderProcess();
+}
+
+void FileSource::save(QJsonObject& json) const
+{
+    SourceBase::save(json);
+    json[Statics::FilePath] = m_filepath;
+    json[Statics::TailOnly] = m_tailOnly;
+}
+
+void FileSource::accept(InputVisitorBase* v)
+{
+    v->visit(this);
+}
+
+void FileSource::setFilenameAndConfigure(QString filename)
+{
+    setDescription(filename);
+    m_filepath = filename;
     configureFileReaderProcess();
 }
 
@@ -142,7 +200,7 @@ void UDPSource::openSocket()
     {
         if (!m_socket->bind(QHostAddress::LocalHost, m_port))
         {
-            warn("error binding udpsocket " + m_port);
+            warn("error binding udpsocket " << m_port);
         }
         if (m_socket->state() == QUdpSocket::BoundState)
         {
@@ -207,6 +265,10 @@ InputItemBase* InputEntryFactory(const QJsonObject& json)
     {
         return new FileSource(json);
     }
+    else if (className == DirSource().getClassName())
+    {
+        return new DirSource(json);
+    }
     else if (className == UDPSource().getClassName())
     {
         return new UDPSource(json);
@@ -227,6 +289,7 @@ InputItemBase* InputEntryFactory(const QJsonObject& json)
 void getAllSources(InputItemList& list)
 {
     list.append(new FileSource());
+    list.append(new DirSource());
     list.append(new UDPSource());
 }
 

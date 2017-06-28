@@ -12,6 +12,7 @@ class GetName : public InputVisitorBase
 {
 public:
     void visit(FileSource* fileSource);
+    void visit(DirSource* dirSource);
     void visit(UDPSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
@@ -25,6 +26,7 @@ class GetJson : public InputVisitorBase
 {
 public:
     void visit(FileSource *fileSource);
+    void visit(DirSource *dirSource);
     void visit(UDPSource *udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
@@ -39,6 +41,7 @@ public:
     GetLabel();
 
     void visit(FileSource *fileSource);
+    void visit(DirSource *dirSource);
     void visit(UDPSource *udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
@@ -52,6 +55,7 @@ public:
     ~GetInputDialogWidget();
 
     void visit(FileSource *fileSource);
+    void visit(DirSource *dirSource);
     void visit(UDPSource *udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
@@ -67,6 +71,7 @@ public:
     GetDialog();
 
     void visit(FileSource *fileSource);
+    void visit(DirSource *dirSource);
     void visit(UDPSource *udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);

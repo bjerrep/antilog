@@ -6,45 +6,61 @@
 #include <QList>
 #include <QJsonObject>
 
-class InputVisitorBase;
-class FileSource;
-class UDPSource;
-class PassProcessor;
-class RegexProcessor;
 class FileReader;
 class QUdpSocket;
 
-class FileSource : public SourceBase
+
+class DirSource : public SourceBase
 {
     Q_OBJECT
 
 public:
-    FileSource(const QJsonObject& json = QJsonObject());
-    ~FileSource();
+    DirSource(const QJsonObject& json = QJsonObject());
+    DirSource(const QString& type, const QJsonObject& json);
+    virtual ~DirSource();
 
     void save(QJsonObject& json) const override;
-    void accept(InputVisitorBase* v);
-    void setFilename(QString filename);
-    QString getFilename() const;
+    void accept(InputVisitorBase* v) override;
+    void setDir(QString dir);
     void setEnabled(bool enabled) override;
 
 public slots:
     void slotSystemReady() override;
 
-private:
+protected:
     void configureFileReaderProcess();
 
 private slots:
-    void slotNewFileReaderData(QString data);
+    void slotNewFileReaderData(QString data, QString sourceIdentifier);
+
+protected:
+    // FileSource attributes, used by configureFileReaderProcess().
+    QString m_filepath;
+    bool m_tailOnly = true;
 
 private:
     FileReader* m_fileReader = nullptr;
-    bool m_tailOnly = true;
-    QString m_filePath;
+    QString m_dir;
+    bool m_recursive = true;
+    QString m_mask;
+    friend class DirSourceDialog;
+};
+
+
+class FileSource : public DirSource
+{
+    Q_OBJECT
+
+public:
+    FileSource(const QJsonObject& json = QJsonObject());
+    //~FileSource();
+
+    void save(QJsonObject& json) const override;
+    void accept(InputVisitorBase* v) override;
+    void setFilenameAndConfigure(QString filename);
 
     friend class FileSourceDialog;
 };
-
 
 class UDPSource : public SourceBase
 {
@@ -55,8 +71,8 @@ public:
     ~UDPSource();
 
     void save(QJsonObject& json) const override;
-    void accept(InputVisitorBase* v);
-    void setEnabled(bool enabled);
+    void accept(InputVisitorBase* v) override;
+    void setEnabled(bool enabled) override;
     int getPort() const;
     void setPort(int port);
 

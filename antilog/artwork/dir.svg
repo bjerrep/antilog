@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="600mm"
+   height="250mm"
+   viewBox="0 0 600 250"
+   version="1.1"
+   id="svg4680"
+   inkscape:version="0.92.1 r"
+   sodipodi:docname="dir.svg">
+  <defs
+     id="defs4674" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="508.14397"
+     inkscape:cy="663.86951"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1600"
+     inkscape:window-height="878"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4677">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(218.35714,-74.482142)">
+    <g
+       transform="translate(682.21463,-19.947301)"
+       style="opacity:0.9;filter:url(#filter4577);enable-background:new"
+       id="g4660">
+      <rect
+         style="opacity:1;fill:#0010ff;fill-opacity:1;stroke:#0f0f0f;stroke-width:12.25559998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect4629"
+         width="587.74438"
+         height="237.7444"
+         x="-894.44397"
+         y="100.55724"
+         ry="84.055275" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:169.33332825px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#fefdff;fill-opacity:1;stroke:#f3f3f3;stroke-width:4.23333311px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="-759.07373"
+         y="281.15176"
+         id="text4633"><tspan
+           sodipodi:role="line"
+           id="tspan4631"
+           x="-759.07373"
+           y="281.15176"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:169.33332825px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#fefdff;fill-opacity:1;stroke:#f3f3f3;stroke-width:4.23333311px;stroke-opacity:1">DIR</tspan></text>
+    </g>
+  </g>
+</svg>

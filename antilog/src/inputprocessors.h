@@ -15,11 +15,11 @@ public:
     PassProcessor(const QJsonObject& json = QJsonObject());
 
     void save(QJsonObject& json) const override;
-    void accept(InputVisitorBase* v);
+    void accept(InputVisitorBase* v) override;
     void setSchemeFromName(const QString& scheme) override;
 
 public slots:
-    void slotNewData(InputItemBase* source, QString data);
+    void slotNewData(InputItemBase* source, QString data, QString sourceIdentifier) override;
 };
 
 // ------ RegexProcessor -------
@@ -32,18 +32,18 @@ public:
     RegexProcessor(const QJsonObject& json = QJsonObject());
 
     void save(QJsonObject& json) const override;
-    void accept(InputVisitorBase* v);
+    void accept(InputVisitorBase* v) override;
     QStringList applyRegex(const QString& data);
     QString getRegex() const;
     void setRegex(const QString& getRegex);
     int getNofEnabledColumns() const;
-    void setSchemeFromName(const QString& schemeName);
+    void setSchemeFromName(const QString& schemeName) override;
 
 private:
     void updateDescription();
 
 public slots:
-    void slotNewData(InputItemBase* source, QString data);
+    void slotNewData(InputItemBase* source, QString data, QString sourceIdentifier) override;
 
 private:
     const char* RegexKey = "regex";

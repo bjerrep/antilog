@@ -16,6 +16,7 @@ namespace Statics
     // Sources
     extern const char* UDPSourceResource;
     extern const char* FileResource;
+    extern const char* DirResource;
 
     // Processors
     extern const char* PassProcessorResource;

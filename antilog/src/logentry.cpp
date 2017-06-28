@@ -107,7 +107,7 @@ QString LogEntry::getHtml()
     QString source;
     if (Statics::options->m_showSource)
     {
-        const int sourceLength = 10;
+        const int sourceLength = 18;
         int widthInPixels = Statics::options->logFontWidth(sourceLength + Statics::options->m_logViewSpacing);
         source = QString("<td width=%1>").arg(widthInPixels) +
                  m_sourceName.left(sourceLength).rightJustified(sourceLength, ' ') + "</td>";

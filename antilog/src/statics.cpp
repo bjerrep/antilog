@@ -8,6 +8,7 @@ namespace Statics
 {
     const char* UDPSourceResource = ":/artwork/artwork/udp.svg";
     const char* FileResource = ":/artwork/artwork/file.svg";
+    const char* DirResource = ":/artwork/artwork/dir.svg";
 
     const char* PassProcessorResource = ":/artwork/artwork/pass.svg";
     const char* RegexProcessorResource = ":/artwork/artwork/regex.svg";
@@ -62,7 +63,7 @@ namespace Statics
         QHBoxLayout* layout = new QHBoxLayout();
         widget->setLayout(layout);
         QLabel* label = new QLabel();
-        label->setAlignment(Qt::AlignHCenter);
+        label->setAlignment(Qt::AlignCenter);
         layout->addWidget(label);
         QPixmap pixmap = pixmapIcon(resourceImage, height);
         label->setPixmap(pixmap);

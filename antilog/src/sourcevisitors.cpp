@@ -1,5 +1,6 @@
 #include "sourcevisitors.h"
 #include "filesourcedialog.h"
+#include "dirsourcedialog.h"
 #include "passprocessordialog.h"
 #include "regexprocessordialog.h"
 #include "udpsourcedialog.h"
@@ -9,46 +10,56 @@
 #include <QComboBox>
 #include <QIcon>
 
-void GetName::visit(FileSource* fileSource)
+void GetName::visit(FileSource* visitor)
 {
-    m_name = fileSource->getName();
+    m_name = visitor->getName();
 }
 
-void GetName::visit(UDPSource* udpSource)
+void GetName::visit(DirSource* visitor)
 {
-    m_name = udpSource->getName();
+    m_name = visitor->getName();
 }
 
-void GetName::visit(PassProcessor* passProcessor)
+void GetName::visit(UDPSource* visitor)
 {
-    m_name = passProcessor->getName();
+    m_name = visitor->getName();
 }
 
-void GetName::visit(RegexProcessor* regexProcessor)
+void GetName::visit(PassProcessor* visitor)
 {
-    m_name = regexProcessor->getName();
+    m_name = visitor->getName();
+}
+
+void GetName::visit(RegexProcessor* visitor)
+{
+    m_name = visitor->getName();
 }
 
 // ------ GetJson -------
 
-void GetJson::visit(FileSource *fileSource)
+void GetJson::visit(FileSource *visitor)
 {
-    fileSource->save(m_json);
+    visitor->save(m_json);
 }
 
-void GetJson::visit(UDPSource *udpSource)
+void GetJson::visit(DirSource *visitor)
 {
-    udpSource->save(m_json);
+    visitor->save(m_json);
 }
 
-void GetJson::visit(PassProcessor* passProcessor)
+void GetJson::visit(UDPSource *visitor)
 {
-    passProcessor->save(m_json);
+    visitor->save(m_json);
 }
 
-void GetJson::visit(RegexProcessor* regexProcessor)
+void GetJson::visit(PassProcessor* visitor)
 {
-    regexProcessor->save(m_json);
+    visitor->save(m_json);
+}
+
+void GetJson::visit(RegexProcessor* visitor)
+{
+    visitor->save(m_json);
 }
 
 // ------ GetLabel -------
@@ -60,6 +71,11 @@ GetLabel::GetLabel()
 void GetLabel::visit(FileSource*)
 {
     Statics::widgetIcon(Statics::FileResource, this);
+}
+
+void GetLabel::visit(DirSource*)
+{
+    Statics::widgetIcon(Statics::DirResource, this);
 }
 
 void GetLabel::visit(UDPSource*)
@@ -104,6 +120,13 @@ void GetInputDialogWidget::visit(FileSource *fileSource)
     ui->labelDetail->setText(fileSource->getDescription());
 }
 
+void GetInputDialogWidget::visit(DirSource *dirSource)
+{
+    ui->labelIcon->setPixmap(Statics::pixmapIcon(Statics::DirResource));
+    ui->labelName->setText(dirSource->getName());
+    ui->labelDetail->setText(dirSource->getDescription());
+}
+
 void GetInputDialogWidget::visit(UDPSource *udpSource)
 {
     ui->labelIcon->setPixmap(Statics::pixmapIcon(Statics::UDPSourceResource));
@@ -131,22 +154,27 @@ GetDialog::GetDialog()
 {
 }
 
-void GetDialog::visit(FileSource *fileSource)
+void GetDialog::visit(FileSource *visitor)
 {
-    FileSourceDialog temp(*fileSource, this);
+    FileSourceDialog temp(*visitor, this);
 }
 
-void GetDialog::visit(UDPSource *udpSource)
+void GetDialog::visit(DirSource *visitor)
 {
-    UdpSourceDialog temp(udpSource, this);
+    DirSourceDialog temp(*visitor, this);
 }
 
-void GetDialog::visit(PassProcessor* passProcessor)
+void GetDialog::visit(UDPSource *visitor)
 {
-    PassProcessorDialog temp(passProcessor, this);
+    UdpSourceDialog temp(visitor, this);
 }
 
-void GetDialog::visit(RegexProcessor* regexProcessor)
+void GetDialog::visit(PassProcessor* visitor)
 {
-    RegexProcessorDialog temp(regexProcessor, this);
+    PassProcessorDialog temp(visitor, this);
+}
+
+void GetDialog::visit(RegexProcessor* visitor)
+{
+    RegexProcessorDialog temp(visitor, this);
 }

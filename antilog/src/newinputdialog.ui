@@ -119,7 +119,24 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButtonCancel">
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources.qrc">
+         <normaloff>:/artwork/artwork/b_cancel.svg</normaloff>:/artwork/artwork/b_cancel.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButtonOk">
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
        <property name="text">
         <string>O.k.</string>
        </property>

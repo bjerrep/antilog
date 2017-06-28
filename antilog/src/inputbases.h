@@ -52,7 +52,7 @@ public slots:
     virtual void slotSystemReady();
 
 signals:
-    void signalNewSourceData(InputItemBase* source, QString data);
+    void signalNewSourceData(InputItemBase* source, QString data, QString sourceIdentifier = QString());
 
 private:
     bool m_enabled = false;
@@ -79,7 +79,7 @@ signals:
     void signalNewProcessorData(InputItemBase* source, LogEntryPtr logEntry);
 
 public slots:
-    virtual void slotNewData(InputItemBase* source, QString data) = 0;
+    virtual void slotNewData(InputItemBase* source, QString data, QString sourceIdentifier) = 0;
 
 private:
     InputItemBase* m_inputItem = nullptr;

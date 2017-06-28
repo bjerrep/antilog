@@ -37,10 +37,10 @@ void PassProcessor::setSchemeFromName(const QString& schemeName)
     setDescription("Format scheme '" + schemeName + "'");
 }
 
-void PassProcessor::slotNewData(InputItemBase* source, QString data)
+void PassProcessor::slotNewData(InputItemBase* source, QString data, QString sourceIdentifier)
 {
     setInputItem(source);
-    auto logEntry = LogEntryPtr(new LogEntry(data, source->getName(), getScheme()));
+    auto logEntry = LogEntryPtr(new LogEntry(data, sourceIdentifier, getScheme()));
     signalNewProcessorData(this, logEntry);
 }
 
@@ -121,19 +121,19 @@ void RegexProcessor::setSchemeFromName(const QString& schemeName)
     updateDescription();
 }
 
-void RegexProcessor::slotNewData(InputItemBase* source, QString data)
+void RegexProcessor::slotNewData(InputItemBase* source, QString data, QString sourceIdentifier)
 {
     setInputItem(source);
     auto rows = applyRegex(data);
 
     if (!rows.empty())
     {
-        auto logEntryPtr = LogEntryPtr(new LogEntry(rows, source->getName(), getScheme()));
+        auto logEntryPtr = LogEntryPtr(new LogEntry(rows, sourceIdentifier, getScheme()));
         signalNewProcessorData(this, logEntryPtr);
     }
     else if (!m_onlyPassRegexMatches)
     {
-        auto logEntryPtr = LogEntryPtr(new LogEntry(data, source->getName(), getScheme()));
+        auto logEntryPtr = LogEntryPtr(new LogEntry(data, sourceIdentifier, getScheme()));
         signalNewProcessorData(this, logEntryPtr);
     }
 }

@@ -27,14 +27,15 @@ private:
     QString cleanMessage(QString message);
 
 private slots:
-    void slotSourceData(InputItemBase* source, QString message);
+    void slotSourceData(InputItemBase* source, QString message, QString sourceIdentifier);
     void slotProcessorData(InputItemBase* source, LogEntryPtr logEntry);
+
 public slots:
     void slotSystemReady();
 
 signals:
     void signalNewData(InputItemBase* source, LogEntryPtr logEntry);
-    void signalDataToProcessor(InputItemBase* source, QString message);
+    void signalDataToProcessor(InputItemBase* source, QString message, QString sourceIdentifier = QString());
     void signalSystemReady();
 
 private:
