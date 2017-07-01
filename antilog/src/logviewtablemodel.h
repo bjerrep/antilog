@@ -18,8 +18,6 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionViewItem& option,
                const QModelIndex& index) const;
-    QSize sizeHint(const QStyleOptionViewItem &option,
-                   const QModelIndex &index) const;
 };
 
 
@@ -34,6 +32,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    void clear();
     void erase(int count);
     void append(LogEntryPtr logEntry);
     void append(QVector<LogEntryPtr> logEntries);

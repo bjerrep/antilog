@@ -69,9 +69,9 @@ void SourceAndProcessor::connectSignalsAndSlots()
             Qt::UniqueConnection);
 }
 
-void SourceAndProcessor::slotProcessorData(InputItemBase* source, LogEntryPtr logEntry)
+void SourceAndProcessor::slotProcessorData(ProcessorBase* processor, LogEntryPtr logEntry)
 {
-    emit signalNewData(source, logEntry);
+    emit signalNewData(processor, logEntry);
 }
 
 void SourceAndProcessor::slotSystemReady()
@@ -85,7 +85,7 @@ QString SourceAndProcessor::cleanMessage(QString message)
     return message;
 }
 
-void SourceAndProcessor::slotSourceData(InputItemBase* source, QString message, QString sourceIdentifier)
+void SourceAndProcessor::slotSourceData(SourceBase* source, QString message, QString sourceIdentifier)
 {
     QString cleaned = cleanMessage(message);
     emit signalDataToProcessor(source, cleaned, sourceIdentifier);

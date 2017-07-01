@@ -28,6 +28,7 @@ RegexProcessorDialog::RegexProcessorDialog(RegexProcessor* regexProcessor, QWidg
     ui->iconLayout->addWidget(Statics::widgetIcon(Statics::RegexProcessorResource));
     ui->name->setText(regexProcessor->getName());
     ui->lineEditRegex->setText(regexProcessor->getRegex());
+    ui->checkBoxOnlyOutputMatches->setChecked(regexProcessor->m_onlyPassRegexMatches);
 
     QString scheme = regexProcessor->getScheme()->name();
     ui->comboBoxFormat->addItems(Statics::formatSchemeModel->getSchemeNames());
@@ -44,6 +45,7 @@ RegexProcessorDialog::RegexProcessorDialog(RegexProcessor* regexProcessor, QWidg
         const QString scheme = ui->comboBoxFormat->currentText();
         regexProcessor->setSchemeFromName(scheme);
         regexProcessor->m_regex = ui->lineEditRegex->text();
+        regexProcessor->m_onlyPassRegexMatches = ui->checkBoxOnlyOutputMatches->isChecked();
     }
 }
 

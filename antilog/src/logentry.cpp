@@ -8,6 +8,7 @@
 
 #include <QVariant>
 #include <QSharedPointer>
+#include <QTextDocument>
 
 // ------ LogCell -------
 
@@ -87,6 +88,16 @@ int LogEntry::getNofRows() const
     return m_logCells.size();
 }
 
+int LogEntry::getWidth()
+{
+    if (m_width == -1)
+    {
+        invalidateCachedHtml();
+        getHtml();
+    }
+    return m_width;
+}
+
 QString LogEntry::getHtml()
 {
     if (!m_htmlCached.isEmpty())
@@ -113,7 +124,12 @@ QString LogEntry::getHtml()
                  m_sourceName.left(sourceLength).rightJustified(sourceLength, ' ') + "</td>";
     }
     QString html = source + m_formatScheme->getTableFormat().getEntryCellsAsHtml(subMessages);
-    return m_htmlCached = "<html>" + css + "<table><tr>" + html + "</tr></table></html>";
+    m_htmlCached = "<html>" + css + "<table><tr>" + html + "</tr></table></html>";
+
+    QTextDocument doc;
+    doc.setHtml(m_htmlCached);
+    m_width = doc.idealWidth();
+    return m_htmlCached;
 }
 
 QString LogEntry::getText() const
@@ -123,6 +139,7 @@ QString LogEntry::getText() const
 
 void LogEntry::invalidateCachedHtml()
 {
+    m_width = -1;
     m_htmlCached.clear();
 }
 

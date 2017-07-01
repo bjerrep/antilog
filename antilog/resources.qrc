@@ -17,5 +17,9 @@
         <file>artwork/button_ok.svg</file>
         <file>artwork/b_cancel.svg</file>
         <file>artwork/dir.svg</file>
+        <file>artwork/clear.svg</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>artwork/clear.svg</file>
     </qresource>
 </RCC>

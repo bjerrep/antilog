@@ -52,7 +52,7 @@ public slots:
     virtual void slotSystemReady();
 
 signals:
-    void signalNewSourceData(InputItemBase* source, QString data, QString sourceIdentifier = QString());
+    void signalNewSourceData(SourceBase* source, QString data, QString sourceIdentifier);
 
 private:
     bool m_enabled = false;
@@ -76,10 +76,10 @@ public:
     const char* SchemeNameKey = "schemename";
 
 signals:
-    void signalNewProcessorData(InputItemBase* source, LogEntryPtr logEntry);
+    void signalNewProcessorData(ProcessorBase* processor, LogEntryPtr logEntry);
 
 public slots:
-    virtual void slotNewData(InputItemBase* source, QString data, QString sourceIdentifier) = 0;
+    virtual void slotNewData(SourceBase* source, QString data, QString sourceIdentifier) = 0;
 
 private:
     InputItemBase* m_inputItem = nullptr;

@@ -37,7 +37,7 @@ void PassProcessor::setSchemeFromName(const QString& schemeName)
     setDescription("Format scheme '" + schemeName + "'");
 }
 
-void PassProcessor::slotNewData(InputItemBase* source, QString data, QString sourceIdentifier)
+void PassProcessor::slotNewData(SourceBase* source, QString data, QString sourceIdentifier)
 {
     setInputItem(source);
     auto logEntry = LogEntryPtr(new LogEntry(data, sourceIdentifier, getScheme()));
@@ -121,7 +121,7 @@ void RegexProcessor::setSchemeFromName(const QString& schemeName)
     updateDescription();
 }
 
-void RegexProcessor::slotNewData(InputItemBase* source, QString data, QString sourceIdentifier)
+void RegexProcessor::slotNewData(SourceBase* source, QString data, QString sourceIdentifier)
 {
     setInputItem(source);
     auto rows = applyRegex(data);

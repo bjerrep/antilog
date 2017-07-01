@@ -19,7 +19,7 @@ public:
     void setSchemeFromName(const QString& scheme) override;
 
 public slots:
-    void slotNewData(InputItemBase* source, QString data, QString sourceIdentifier) override;
+    void slotNewData(SourceBase* source, QString data, QString sourceIdentifier) override;
 };
 
 // ------ RegexProcessor -------
@@ -43,7 +43,7 @@ private:
     void updateDescription();
 
 public slots:
-    void slotNewData(InputItemBase* source, QString data, QString sourceIdentifier) override;
+    void slotNewData(SourceBase* source, QString data, QString sourceIdentifier) override;
 
 private:
     const char* RegexKey = "regex";

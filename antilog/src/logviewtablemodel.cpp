@@ -27,19 +27,12 @@ void LogViewDelegate::paint(QPainter *painter,
         QTextDocument doc;
         QString html = logEntryPtr->getHtml();
         doc.setHtml(html);
-
         painter->save();
         painter->translate(option.rect.topLeft() + QPoint(0, -2));
         doc.setDefaultFont(Statics::options->m_logFont);
-        doc.drawContents(painter, QRect(QPoint(0, 0), option.rect.size()));
+        doc.drawContents(painter);
         painter->restore();
     }
-}
-
-QSize LogViewDelegate::sizeHint(const QStyleOptionViewItem &option,
-                                const QModelIndex &index) const
-{
-    return QStyledItemDelegate::sizeHint(option, index);
 }
 
 // ------ LogViewTableModel -------
@@ -86,6 +79,15 @@ QVariant LogViewTableModel::data(const QModelIndex &index, int role) const
         return Statics::options->m_logFont;
     }
     return QVariant();
+}
+
+void LogViewTableModel::clear()
+{
+    beginRemoveRows(QModelIndex(), 0, m_visibleRows.count());
+    m_visibleRows.clear();
+    endRemoveRows();
+    m_rowsTotal.clear();
+    redrawVisibleRows();
 }
 
 void LogViewTableModel::erase(int count)

@@ -17,8 +17,8 @@ class FileReader : public QObject
     };
 
 public:
-    FileReader(const QString& filename, const QString& sourceName, int lastNumlines = 0);
-    FileReader(const QString& rootDir, bool recursive, const QString& mask, const QString& sourceName);
+    FileReader(const QString& filename, int lastNumlines = 0);
+    FileReader(const QString& rootDir, bool recursive, const QString& mask);
     ~FileReader();
     void setup();
 
@@ -43,7 +43,6 @@ private:
     QString m_rootDir;
     bool m_recursive = false;
     QString m_mask;
-    QString m_sourceName;
     int m_lastNumLines = 0;
     QMap<QString, qint64> m_positions;
     QFileSystemWatcher* m_watcher = nullptr;

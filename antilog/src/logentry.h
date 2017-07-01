@@ -35,6 +35,7 @@ public:
     bool isInScope(const QString& level, const QString& textFilter) const;
     QStringList getEntriesList() const;
     int getNofRows() const;
+    int getWidth();
     QString getHtml();
     QString getText() const;
     int getSerial() const;
@@ -48,6 +49,7 @@ private:
     FormatScheme* m_formatScheme = nullptr;
     QString m_htmlCached;
     QString m_sourceName;
+    int m_width = -1;
 };
 
 using LogEntryPtr = QSharedPointer<LogEntry>;

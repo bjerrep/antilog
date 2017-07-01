@@ -13,6 +13,7 @@
 #include <QDir>
 #include <QMenu>
 #include <QClipboard>
+#include <QTableView>
 
 
 AntiLog::AntiLog(QWidget *parent) :
@@ -173,6 +174,15 @@ void AntiLog::slotLogViewSliderChanged(int value)
     }
 }
 
+void AntiLog::adjustColumnWidth(int width)
+{
+    if (width > m_columnWidth)
+    {
+        m_columnWidth = width;
+        ui->tableView->horizontalHeader()->setMinimumSectionSize(width);
+    }
+}
+
 void AntiLog::on_pushButtonInputs_clicked()
 {
     if (!m_inputDialog)
@@ -185,7 +195,14 @@ void AntiLog::on_pushButtonInputs_clicked()
 
 void AntiLog::slotNewLogEntry(InputItemBase* /*processor*/, LogEntryPtr logEntry)
 {
+    adjustColumnWidth(logEntry->getWidth());
     m_logViewTableModel->append(logEntry);
+}
+
+void AntiLog::refreshLogView()
+{
+    m_logViewTableModel->redrawVisibleRows();
+    slotTableUpdated();
 }
 
 void AntiLog::slotTableUpdated()
@@ -279,10 +296,18 @@ void AntiLog::on_comboBoxLogThreshold_currentIndexChanged(const QString &arg1)
 void AntiLog::on_lineEditTextFilter_textChanged(const QString &arg1)
 {
     m_logViewTableModel->setTextFilter(arg1);
+    refreshLogView();
 }
 
 void AntiLog::on_checkBoxShowSource_clicked(bool checked)
 {
     Statics::options->m_showSource = checked;
     m_logViewTableModel->redrawVisibleRows();
+}
+
+void AntiLog::on_pushButtonClear_clicked()
+{
+    m_logViewTableModel->clear();
+    m_columnWidth = -1;
+    adjustColumnWidth(0);
 }

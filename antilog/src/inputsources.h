@@ -31,7 +31,7 @@ protected:
     void configureFileReaderProcess();
 
 private slots:
-    void slotNewFileReaderData(QString data, QString sourceIdentifier);
+    void slotNewFileReaderData(const QString& data, const QString& sourceIdentifier);
 
 protected:
     // FileSource attributes, used by configureFileReaderProcess().
@@ -80,11 +80,13 @@ private:
     void openSocket();
 
 private slots:
+    void slotSystemReady() override;
     void slotNewUdpSocketData();
 
 private:
     QUdpSocket* m_socket = nullptr;
     int m_port = 12345;
+    QString m_sourceDescriptor;
 };
 
 // ------ Statics -------

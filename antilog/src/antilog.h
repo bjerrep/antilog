@@ -37,6 +37,8 @@ public:
 
     bool eventFilter(QObject *obj, QEvent *event);
     void copySelectionToClipboard(AntiLog::CopyFormat format);
+    void adjustColumnWidth(int width);
+    void refreshLogView();
 
 public slots:
     void slotFormatRuleChanged();
@@ -59,6 +61,7 @@ private slots:
     void on_comboBoxLogThreshold_currentIndexChanged(const QString &arg1);
     void on_lineEditTextFilter_textChanged(const QString &arg1);
     void on_checkBoxShowSource_clicked(bool checked);
+    void on_pushButtonClear_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -66,5 +69,6 @@ private:
     InputDialog* m_inputDialog = nullptr;
     InputList m_inputList;
     bool m_scrollToBottom = true;
+    int m_columnWidth = 0;
 };
 

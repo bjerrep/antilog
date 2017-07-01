@@ -54,9 +54,9 @@ void DirSource::save(QJsonObject& json) const
     json["mask"] = m_mask;
 }
 
-void DirSource::slotNewFileReaderData(QString data, QString sourceIdentifier)
+void DirSource::slotNewFileReaderData(const QString& data, const QString& sourceIdentifier)
 {
-    emit signalNewSourceData(this, data, sourceIdentifier);
+    emit signalNewSourceData(this, data, getName() + " " + sourceIdentifier);
 }
 
 void DirSource::slotSystemReady()
@@ -77,12 +77,12 @@ void DirSource::configureFileReaderProcess()
 
         if (!m_dir.isEmpty())
         {
-            m_fileReader = new FileReader(m_dir, true, "*", getName());
+            m_fileReader = new FileReader(m_dir, true, "*");
         }
         else
         {
             const int linesToLoad = Statics::options->m_numberOfLinesToLoad * !m_tailOnly;
-            m_fileReader = new FileReader(m_filepath, getName(), linesToLoad);
+            m_fileReader = new FileReader(m_filepath, linesToLoad);
         }
 
         connect(m_fileReader, &FileReader::signalNewData,
@@ -165,11 +165,6 @@ UDPSource::UDPSource(const QJsonObject& json)
         return;
     }
 
-    if (enabled())
-    {
-        setEnabled(true);
-    }
-
     setPort(json["port"].toString().toInt());
 }
 
@@ -207,6 +202,15 @@ void UDPSource::openSocket()
             connect(m_socket, SIGNAL(readyRead()), this, SLOT(slotNewUdpSocketData()));
         }
     }
+    m_sourceDescriptor = getName() + " " + QString::number(m_port);
+}
+
+void UDPSource::slotSystemReady()
+{
+    if (enabled())
+    {
+        setEnabled(true);
+    }
 }
 
 void UDPSource::slotNewUdpSocketData()
@@ -225,7 +229,7 @@ void UDPSource::slotNewUdpSocketData()
                                &sender,
                                &senderPort);
 
-        emit signalNewSourceData(this, QString::fromLatin1(buffer));
+        emit signalNewSourceData(this, QString::fromLatin1(buffer), m_sourceDescriptor);
     }
 }
 

@@ -7,20 +7,18 @@
 #include <QFileSystemWatcher>
 #include <QThread>
 
-FileReader::FileReader(const QString& filename, const QString& sourceName, int lastNumlines)
+FileReader::FileReader(const QString& filename, int lastNumlines)
     : m_filename(filename),
-      m_sourceName(sourceName),
       m_lastNumLines(lastNumlines),
       m_mode(FILE)
 {
     setup();
 }
 
-FileReader::FileReader(const QString& rootDir, bool recursive, const QString& mask, const QString& sourceName)
+FileReader::FileReader(const QString& rootDir, bool recursive, const QString& mask)
     : m_rootDir(rootDir),
       m_recursive(recursive),
       m_mask(mask),
-      m_sourceName(sourceName),
       m_mode(DIR)
 {
     setup();
@@ -44,7 +42,7 @@ void FileReader::systemReady()
 
 QString FileReader::sourceIdentification(const QString& filename) const
 {
-    return m_sourceName + " " + QFileInfo(filename).fileName();
+    return QFileInfo(filename).fileName();
 }
 
 int FileReader::glob(const QString& dir, QStringList& files, QStringList& directories, const QString& filter, bool recurse)
