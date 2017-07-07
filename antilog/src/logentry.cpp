@@ -88,7 +88,7 @@ int LogEntry::getNofRows() const
     return m_logCells.size();
 }
 
-int LogEntry::getWidth()
+int LogEntry::getWidth() const
 {
     if (m_width == -1)
     {
@@ -98,7 +98,7 @@ int LogEntry::getWidth()
     return m_width;
 }
 
-QString LogEntry::getHtml()
+QString LogEntry::getHtml() const
 {
     if (!m_htmlCached.isEmpty())
     {
@@ -137,7 +137,7 @@ QString LogEntry::getText() const
     return m_formatScheme->getTableFormat().getEntryCellsAsText(getEntriesList());
 }
 
-void LogEntry::invalidateCachedHtml()
+void LogEntry::invalidateCachedHtml() const
 {
     m_width = -1;
     m_htmlCached.clear();

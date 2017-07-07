@@ -14,6 +14,7 @@
 #include <QMenu>
 #include <QClipboard>
 #include <QTableView>
+#include <QKeyEvent>
 
 
 AntiLog::AntiLog(QWidget *parent) :

@@ -35,11 +35,11 @@ public:
     bool isInScope(const QString& level, const QString& textFilter) const;
     QStringList getEntriesList() const;
     int getNofRows() const;
-    int getWidth();
-    QString getHtml();
+    int getWidth() const;
+    QString getHtml() const;
     QString getText() const;
     int getSerial() const;
-    void invalidateCachedHtml();
+    void invalidateCachedHtml() const;
 
 private:
     static int staticSerial;
@@ -47,9 +47,10 @@ private:
     QVector<LogCell> m_logCells;
     QString m_level = Statics::logLevelFilterOff;
     FormatScheme* m_formatScheme = nullptr;
-    QString m_htmlCached;
     QString m_sourceName;
-    int m_width = -1;
+
+    mutable QString m_htmlCached;
+    mutable int m_width = -1;
 };
 
 using LogEntryPtr = QSharedPointer<LogEntry>;
