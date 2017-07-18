@@ -124,7 +124,7 @@ LogEntryFormatterPtr FormatRule::match(const QStringList& logEntries,
     }
 
     if (rowHits.size() == 0)
-        return 0;
+        return LogEntryFormatterPtr();
 
     LogEntryFormatterPtr logEntryFormatter(new LogEntryFormatter(formatschemeName));
 

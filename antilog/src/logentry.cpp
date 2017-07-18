@@ -91,7 +91,7 @@ int LogEntry::getNofRows() const
     return m_logCells.size();
 }
 
-int LogEntry::getWidth()
+int LogEntry::getWidth() const
 {
     if (m_width == -1)
     {
@@ -162,7 +162,7 @@ QString LogEntry::getCellValue(const QString& key) const
     return QString();
 }
 
-void LogEntry::invalidateCachedHtml()
+void LogEntry::invalidateCachedHtml() const
 {
     m_width = -1;
     m_htmlCached.clear();

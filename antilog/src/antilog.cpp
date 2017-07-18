@@ -18,7 +18,6 @@
 #include <QTableView>
 #include <QProgressBar>
 
-
 AntiLog::AntiLog(QWidget* parent) :
     QWidget(parent),
     ui(new Ui::MainWindow),

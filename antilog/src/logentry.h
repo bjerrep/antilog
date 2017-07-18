@@ -35,11 +35,11 @@ public:
     bool isInScope(const QString& level, const QString& textFilter) const;
     QStringList getEntriesList() const;
     int getNofRows() const;
-    int getWidth();
+    int getWidth() const;
     QString getHtml() const;
     QString getText() const;
     int getSerial() const;
-    void invalidateCachedHtml();
+    void invalidateCachedHtml() const;
     QString getSourceName() const;
     QString getModuleName() const;
     QString getCellValue(const QString& key) const;
@@ -50,8 +50,8 @@ private:
     QVector<LogCell> m_logCells;
     QString m_level = Statics::logLevelFilterOff;
     FormatScheme* m_formatScheme = nullptr;
-    mutable QString m_htmlCached;
     QString m_sourceName;
+    mutable QString m_htmlCached;
     mutable int m_width = -1;
 };
 
