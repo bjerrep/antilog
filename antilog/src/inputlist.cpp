@@ -52,6 +52,9 @@ int InputList::count() const
 void InputList::appendAndConnect(SourceAndProcessor* input)
 {
     m_sourceAndProcessorList.append(input);
+    connect(input->getSourceEntry(), &SourceBase::signalNewSourceData,
+            m_app, &AntiLog::slotSourceTrafficMonitor);
+
     connect(input->getProcessorEntry(), &ProcessorBase::signalNewProcessorData,
             m_app, &AntiLog::slotNewLogEntry);
 }

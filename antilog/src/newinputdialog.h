@@ -18,7 +18,7 @@ class NewInputDialog : public QDialog
 public:
     explicit NewInputDialog(const InputItemList& sources,
                             const InputItemList& processors,
-                            QWidget *parent);
+                            QWidget* parent);
     ~NewInputDialog();
 
     void drawDialog();
@@ -31,7 +31,7 @@ private slots:
     void on_pushButtonCancel_clicked();
 
 private:
-    Ui::NewInputDialog *ui;
+    Ui::NewInputDialog* ui;
     const InputItemList& m_sources;
     const InputItemList& m_processors;
 };

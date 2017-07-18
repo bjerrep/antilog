@@ -38,11 +38,12 @@ protected:
     QString m_filepath;
     bool m_tailOnly = true;
 
-private:
+protected:
     FileReader* m_fileReader = nullptr;
     QString m_dir;
     bool m_recursive = true;
     QString m_mask;
+
     friend class DirSourceDialog;
 };
 
@@ -58,6 +59,7 @@ public:
     void save(QJsonObject& json) const override;
     void accept(InputVisitorBase* v) override;
     void setFilenameAndConfigure(QString filename);
+    void slotSystemReady() override;
 
     friend class FileSourceDialog;
 };

@@ -5,7 +5,7 @@
 #include "inputprocessors.h"
 #include "formatschememodel.h"
 
-PassProcessorDialog::PassProcessorDialog(PassProcessor* passProcessor, QWidget *parent) :
+PassProcessorDialog::PassProcessorDialog(PassProcessor* passProcessor, QWidget* parent) :
     QDialog(parent),
     ui(new Ui::PassProcessorDialog),
     m_passProcessor(passProcessor)

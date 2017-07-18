@@ -31,7 +31,7 @@ public:
     QModelIndex getSelectedModelIndex(int column) const;
 
 private slots:
-    void slotShowContextMenu(const QPoint &pos);
+    void slotShowContextMenu(const QPoint& pos);
     void slotDeleteInput();
     void slotChangeSource();
     void slotChangeProcessor();
@@ -43,7 +43,7 @@ private slots:
     void on_pushButtonClose_clicked();
 
 private:
-    Ui::inputDialog *ui;
+    Ui::inputDialog* ui;
     InputTableViewModel* m_inputTableViewModel;
     InputList* m_inputList;
     AntiLog* m_app;

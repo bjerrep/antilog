@@ -15,7 +15,7 @@ class FileSourceDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit FileSourceDialog(FileSource& fileSource, QWidget *parent);
+    explicit FileSourceDialog(FileSource& fileSource, QWidget* parent);
     ~FileSourceDialog();
 
 private:
@@ -26,13 +26,13 @@ private slots:
 
     void on_fileSelectButton_clicked();
     void on_pushButtonOk_clicked();
-    void on_name_textChanged(const QString &arg1);
+    void on_name_textChanged(const QString& arg1);
     void on_pushButtonCancel_clicked();
     void on_radioButtonTail_toggled(bool checked);
     void on_filepath_editingFinished();
 
 private:
-    Ui::FileSourceDialog *ui;
+    Ui::FileSourceDialog* ui;
     const FileSource& m_fileSource;
     QString m_name;
     QString m_filename;

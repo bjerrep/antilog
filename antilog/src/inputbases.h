@@ -44,9 +44,11 @@ public:
     SourceBase(const QString& getClassName, const QJsonObject& json);
     virtual ~SourceBase();
 
+    virtual void save(QJsonObject& json) const override = 0;
+
     virtual void setEnabled(bool enabled);
     bool enabled() const;
-    virtual void save(QJsonObject& json) const override = 0;
+    bool isGoodToGo() const;
 
 public slots:
     virtual void slotSystemReady();
@@ -56,6 +58,7 @@ signals:
 
 private:
     bool m_enabled = false;
+    bool m_systemReady = false;
 };
 
 

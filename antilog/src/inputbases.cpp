@@ -75,6 +75,11 @@ bool SourceBase::enabled() const
     return m_enabled;
 }
 
+bool SourceBase::isGoodToGo() const
+{
+    return m_systemReady && m_enabled;
+}
+
 void SourceBase::setEnabled(bool enabled)
 {
     m_enabled = enabled;
@@ -82,6 +87,7 @@ void SourceBase::setEnabled(bool enabled)
 
 void SourceBase::slotSystemReady()
 {
+    m_systemReady = true;
 }
 
 // ------ ProcessorItem -------

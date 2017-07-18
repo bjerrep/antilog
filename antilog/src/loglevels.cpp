@@ -27,7 +27,7 @@ void CategoryAlias::save(QJsonObject& json) const
     json["alias"] = QJsonValue::fromVariant(m_aliasList);
 }
 
-bool CategoryAlias::contains(const QString &alias) const
+bool CategoryAlias::contains(const QString& alias) const
 {
     return m_aliasList.indexOf(alias) >= 0;
 }
@@ -78,6 +78,11 @@ void LogLevelCategories::constructCategoryNames()
 QStringList const& LogLevelCategories::getCategoryNames() const
 {
     return m_categoryNames;
+}
+
+QString LogLevelCategories::getDefaultLoglevel()
+{
+    return "Standard";
 }
 
 int LogLevelCategories::value(const QString& category) const

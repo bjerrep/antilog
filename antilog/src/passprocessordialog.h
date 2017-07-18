@@ -14,7 +14,7 @@ class PassProcessorDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PassProcessorDialog(PassProcessor* passProcessor, QWidget *parent);
+    explicit PassProcessorDialog(PassProcessor* passProcessor, QWidget* parent);
     ~PassProcessorDialog();
 
     const PassProcessor* processor() const;
@@ -26,6 +26,6 @@ private slots:
     void on_pushButton_clicked();
 
 private:
-    Ui::PassProcessorDialog *ui;
+    Ui::PassProcessorDialog* ui;
     PassProcessor* m_passProcessor;
 };

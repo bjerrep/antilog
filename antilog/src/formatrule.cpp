@@ -28,12 +28,6 @@ FormatRule::FormatRule(MatchingRule key, const QString& value)
 {
 }
 
-int FormatRule::MME(const char* var, const QJsonValue& json)
-{
-    auto meta = staticMetaObject.property(staticMetaObject.indexOfProperty(var)).enumerator();
-    return meta.keyToValue(json.toString().toStdString().c_str());
-}
-
 QString FormatRule::searchTerm() const
 {
     return m_searchTerm;
@@ -73,22 +67,22 @@ QString FormatRule::formatAreaAsString() const
 
 FormatRule::Color FormatRule::setColorFromString(const QString& color)
 {
-    return m_color = static_cast<Color>(MME("color", color));
+    return m_color = static_cast<Color>(Statics::metaIndex(staticMetaObject, "color", color));
 }
 
 FormatRule::Color FormatRule::setBgColorFromString(const QString& color)
 {
-    return m_bgcolor = static_cast<Color>(MME("bgcolor", color));
+    return m_bgcolor = static_cast<Color>(Statics::metaIndex(staticMetaObject, "bgcolor", color));
 }
 
 FormatRule::MatchingRule FormatRule::setMatchingRuleFromString(const QString& operation)
 {
-    return m_matchingRule = static_cast<MatchingRule>(MME("matchingRule", operation));
+    return m_matchingRule = static_cast<MatchingRule>(Statics::metaIndex(staticMetaObject, "matchingRule", operation));
 }
 
 FormatRule::FormatArea FormatRule::setFormatAreaFromString(const QString& range)
 {
-    return m_formatArea = static_cast<FormatArea>(MME("formatArea", range));
+    return m_formatArea = static_cast<FormatArea>(Statics::metaIndex(staticMetaObject, "formatArea", range));
 }
 
 LogEntryFormatterPtr FormatRule::match(const QStringList& logEntries,

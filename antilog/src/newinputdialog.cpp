@@ -7,7 +7,7 @@
 
 NewInputDialog::NewInputDialog(const InputItemList& sources,
                                const InputItemList& processors,
-                               QWidget *parent)
+                               QWidget* parent)
     : QDialog(parent),
       ui(new Ui::NewInputDialog),
       m_sources(sources),

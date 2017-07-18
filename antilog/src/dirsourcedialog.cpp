@@ -4,7 +4,7 @@
 
 #include <QFileDialog>
 
-DirSourceDialog::DirSourceDialog(DirSource& dirSource, QWidget *parent) :
+DirSourceDialog::DirSourceDialog(DirSource& dirSource, QWidget* parent) :
     QDialog(parent),
     ui(new Ui::DirSourceDialog)
 {

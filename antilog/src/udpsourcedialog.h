@@ -14,7 +14,7 @@ class UdpSourceDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit UdpSourceDialog(UDPSource* udpSource, QWidget *parent);
+    explicit UdpSourceDialog(UDPSource* udpSource, QWidget* parent);
     ~UdpSourceDialog();
 
 private slots:
@@ -24,6 +24,6 @@ private slots:
     void on_port_textChanged(const QString &arg1);
 
 private:
-    Ui::UdpSourceDialog *ui;
+    Ui::UdpSourceDialog* ui;
     UDPSource* m_udpSource;
 };

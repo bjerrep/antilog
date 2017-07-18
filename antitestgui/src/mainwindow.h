@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 #include <QStringList>
@@ -15,36 +14,32 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
 private:
     void save();
     void load();
     QString getConfigFilePath();
-    void generateMessages();
+    QString getNextMessage();
 
 public slots:
     void slotTimerHit();
 
 private slots:
-    void on_checkBoxExample1_clicked();
-    void on_checkBoxHelloWorld_clicked();
     void on_pushButton_clicked();
-
     void on_spinBoxPeriod_valueChanged(int arg1);
-
-    void on_checkBoxSpdLog_clicked();
-
     void on_checkBoxAppendSerial_clicked(bool checked);
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
     QTimer* m_timer;
     QString m_filename;
-    QStringList m_messages;
-    int m_index = 0;
+    int m_serial = 0;
     bool m_appendSerial = false;
+    int m_messageSelector = 0;
+    int m_helloWorldIndex = 0;
+    int m_example1Index = 0;
+    int m_spdLogIndex = 0;
 };
 
-#endif // MAINWINDOW_H

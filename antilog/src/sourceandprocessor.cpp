@@ -23,8 +23,8 @@ SourceAndProcessor::SourceAndProcessor(const QJsonObject& json)
 
 SourceAndProcessor::~SourceAndProcessor()
 {
-    m_sourceEntry->deleteLater();
-    m_processorEntry->deleteLater();
+    delete m_sourceEntry;
+    delete m_processorEntry;
 }
 
 QJsonObject SourceAndProcessor::getJson() const

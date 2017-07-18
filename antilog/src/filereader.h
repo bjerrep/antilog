@@ -32,7 +32,7 @@ private:
 
 public slots:
     void systemReady();
-    void slotFileChanged(const QString &path);
+    void slotFileChanged(const QString& path);
     void startReader();
 
 signals:

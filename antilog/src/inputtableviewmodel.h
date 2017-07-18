@@ -10,7 +10,7 @@ class InputTableViewModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    InputTableViewModel(InputList* inputList, QObject *parent);
+    InputTableViewModel(InputList* inputList, QObject* parent);
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;

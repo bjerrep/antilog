@@ -7,7 +7,7 @@
 #include <QFileSystemWatcher>
 
 
-FileSourceDialog::FileSourceDialog(FileSource& fileSource, QWidget *parent) :
+FileSourceDialog::FileSourceDialog(FileSource& fileSource, QWidget* parent) :
     QDialog(parent),
     ui(new Ui::FileSourceDialog),
     m_fileSource(fileSource)
@@ -112,7 +112,7 @@ void FileSourceDialog::on_pushButtonOk_clicked()
     setResult(QDialog::Accepted);
 }
 
-void FileSourceDialog::on_name_textChanged(const QString &arg1)
+void FileSourceDialog::on_name_textChanged(const QString& arg1)
 {
     m_name = arg1;
 }

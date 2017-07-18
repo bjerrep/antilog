@@ -13,7 +13,7 @@ class FormatWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit FormatWidget(FormatRule* formatScheme, const TableFormat& tableFormat, QWidget *parent);
+    explicit FormatWidget(FormatRule* formatScheme, const TableFormat& tableFormat, QWidget* parent);
     ~FormatWidget();
 
     FormatRule* formatEntry();
@@ -34,7 +34,7 @@ private slots:
     void on_checkBoxCase_clicked(bool checked);
 
 private:
-    Ui::FormatWidget *ui;
+    Ui::FormatWidget* ui;
     FormatRule* m_formatRule;
 };
 

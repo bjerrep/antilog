@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <stdlib.h>
+#include <iostream>
 
 #include <QTimer>
 #include <QCheckBox>
@@ -17,7 +19,7 @@
 #include <QDir>
 
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -71,13 +73,18 @@ void MainWindow::load()
 
 void MainWindow::slotTimerHit()
 {
-    if (!m_messages.size())
+    if (!ui->checkBoxFile->isChecked() && !ui->checkBoxStdout->isChecked())
+    {
+        return;
+    }
+
+    QString message = getNextMessage();
+    if (message.isNull())
         return;
 
-    QString message = m_messages[m_index % m_messages.size()];
     if (m_appendSerial)
-        message += " (" + QString::number(m_index) + ")";
-    ++m_index;
+        message += " (" + QString::number(m_serial) + ")";
+    ++m_serial;
 
     if (ui->checkBoxFile->isChecked())
     {
@@ -90,21 +97,23 @@ void MainWindow::slotTimerHit()
         }
     }
 
-    if (ui->checkBoxFile->isChecked())
+    if (ui->checkBoxStdout->isChecked())
     {
-        ui->listWidgetPreview->addItem(message);
-        ui->listWidgetPreview->scrollToBottom();
+        std::cout << message.toStdString() << '\n';
     }
+
+    ui->listWidgetPreview->addItem(message);
+    ui->listWidgetPreview->scrollToBottom();
 }
 
-void MainWindow::generateMessages()
+QString MainWindow::getNextMessage()
 {
-    QStringList helloworld;
+    static QStringList helloworld;
     helloworld
             << "hello world"
             << "who are you";
 
-    QStringList example1;
+    static QStringList example1;
     example1
             << "2017-01-01 10:20:30:000 ver [fuelcell] on fire"
             << "2017-01-01 10:20:31:000 deb [fuelcell] sold"
@@ -114,7 +123,7 @@ void MainWindow::generateMessages()
             << "2017-01-03 10:20:30:000 err [fuelcell] oups"
             << "2017-01-03 10:20:30:000 fat [fuelcell] arrghhh";
 
-    QStringList spdlog;
+    static QStringList spdlog;
     spdlog
             << "[2017-06-09 00:09:46.850] [console] [info] Welcome to spdlog!"
             << "[2017-06-09 00:09:46.850] [console] [error] Some error message with arg1.."
@@ -125,17 +134,30 @@ void MainWindow::generateMessages()
             << "[2017-06-09 00:09:46.850] [console] [info] left aligned"
             << "[2017-06-09 00:09:46.850] [console] [info] loggers can be retrieved from a global registry using the spdlog::get(logger_name) function";
 
-    m_messages.clear();
-
-    for (int i = 0; i <= 100; i++)
+    switch (m_messageSelector)
     {
+    case 0:
+        m_messageSelector = 1;
         if (ui->checkBoxHelloWorld->isChecked())
-            m_messages.append(helloworld[i % helloworld.size()]);
+            return helloworld[m_helloWorldIndex++ % helloworld.size()];
+    case 1:
+        m_messageSelector = 2;
         if (ui->checkBoxExample1->isChecked())
-            m_messages.append(example1[i % example1.size()]);
+            return example1[m_example1Index++ % example1.size()];
+    case 2:
+        m_messageSelector = 3;
         if (ui->checkBoxSpdLog->isChecked())
-            m_messages.append(spdlog[i % spdlog.size()]);
+            return spdlog[m_spdLogIndex++ % spdlog.size()];
+    case 3:
+        m_messageSelector = 0;
+        if (ui->checkBoxSourcesAndModules->isChecked())
+        {
+            const int nofModules = 20;
+            int moduleIndex = qrand() / (RAND_MAX/nofModules);
+            return QString("module%1 SourcesAndModules - Log message from module%1").arg(moduleIndex);
+        }
     }
+    return QString();
 }
 
 QString MainWindow::getConfigFilePath()
@@ -143,16 +165,6 @@ QString MainWindow::getConfigFilePath()
     QString path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
     QDir().mkpath(path);
     return QDir(path).filePath("configtestui.json");
-}
-
-void MainWindow::on_checkBoxExample1_clicked()
-{
-    generateMessages();
-}
-
-void MainWindow::on_checkBoxHelloWorld_clicked()
-{
-    generateMessages();
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -164,11 +176,6 @@ void MainWindow::on_spinBoxPeriod_valueChanged(int arg1)
 {
     m_timer->setInterval(arg1);
     m_timer->start();
-}
-
-void MainWindow::on_checkBoxSpdLog_clicked()
-{
-    generateMessages();
 }
 
 void MainWindow::on_checkBoxAppendSerial_clicked(bool checked)

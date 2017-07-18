@@ -121,7 +121,7 @@ void InputDialog::redrawTable()
     m_inputTableViewModel->layoutChanged();
 }
 
-void InputDialog::slotShowContextMenu(const QPoint &pos)
+void InputDialog::slotShowContextMenu(const QPoint& pos)
 {
     auto globalPos = ui->tableView->mapToGlobal(pos);
     QMenu contextMenu;

@@ -24,9 +24,14 @@ There are 3 executables after a full build, antilog (the logviewer), antiudp (st
 
 ### antilog
 
-This is the viewer application. Typically the first thing to make is a formatting scheme matching a source, followed by a input configuration linking a source to a processor. Here a formatting scheme is made that matches the output from the [spdlog](https://github.com/gabime/spdlog) example application. The fields in the 'active' view are predefined but can be reordered to match e.g. the output groups from a regex processor. The only field that have any special meaning is 'Level' which can be used in the log view to filter out unwanted log levels.
+This is the viewer application. Typically the first thing to do is to make a formatting scheme for a source, followed by a input configuration linking a source to a processor. 
+
+#### Formatting scheme
+Here a formatting scheme is made that matches the output from the [spdlog](https://github.com/gabime/spdlog) example application. The fields in the 'active' view are predefined but can be reordered to match e.g. the output groups from a regex processor. The only field that have any special meaning is 'Level' which can be used in the log view to filter out unwanted log levels.
 
 ![](misc/formatscheme.png) 
+
+#### Input configuration
 
 Next a input is configured, the source is a file filereader set up to load a log file containing the spdlog texts (available in ./misc) and the processor is regex based and parses the spdlog default formatting. There can be an arbitrary number of such input configurations.
 
@@ -36,11 +41,24 @@ For instance the regex processor configuration dialog looks like this:
 
 ![](misc/regexdialog.png) 
 
+These are the input sources implemented so far:
+
+- **Dir**. Run individual tails on all specified files recursively below a specified root. E.g. on all files below /var/log in one go.
+- **File**. Run a tail on a specified file. The last part of the file can be loaded as well if desired.
+- **UDP**. Treats each received datagram as a log message.
+
+These are the available processors:
+
+- **Pass**. Just show the log data as-is.
+- **Regex**, Parse log messages as regex groups. These groups will then be labelled e.g. date, time, severity etc.
+
+#### Log viewer
+
 The final screenshot is the actual logview. The formatting implementation is not quite there yet. Whenever a formatting rule has hit on a line no further formatting rules are applied to the specific line. That needs to get fixed as a alot of other things do.
 
 ![](misc/logview.png) 
 
-The pulldown in lower left corner sets the threshold for the severities to display and any text in the textfield to the right will act as an grep filter. Missing is a way to select which module ids to show and their individual severity threshold. Same goes for the sources if there are more than one.
+The pulldown in lower left corner sets the threshold for the severities to display and any text in the textfield to the right will act as an grep filter. The "Use filters" will harvest source names and module names on the fly if checked. If checked this will in turn enable a dialog where it is possible to enable or disable individual source/module combinations and to give them individual severity thresholds.
 The antilog configuration file is saved in json format in ~/.config/antilog. 
 
 ### antiudp

@@ -13,7 +13,7 @@ class DirSourceDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit DirSourceDialog(DirSource& dirSource, QWidget *parent = 0);
+    explicit DirSourceDialog(DirSource& dirSource, QWidget* parent = 0);
     ~DirSourceDialog();
 
     void updateUi(const QString& dir);
@@ -26,5 +26,5 @@ private slots:
     void on_FileMaskLineEdit_editingFinished();
 
 private:
-    Ui::DirSourceDialog *ui;
+    Ui::DirSourceDialog* ui;
 };

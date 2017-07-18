@@ -48,8 +48,6 @@ public:
     FormatRule(MatchingRule key = MatchingRule::Contains, const QString& value = "undefined");
     void save(QJsonObject& json) const;
 
-    int MME(const char* var, const QJsonValue& json);
-
     QString colorAsString() const;
     QString bgColorAsString() const;
     QString matchingRuleAsString() const;

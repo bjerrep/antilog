@@ -14,7 +14,7 @@
 #include <QLineEdit>
 #include <QBoxLayout>
 
-FormatDialog::FormatDialog(const QString& schemeName, QWidget *parent, const InputList* inputList)
+FormatDialog::FormatDialog(const QString& schemeName, QWidget* parent, const InputList* inputList)
     : QDialog(parent),
       ui(new Ui::FormatDialog),
       m_inputList(inputList)
@@ -95,7 +95,7 @@ void FormatDialog::slotFormatRuleChanged()
     emit signalFormatRuleChanged();
 }
 
-void FormatDialog::on_comboBoxSchemeName_currentTextChanged(const QString &arg1)
+void FormatDialog::on_comboBoxSchemeName_currentTextChanged(const QString& arg1)
 {
     redrawFormatScheme(arg1);
 }

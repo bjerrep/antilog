@@ -1,20 +1,19 @@
 #include "logviewtablemodel.h"
-#include "logentryformatter.h"
-#include "logentry.h"
 #include "options.h"
+#include "extendedfiltermodel.h"
 
 #include <QTextDocument>
 #include <QStyleOptionViewItem>
-#include <QApplication>
+#include <QPainter>
 
 // ------ LogViewDelegate -------
 
-LogViewDelegate::LogViewDelegate(QObject *parent)
+LogViewDelegate::LogViewDelegate(QObject* parent)
     : QStyledItemDelegate(parent)
 {
 }
 
-void LogViewDelegate::paint(QPainter *painter,
+void LogViewDelegate::paint(QPainter* painter,
                             const QStyleOptionViewItem& option,
                             const QModelIndex& index) const
 {
@@ -37,8 +36,9 @@ void LogViewDelegate::paint(QPainter *painter,
 
 // ------ LogViewTableModel -------
 
-LogViewTableModel::LogViewTableModel(QObject *parent)
-    : QAbstractTableModel(parent)
+LogViewTableModel::LogViewTableModel(QObject* parent, const ExtendedFilterModel* filterModel)
+    : QAbstractTableModel(parent),
+      m_filterModel(filterModel)
 {
     startTimer(100);
 }
@@ -133,7 +133,8 @@ void LogViewTableModel::append(QVector<LogEntryPtr> logEntries)
 
     foreach(auto logEntryPtr, logEntries)
     {
-        if (logEntryPtr->isInScope(m_logLevel, m_textFilter))
+        if ((logEntryPtr->isInScope(m_logLevel, m_textFilter) && m_filterModel->isMatched(logEntryPtr)) ||
+             logEntryPtr->getText().startsWith(Statics::AntiLogMessage))
         {
             inScope.append(logEntryPtr);
         }

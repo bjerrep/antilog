@@ -61,6 +61,7 @@ void DirSource::slotNewFileReaderData(const QString& data, const QString& source
 
 void DirSource::slotSystemReady()
 {
+    SourceBase::slotSystemReady();
     QMetaObject::invokeMethod(m_fileReader, "systemReady", Qt::QueuedConnection);
 }
 
@@ -71,7 +72,7 @@ void DirSource::accept(InputVisitorBase* v)
 
 void DirSource::configureFileReaderProcess()
 {
-    if (enabled())
+    if (isGoodToGo())
     {
         delete m_fileReader;
 
@@ -153,6 +154,12 @@ void FileSource::setFilenameAndConfigure(QString filename)
     configureFileReaderProcess();
 }
 
+void FileSource::slotSystemReady()
+{
+    SourceBase::slotSystemReady();
+    configureFileReaderProcess();
+}
+
 // ------ UDPSource -------
 
 UDPSource::UDPSource(const QJsonObject& json)
@@ -207,7 +214,8 @@ void UDPSource::openSocket()
 
 void UDPSource::slotSystemReady()
 {
-    if (enabled())
+    SourceBase::slotSystemReady();
+    if (isGoodToGo())
     {
         setEnabled(true);
     }
@@ -239,6 +247,12 @@ void UDPSource::setEnabled(bool enabled)
     if (!m_socket && enabled)
     {
         openSocket();
+        if (m_socket->state() != QUdpSocket::BoundState)
+        {
+            emit signalNewSourceData(this,
+                                     Statics::AntiLogMessage + getName() + " failed to open socket",
+                                     m_sourceDescriptor);
+        }
     }
     else if (m_socket && !enabled)
     {
@@ -256,6 +270,11 @@ int UDPSource::getPort() const
 void UDPSource::setPort(int port)
 {
     m_port = port;
+    if (isGoodToGo())
+    {
+        setEnabled(false);
+        setEnabled(true);
+    }
     setDescription("Port " + QString::number(m_port));
 }
 

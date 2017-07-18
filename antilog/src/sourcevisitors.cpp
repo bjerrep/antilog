@@ -37,17 +37,17 @@ void GetName::visit(RegexProcessor* visitor)
 
 // ------ GetJson -------
 
-void GetJson::visit(FileSource *visitor)
+void GetJson::visit(FileSource* visitor)
 {
     visitor->save(m_json);
 }
 
-void GetJson::visit(DirSource *visitor)
+void GetJson::visit(DirSource* visitor)
 {
     visitor->save(m_json);
 }
 
-void GetJson::visit(UDPSource *visitor)
+void GetJson::visit(UDPSource* visitor)
 {
     visitor->save(m_json);
 }
@@ -113,21 +113,21 @@ GetInputDialogWidget::~GetInputDialogWidget()
     delete ui;
 }
 
-void GetInputDialogWidget::visit(FileSource *fileSource)
+void GetInputDialogWidget::visit(FileSource* fileSource)
 {
     ui->labelIcon->setPixmap(Statics::pixmapIcon(Statics::FileResource));
     ui->labelName->setText(fileSource->getName());
     ui->labelDetail->setText(fileSource->getDescription());
 }
 
-void GetInputDialogWidget::visit(DirSource *dirSource)
+void GetInputDialogWidget::visit(DirSource* dirSource)
 {
     ui->labelIcon->setPixmap(Statics::pixmapIcon(Statics::DirResource));
     ui->labelName->setText(dirSource->getName());
     ui->labelDetail->setText(dirSource->getDescription());
 }
 
-void GetInputDialogWidget::visit(UDPSource *udpSource)
+void GetInputDialogWidget::visit(UDPSource* udpSource)
 {
     ui->labelIcon->setPixmap(Statics::pixmapIcon(Statics::UDPSourceResource));
     ui->labelName->setText(udpSource->getName());
@@ -154,17 +154,17 @@ GetDialog::GetDialog()
 {
 }
 
-void GetDialog::visit(FileSource *visitor)
+void GetDialog::visit(FileSource* visitor)
 {
     FileSourceDialog temp(*visitor, this);
 }
 
-void GetDialog::visit(DirSource *visitor)
+void GetDialog::visit(DirSource* visitor)
 {
     DirSourceDialog temp(*visitor, this);
 }
 
-void GetDialog::visit(UDPSource *visitor)
+void GetDialog::visit(UDPSource* visitor)
 {
     UdpSourceDialog temp(visitor, this);
 }

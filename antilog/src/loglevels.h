@@ -29,6 +29,7 @@ public:
 
     void save(QJsonObject& json) const;
     QStringList const& getCategoryNames() const;
+    static QString getDefaultLoglevel();
     int value(const QString& category) const;
     QString findLogLevel(const QString& logLevelString) const;
 

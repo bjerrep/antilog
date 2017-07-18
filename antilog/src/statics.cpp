@@ -3,43 +3,47 @@
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMetaProperty>
 
 namespace Statics
 {
-    const char* UDPSourceResource = ":/artwork/artwork/udp.svg";
-    const char* FileResource = ":/artwork/artwork/file.svg";
-    const char* DirResource = ":/artwork/artwork/dir.svg";
+    const QString& UDPSourceResource = ":/artwork/artwork/udp.svg";
+    const QString& FileResource = ":/artwork/artwork/file.svg";
+    const QString& DirResource = ":/artwork/artwork/dir.svg";
 
-    const char* PassProcessorResource = ":/artwork/artwork/pass.svg";
-    const char* RegexProcessorResource = ":/artwork/artwork/regex.svg";
+    const QString& PassProcessorResource = ":/artwork/artwork/pass.svg";
+    const QString& RegexProcessorResource = ":/artwork/artwork/regex.svg";
 
-    const char* ClassName = "type";
-    const char* Name = "name";
-    const char* Description = "description";
+    const QString& ClassName = "type";
+    const QString& Name = "name";
+    const QString& Description = "description";
 
-    const char* FilePath = "filepath";
-    const char* Source = "source";
-    const char* Processor = "processor";
-    const char* Enabled = "enabled";
-    const char* Inputs = "inputs";
-    const char* TailOnly = "tailonly";
+    const QString& FilePath = "filepath";
+    const QString& Source = "source";
+    const QString& Processor = "processor";
+    const QString& Enabled = "enabled";
+    const QString& Inputs = "inputs";
+    const QString& TailOnly = "tailonly";
 
-    const char* Date = "Date";
-    const char* Time = "Time";
-    const char* Level = "Level";
-    const char* Id = "Id";
-    const char* Message = "Message";
+    const QString& Date = "Date";
+    const QString& Time = "Time";
+    const QString& Level = "Level";
+    const QString& Id = "Id";
+    const QString& Message = "Message";
 
-    const char* NoneScheme = "None";
+    const QString& NoneScheme = "None";
 
-    const char* FormatColumnAny = "Any";
+    const QString& FormatColumnAny = "Any";
 
-    const char* logLevelFilterOff = "All";
+    const QString& logLevelFilterOff = "All";
+    const QString& logLevelFilterOverruled = "-";
 
     const int iconHeight = 50;
     const int verticalMargin = 8;
 
     bool SystemReady = false;
+
+    const QString& AntiLogMessage = "AntiLog Message: ";
 
     FormatSchemeModel* formatSchemeModel = nullptr;
     LogLevelCategories* logLevels = nullptr;
@@ -47,7 +51,7 @@ namespace Statics
     AntiLog* antiLog = nullptr;
 
 
-    QPixmap pixmapIcon(QString resourceImage, int height)
+    QPixmap pixmapIcon(const QString& resourceImage, int height)
     {
         QPixmap icon(resourceImage);
         // hack to counteract something below that don't work as planned
@@ -58,7 +62,7 @@ namespace Statics
         return icon;
     }
 
-    int widgetIcon(QString resourceImage, QWidget* widget, int height)
+    int widgetIcon(const QString& resourceImage, QWidget* widget, int height)
     {
         QHBoxLayout* layout = new QHBoxLayout();
         widget->setLayout(layout);
@@ -70,10 +74,16 @@ namespace Statics
         return pixmap.width();
     }
 
-    QWidget* widgetIcon(QString resourceImage, int height)
+    QWidget* widgetIcon(const QString& resourceImage, int height)
     {
         auto* widget = new QWidget();
         widgetIcon(resourceImage, widget, height);
         return widget;
+    }
+
+    int metaIndex(const QMetaObject& metaObject, const char* var, const QString& key)
+    {
+        auto meta = metaObject.property(metaObject.indexOfProperty(var)).enumerator();
+        return meta.keyToValue(key.toStdString().c_str());
     }
 }

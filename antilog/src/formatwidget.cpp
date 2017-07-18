@@ -9,7 +9,7 @@
 #include <QCheckBox>
 
 
-FormatWidget::FormatWidget(FormatRule* formatEntry, const TableFormat& tableFormat, QWidget *parent) :
+FormatWidget::FormatWidget(FormatRule* formatEntry, const TableFormat& tableFormat, QWidget* parent) :
     QWidget(parent),
     ui(new Ui::FormatWidget),
     m_formatRule(formatEntry)

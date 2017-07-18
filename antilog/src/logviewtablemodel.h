@@ -3,19 +3,18 @@
 #include "logentry.h"
 #include "statics.h"
 
-#include <QTextDocument>
-#include <QStyleOptionViewItem>
 #include <QStyledItemDelegate>
-#include <QPainter>
 #include <QModelIndex>
 
 class TableCellFormat;
+class ExtendedFilterModel;
+class QPainter;
 
 class LogViewDelegate : public QStyledItemDelegate
 {
 public:
-    LogViewDelegate(QObject *parent);
-    void paint(QPainter *painter,
+    LogViewDelegate(QObject* parent = nullptr);
+    void paint(QPainter* painter,
                const QStyleOptionViewItem& option,
                const QModelIndex& index) const;
 };
@@ -26,7 +25,7 @@ class LogViewTableModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    LogViewTableModel(QObject *parent);
+    LogViewTableModel(QObject* parent, const ExtendedFilterModel* filterModel);
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -50,5 +49,6 @@ private:
     QVector<LogEntryPtr> m_rowsBuffered;
     QString m_logLevel;
     QString m_textFilter = Statics::logLevelFilterOff;
+    const ExtendedFilterModel* m_filterModel;
 };
 

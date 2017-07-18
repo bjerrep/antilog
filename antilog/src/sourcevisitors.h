@@ -25,9 +25,9 @@ private:
 class GetJson : public InputVisitorBase
 {
 public:
-    void visit(FileSource *fileSource);
-    void visit(DirSource *dirSource);
-    void visit(UDPSource *udpSource);
+    void visit(FileSource* fileSource);
+    void visit(DirSource* dirSource);
+    void visit(UDPSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
 
@@ -40,9 +40,9 @@ class GetLabel : public QWidget, public InputVisitorBase
 public:
     GetLabel();
 
-    void visit(FileSource *fileSource);
-    void visit(DirSource *dirSource);
-    void visit(UDPSource *udpSource);
+    void visit(FileSource* fileSource);
+    void visit(DirSource* dirSource);
+    void visit(UDPSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
 };
@@ -54,9 +54,9 @@ public:
     GetInputDialogWidget();
     ~GetInputDialogWidget();
 
-    void visit(FileSource *fileSource);
-    void visit(DirSource *dirSource);
-    void visit(UDPSource *udpSource);
+    void visit(FileSource* fileSource);
+    void visit(DirSource* dirSource);
+    void visit(UDPSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
 
@@ -70,9 +70,9 @@ class GetDialog : public QWidget, public InputVisitorBase
 public:
     GetDialog();
 
-    void visit(FileSource *fileSource);
-    void visit(DirSource *dirSource);
-    void visit(UDPSource *udpSource);
+    void visit(FileSource* fileSource);
+    void visit(DirSource* dirSource);
+    void visit(UDPSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
 

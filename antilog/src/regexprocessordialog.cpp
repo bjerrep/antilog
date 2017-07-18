@@ -18,7 +18,7 @@
 #include <QListWidget>
 
 
-RegexProcessorDialog::RegexProcessorDialog(RegexProcessor* regexProcessor, QWidget *parent) :
+RegexProcessorDialog::RegexProcessorDialog(RegexProcessor* regexProcessor, QWidget* parent) :
     QDialog(parent),
     ui(new Ui::RegexProcessorDialog),
     m_regexProcessor(regexProcessor)
@@ -81,7 +81,7 @@ void RegexProcessorDialog::updateDialog()
     }
 }
 
-void RegexProcessorDialog::layoutChanged(QListWidgetItem *current, QListWidgetItem *previous)
+void RegexProcessorDialog::layoutChanged(QListWidgetItem* current, QListWidgetItem* previous)
 {
     m_nofActiveCells = ui->listWidgetActive->count();
     updateDialog();

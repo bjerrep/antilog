@@ -7,7 +7,7 @@
 #include <QLineEdit>
 
 
-UdpSourceDialog::UdpSourceDialog(UDPSource* udpSource, QWidget *parent) :
+UdpSourceDialog::UdpSourceDialog(UDPSource* udpSource, QWidget* parent) :
     QDialog(parent),
     ui(new Ui::UdpSourceDialog),
     m_udpSource(udpSource)

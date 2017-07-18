@@ -14,15 +14,15 @@ class RegexProcessorDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RegexProcessorDialog(RegexProcessor* regexProcessor, QWidget *parent);
+    explicit RegexProcessorDialog(RegexProcessor* regexProcessor, QWidget* parent);
     ~RegexProcessorDialog();
 
 public slots:
     void updateDialog();
-    void layoutChanged(QListWidgetItem *current, QListWidgetItem *previous);
+    void layoutChanged(QListWidgetItem* current, QListWidgetItem* previous);
 
 public:
-    Ui::RegexProcessorDialog *ui;
+    Ui::RegexProcessorDialog* ui;
 
 private slots:
     void on_lineEditRegex_textEdited(const QString &arg1);

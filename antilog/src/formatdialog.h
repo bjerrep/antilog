@@ -15,7 +15,7 @@ class FormatDialog : public QDialog
 
 public:
     explicit FormatDialog(const QString& schemeName,
-                          QWidget *parent,
+                          QWidget* parent,
                           const InputList* inputList = nullptr);
     ~FormatDialog();
     void redrawFormatScheme(const QString& schemeName);
@@ -24,7 +24,7 @@ private slots:
     void slotDeleteWidget(FormatWidget* sender);
     void slotFormatRuleChanged();
 
-    void on_comboBoxSchemeName_currentTextChanged(const QString &arg1);
+    void on_comboBoxSchemeName_currentTextChanged(const QString& arg1);
     void on_pushButtonClose_clicked();
     void on_pushButtonNewScheme_clicked();
     void on_pushButtonDeleteScheme_clicked();
@@ -34,7 +34,7 @@ signals:
     void signalFormatRuleChanged();
 
 private:
-    Ui::FormatDialog *ui;
+    Ui::FormatDialog* ui;
     FormatScheme* m_formatScheme = nullptr;
     const InputList* m_inputList = nullptr;
 };

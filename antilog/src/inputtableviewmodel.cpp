@@ -3,7 +3,7 @@
 #include "inputlist.h"
 #include "sourceandprocessor.h"
 
-InputTableViewModel::InputTableViewModel(InputList* inputList, QObject *parent)
+InputTableViewModel::InputTableViewModel(InputList* inputList, QObject* parent)
     : QAbstractTableModel(parent),
       m_inputList(inputList)
 {

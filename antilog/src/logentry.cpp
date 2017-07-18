@@ -45,7 +45,10 @@ LogEntry::LogEntry(const QStringList& texts, const QString& sourceName, FormatSc
         m_logCells.append(LogCell(rows.at(i), texts.at(i)));
     }
     int logLevelIndex = formatScheme->getTableFormat().getLogLevelIndex();
-    determineLogLevel(texts.at(logLevelIndex));
+    if (logLevelIndex < texts.count())
+    {
+        determineLogLevel(texts.at(logLevelIndex));
+    }
 }
 
 void LogEntry::determineLogLevel(QString logLevelData)
@@ -98,7 +101,7 @@ int LogEntry::getWidth()
     return m_width;
 }
 
-QString LogEntry::getHtml()
+QString LogEntry::getHtml() const
 {
     if (!m_htmlCached.isEmpty())
     {
@@ -135,6 +138,28 @@ QString LogEntry::getHtml()
 QString LogEntry::getText() const
 {
     return m_formatScheme->getTableFormat().getEntryCellsAsText(getEntriesList());
+}
+
+QString LogEntry::getSourceName() const
+{
+    return m_sourceName;
+}
+
+QString LogEntry::getModuleName() const
+{
+    return getCellValue(Statics::Id);
+}
+
+QString LogEntry::getCellValue(const QString& key) const
+{
+    foreach (auto logCell, m_logCells)
+    {
+        if (logCell.m_key == key)
+        {
+            return logCell.m_text;
+        }
+    }
+    return QString();
 }
 
 void LogEntry::invalidateCachedHtml()
