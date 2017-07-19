@@ -22,6 +22,11 @@ ExtendedFilterItem::ExtendedFilterItem(QString name, Qt::CheckState enabled, con
 {
 }
 
+ExtendedFilterItem::~ExtendedFilterItem()
+{
+    qDeleteAll(m_modules);
+}
+
 void ExtendedFilterItem::save(QJsonObject& json) const
 {
     json["name"] = m_name;

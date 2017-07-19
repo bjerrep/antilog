@@ -16,6 +16,7 @@ struct ExtendedFilterItem
 public:
     ExtendedFilterItem(const QJsonObject& json, ExtendedFilterItem* parent);
     ExtendedFilterItem(QString getName, Qt::CheckState getEnableState, const QString& getSeverity, ExtendedFilterItem* parent);
+    ~ExtendedFilterItem();
     void save(QJsonObject& json) const;
 
     QString getName() const { return m_name; }

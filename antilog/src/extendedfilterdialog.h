@@ -20,10 +20,12 @@ public:
     explicit ExtendedFilterDialog(QWidget* parent, ExtendedFilterModel* filterModel);
     ~ExtendedFilterDialog();
 
-    ExtendedWidget* makeWidget(ExtendedFilterItem* filterItem);
-    void drawFilterModel();
-
     void add(ExtendedFilterItem* source, ExtendedFilterItem* module);
+
+private:
+    void drawFilterModel();
+    ExtendedWidget* makeWidget(ExtendedFilterItem* filterItem);
+    void setupTreeView();
 
 private slots:
     void slotAddFilterItems(ExtendedFilterItem* source, ExtendedFilterItem* module);

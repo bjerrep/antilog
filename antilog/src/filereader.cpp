@@ -24,6 +24,16 @@ FileReader::FileReader(const QString& rootDir, bool recursive, const QString& ma
     setup();
 }
 
+FileReader::~FileReader()
+{
+    if (m_watcher)
+    {
+        m_watcher->deleteLater();
+    }
+    m_thread->requestInterruption();
+    m_thread->deleteLater();
+}
+
 void FileReader::setup()
 {
     m_watcher = new QFileSystemWatcher();
@@ -107,16 +117,6 @@ void FileReader::startReader()
             m_watcher->addPath(file);
         }
     }
-}
-
-FileReader::~FileReader()
-{
-    if (m_watcher)
-    {
-        m_watcher->deleteLater();
-    }
-    m_thread->quit();
-    m_thread->deleteLater();
 }
 
 bool FileReader::isRunning()

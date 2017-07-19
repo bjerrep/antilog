@@ -62,6 +62,7 @@ AntiLog::AntiLog(QWidget* parent) :
 AntiLog::~AntiLog()
 {
     delete ui;
+    delete m_filterModel;
 }
 
 void AntiLog::save() const

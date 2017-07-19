@@ -26,6 +26,11 @@ ExtendedFilterModel::ExtendedFilterModel(const QJsonObject& json)
     }
 }
 
+ExtendedFilterModel::~ExtendedFilterModel()
+{
+     qDeleteAll(m_sources);
+}
+
 void ExtendedFilterModel::save(QJsonObject& json) const
 {
     QJsonObject model;
@@ -172,3 +177,8 @@ QString ExtendedFilterModel::getDefaultSeverity() const
     return m_defaultSeverity;
 }
 
+void ExtendedFilterModel::clear()
+{
+    qDeleteAll(m_sources);
+    m_sources.clear();
+}

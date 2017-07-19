@@ -19,6 +19,7 @@ class ExtendedFilterModel : public QObject
 
 public:
     ExtendedFilterModel(const QJsonObject& json);
+    ~ExtendedFilterModel();
     void save(QJsonObject& json) const;
 
     void registerLogEntry(LogEntryPtr logEntry);
@@ -28,6 +29,7 @@ public:
     ExtendedFilterItem* findModule(ExtendedFilterItem* toFind) const;
     QString getDefaultSeverity() const;
     void setActive(bool active);
+    void clear();
 
 signals:
     void signalNewFilterItems(ExtendedFilterItem* parent, ExtendedFilterItem* child);

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>495</width>
-    <height>500</height>
+    <width>576</width>
+    <height>524</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -161,7 +161,7 @@
           <item>
            <widget class="QCheckBox" name="checkBoxPersist">
             <property name="text">
-             <string>Persist data</string>
+             <string>Persist sources &amp;&amp; modules</string>
             </property>
            </widget>
           </item>

@@ -28,7 +28,6 @@ ExtendedWidget::ExtendedWidget(ExtendedFilterItem* filterItem, QWidget* parent) 
 
 ExtendedWidget::~ExtendedWidget()
 {
-    m_filterItem->setWidget(nullptr);
     delete ui;
 }
 

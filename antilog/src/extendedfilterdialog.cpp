@@ -17,12 +17,10 @@ ExtendedFilterDialog::ExtendedFilterDialog(QWidget* parent, ExtendedFilterModel*
       m_filterModel(filterModel)
 {
     ui->setupUi(this);
-    m_stdItemModel = new QStandardItemModel(0, 2, this);
-    m_stdItemModel->setHorizontalHeaderLabels({"Source & Modules", "Enable & Severity"});
+
+    m_stdItemModel = new QStandardItemModel(this);
     ui->treeView->setModel(m_stdItemModel);
-    ui->treeView->setUniformRowHeights(true);
-    ui->treeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-    ui->treeView->setColumnWidth(1, 130);
+    setupTreeView();
 
     ui->checkBoxEnabled->setChecked(filterModel->m_newSourcesEnabled);
     ui->checkBoxAutoUpdate->setChecked(true);
@@ -256,6 +254,19 @@ void ExtendedFilterDialog::on_checkBoxPersist_clicked(bool checked)
     m_filterModel->m_persistSourcesAndModules = checked;
 }
 
+void ExtendedFilterDialog::setupTreeView()
+{
+    m_stdItemModel->setColumnCount(2);
+    m_stdItemModel->setHorizontalHeaderLabels({"Source & Modules", "Enable & Severity"});
+    ui->treeView->setUniformRowHeights(true);
+    ui->treeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->treeView->setColumnWidth(1, 130);
+}
+
 void ExtendedFilterDialog::on_pushButtonClear_clicked()
 {
+    m_stdItemModel->clear();
+    setupTreeView();
+    m_filterModel->clear();
+    m_buffered.clear();
 }
