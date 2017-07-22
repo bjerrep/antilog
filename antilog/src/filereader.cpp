@@ -31,7 +31,6 @@ FileReader::~FileReader()
         m_watcher->deleteLater();
     }
     m_thread->requestInterruption();
-    m_thread->deleteLater();
 }
 
 void FileReader::setup()
@@ -43,6 +42,8 @@ void FileReader::setup()
     m_thread = new QThread;
     moveToThread(m_thread);
     m_thread->start();
+    connect(m_thread, &QThread::finished,
+            m_thread, &QThread::deleteLater);
 }
 
 void FileReader::systemReady()
