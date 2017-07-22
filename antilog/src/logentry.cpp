@@ -26,6 +26,7 @@ LogCell::LogCell(const QString& key, const QString& text)
 // ------ LogEntry -------
 
 int LogEntry::staticSerial = 0;
+int LogEntry::s_sourceFieldWidth = 0;
 
 LogEntry::LogEntry(const QString& message, const QString& sourceName, FormatScheme* formatScheme)
     : m_formatScheme(formatScheme),
@@ -49,6 +50,11 @@ LogEntry::LogEntry(const QStringList& texts, const QString& sourceName, FormatSc
     {
         determineLogLevel(texts.at(logLevelIndex));
     }
+}
+
+LogEntry::~LogEntry()
+{
+    s_sourceFieldWidth = 0;
 }
 
 void LogEntry::determineLogLevel(QString logLevelData)
@@ -121,10 +127,13 @@ QString LogEntry::getHtml() const
     QString source;
     if (Statics::options->m_showSource)
     {
-        const int sourceLength = 18;
-        int widthInPixels = Statics::options->logFontWidth(sourceLength + Statics::options->m_logViewSpacing);
-        source = QString("<td width=%1>").arg(widthInPixels) +
-                 m_sourceName.left(sourceLength).rightJustified(sourceLength, ' ') + "</td>";
+        const int sourceLength = m_sourceName.size();
+        if (sourceLength > s_sourceFieldWidth)
+        {
+            s_sourceFieldWidth = sourceLength;
+        }
+        int widthInPixels = Statics::options->logFontWidth(s_sourceFieldWidth + Statics::options->m_logViewSpacing);
+        source = QString("<td width=%1><b><small>%2</small></b></td>").arg(widthInPixels).arg(m_sourceName);
     }
     QString html = source + m_formatScheme->getTableFormat().getEntryCellsAsHtml(subMessages);
     m_htmlCached = "<html>" + css + "<table><tr>" + html + "</tr></table></html>";
@@ -137,7 +146,12 @@ QString LogEntry::getHtml() const
 
 QString LogEntry::getText() const
 {
-    return m_formatScheme->getTableFormat().getEntryCellsAsText(getEntriesList());
+    QString source;
+    if (Statics::options->m_showSource)
+    {
+        source = m_sourceName.left(s_sourceFieldWidth).leftJustified(s_sourceFieldWidth, ' ') + " - ";
+    }
+    return source + m_formatScheme->getTableFormat().getEntryCellsAsText(getEntriesList());
 }
 
 QString LogEntry::getSourceName() const

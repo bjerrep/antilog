@@ -40,4 +40,5 @@ int main(int argc, char *argv[])
             std::cout << lineInput << std::endl;
         }
     }
+    socket.close();
 }

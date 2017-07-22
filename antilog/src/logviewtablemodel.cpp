@@ -40,6 +40,8 @@ LogViewTableModel::LogViewTableModel(QObject* parent, const ExtendedFilterModel*
     : QAbstractTableModel(parent),
       m_filterModel(filterModel)
 {
+    connect(this, &LogViewTableModel::rowsAboutToBeRemoved,
+            this, &LogViewTableModel::slotRowsAboutToBeRemoved);
     startTimer(100);
 }
 
@@ -47,7 +49,7 @@ QVariant LogViewTableModel::headerData(int section, Qt::Orientation orientation,
 {
     if (orientation == Qt::Vertical && role == Qt::DisplayRole)
     {
-        return m_visibleRows.at(section)->getSerial();
+        return m_logEntriesVisible.at(section)->getSerial();
     }
     else if (role == Qt::FontRole)
     {
@@ -59,7 +61,7 @@ QVariant LogViewTableModel::headerData(int section, Qt::Orientation orientation,
 
 int LogViewTableModel::rowCount(const QModelIndex&) const
 {
-    return m_visibleRows.count();
+    return m_logEntriesVisible.count();
 }
 
 int LogViewTableModel::columnCount(const QModelIndex&) const
@@ -69,9 +71,13 @@ int LogViewTableModel::columnCount(const QModelIndex&) const
 
 QVariant LogViewTableModel::data(const QModelIndex &index, int role) const
 {
+    if (index.row() < 0)
+    {
+        return QVariant();
+    }
     if (role == Qt::DisplayRole)
     {
-        const LogEntryPtr& ret = m_visibleRows.at(index.row());
+        const LogEntryPtr& ret = m_logEntriesVisible.at(index.row());
         return qVariantFromValue(ret);
     }
     else if (role == Qt::FontRole)
@@ -83,43 +89,55 @@ QVariant LogViewTableModel::data(const QModelIndex &index, int role) const
 
 void LogViewTableModel::clear()
 {
-    beginRemoveRows(QModelIndex(), 0, m_visibleRows.count());
-    m_visibleRows.clear();
+    beginRemoveRows(QModelIndex(), 0, m_logEntriesVisible.count());
+    m_logEntriesVisible.clear();
     endRemoveRows();
-    m_rowsTotal.clear();
+    m_logEntries.clear();
     redrawVisibleRows();
 }
 
 void LogViewTableModel::erase(int count)
 {
-    if (count < m_rowsTotal.size())
+    if (count < m_logEntries.size())
     {
-        int firstSerialToBeDeleted = m_rowsTotal.at(count - 1)->getSerial();
-        for (int i = 0; i < m_visibleRows.size(); i++)
+        int lastSerialToBeDeleted = m_logEntries.at(count - 1)->getSerial();
+        for (int i = 0; i < m_logEntriesVisible.size(); i++)
         {
-            if (firstSerialToBeDeleted == m_visibleRows.at(i)->getSerial())
+            if (lastSerialToBeDeleted == m_logEntriesVisible.at(i)->getSerial())
             {
                 beginRemoveRows(QModelIndex(), 0, i);
-                m_visibleRows.remove(0, i + 1);
+                m_logEntriesVisible.remove(0, i + 1);
+
                 endRemoveRows();
                 break;
             }
         }
-        m_rowsTotal.remove(0, count);
+        m_logEntries.remove(0, count);
     }
     else
     {
-        beginRemoveRows(QModelIndex(), 0, m_visibleRows.size() - 1);
-        m_visibleRows.clear();
+        beginRemoveRows(QModelIndex(), 0, m_logEntriesVisible.size() - 1);
+        m_logEntriesVisible.clear();
         endRemoveRows();
-        m_rowsTotal.clear();
+        m_logEntries.clear();
     }
+}
+
+void LogViewTableModel::slotRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
+{
+    emit signalDeletingRows(last - first + 1);
+}
+
+bool LogViewTableModel::logEntryIsVisible(LogEntryPtr logEntry)
+{
+    return (logEntry->isInScope(m_logLevel, m_textFilter) && m_filterModel->isMatched(logEntry)) ||
+            logEntry->getText().startsWith(Statics::AntiLogMessage);
 }
 
 void LogViewTableModel::append(QVector<LogEntryPtr> logEntries)
 {
-    int toBeDeleted = m_rowsTotal.size() + logEntries.size() -
-                      Statics::options->m_maxRowsInLogModel;
+    int toBeDeleted = m_logEntries.size() + logEntries.size() -
+            Statics::options->m_maxRowsInLogModel;
 
     if (toBeDeleted > 0)
     {
@@ -129,42 +147,71 @@ void LogViewTableModel::append(QVector<LogEntryPtr> logEntries)
         //    this needs fixing. The view should keep the displayed log entries fixed
     }
 
-    QVector<LogEntryPtr> inScope;
+    QVector<LogEntryPtr> newVisibleLogEntries;
 
     foreach(auto logEntryPtr, logEntries)
     {
-        if ((logEntryPtr->isInScope(m_logLevel, m_textFilter) && m_filterModel->isMatched(logEntryPtr)) ||
-             logEntryPtr->getText().startsWith(Statics::AntiLogMessage))
+        if (logEntryIsVisible(logEntryPtr))
         {
-            inScope.append(logEntryPtr);
+            newVisibleLogEntries.append(logEntryPtr);
         }
     }
 
-    m_rowsTotal.append(logEntries);
+    m_logEntries.append(logEntries);
 
-    if (!inScope.empty())
+    if (!newVisibleLogEntries.empty())
     {
-        int first = m_visibleRows.count();
-        int last = m_visibleRows.count() + inScope.size() - 1;
+        int first = m_logEntriesVisible.count();
+        int last = m_logEntriesVisible.count() + newVisibleLogEntries.size() - 1;
         beginInsertRows(QModelIndex{}, first, last);
-        m_visibleRows.append(inScope);
+        m_logEntriesVisible.append(newVisibleLogEntries);
         endInsertRows();
         emit newEntriesAdded();
     }
 }
 
+bool LogViewTableModel::removeRows(int row, int count, const QModelIndex&)
+{
+    QVector<int> serialsToDelete;
+
+    for (int i = row; i < row + count; i++)
+    {
+        serialsToDelete.append(m_logEntriesVisible.at(i)->getSerial());
+    }
+
+    if (!serialsToDelete.isEmpty())
+    {
+        while (!serialsToDelete.isEmpty())
+        {
+            int nextSerial = serialsToDelete.takeAt(0);
+
+            for (int i = 0; i < m_logEntries.size(); i++)
+            {
+                if (m_logEntries.at(i)->getSerial() == nextSerial)
+                {
+                    m_logEntries.remove(i);
+                    break;
+                }
+            }
+        }
+        redrawVisibleRows();
+        return true;
+    }
+    return false;
+}
+
 void LogViewTableModel::timerEvent(QTimerEvent*)
 {
-    if(!m_rowsBuffered.empty())
+    if (!m_logEntriesPending.empty())
     {
-        append(m_rowsBuffered);
-        m_rowsBuffered.clear();
+        append(m_logEntriesPending);
+        m_logEntriesPending.clear();
     }
 }
 
 void LogViewTableModel::append(LogEntryPtr logEntry)
 {
-    m_rowsBuffered.append(logEntry);
+    m_logEntriesPending.append(logEntry);
 }
 
 void LogViewTableModel::newLogLevel(const QString& level)
@@ -182,16 +229,20 @@ void LogViewTableModel::setTextFilter(const QString& textFilter)
 void LogViewTableModel::redrawVisibleRows()
 {
     beginResetModel();
-    m_visibleRows.clear();
+    m_logEntriesVisible.clear();
     endResetModel();
 
-    beginInsertRows(QModelIndex{}, m_visibleRows.count(), m_visibleRows.count());
-    foreach (auto entry, m_rowsTotal)
+    // flush the incomming buffer to include any latecomers
+    m_logEntries.append(m_logEntriesPending);
+    m_logEntriesPending.clear();
+
+    beginInsertRows(QModelIndex{}, m_logEntriesVisible.count(), m_logEntriesVisible.count());
+    foreach (auto logEntry, m_logEntries)
     {
-        if (entry->isInScope(m_logLevel, m_textFilter))
+        if (logEntryIsVisible(logEntry))
         {
-            entry->invalidateCachedHtml();
-            m_visibleRows.append(entry);
+            logEntry->invalidateCachedHtml();
+            m_logEntriesVisible.append(logEntry);
         }
     }
     endInsertRows();

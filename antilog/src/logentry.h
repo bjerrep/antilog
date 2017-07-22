@@ -30,6 +30,7 @@ class LogEntry
 public:
     LogEntry(const QString& message, const QString& sourceName, FormatScheme* formatScheme = nullptr);
     LogEntry(const QStringList& texts, const QString& sourceName, FormatScheme* formatScheme = nullptr);
+    ~LogEntry();
 
     void determineLogLevel(QString logLevelData);
     bool isInScope(const QString& level, const QString& textFilter) const;
@@ -53,6 +54,7 @@ private:
     QString m_sourceName;
     mutable QString m_htmlCached;
     mutable int m_width = -1;
+    static int s_sourceFieldWidth;
 };
 
 using LogEntryPtr = QSharedPointer<LogEntry>;

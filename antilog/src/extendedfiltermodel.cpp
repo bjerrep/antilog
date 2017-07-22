@@ -62,6 +62,7 @@ void ExtendedFilterModel::save(QJsonObject& json) const
 void ExtendedFilterModel::setActive(bool active)
 {
     m_filterModelIsActive = active;
+    emit signalExtendedFiltersModified();
 }
 
 void ExtendedFilterModel::registerLogEntry(LogEntryPtr logEntry)
@@ -98,7 +99,7 @@ void ExtendedFilterModel::registerLogEntry(LogEntryPtr logEntry)
                         getDefaultSeverity();
             auto moduleFilterItem = new ExtendedFilterItem(moduleName, m_newSourcesEnabled, severity, sourceFilterItem);
             sourceFilterItem->addModule(moduleFilterItem);
-            emit signalNewFilterItems(sourceFilterItem, moduleFilterItem);
+            emit signalNewFilterItemsForDialog(sourceFilterItem, moduleFilterItem);
             return;
         }
     }
@@ -108,7 +109,7 @@ void ExtendedFilterModel::registerLogEntry(LogEntryPtr logEntry)
     auto moduleFilterItem = new ExtendedFilterItem(moduleName, m_newSourcesEnabled, getDefaultSeverity(), sourceFilterItem);
     sourceFilterItem->addModule(moduleFilterItem);
     m_sources.append(sourceFilterItem);
-    emit signalNewFilterItems(sourceFilterItem, moduleFilterItem);
+    emit signalNewFilterItemsForDialog(sourceFilterItem, moduleFilterItem);
 }
 
 bool ExtendedFilterModel::isMatched(LogEntryPtr logEntry) const
@@ -146,6 +147,7 @@ void ExtendedFilterModel::enableAll(Qt::CheckState enable)
             source->setEnableState(enable);
         }
     }
+    emit signalExtendedFiltersModified();
 }
 
 ExtendedFilterItem* ExtendedFilterModel::sourceAt(int index)

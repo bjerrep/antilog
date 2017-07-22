@@ -41,5 +41,8 @@ private:
     int m_helloWorldIndex = 0;
     int m_example1Index = 0;
     int m_spdLogIndex = 0;
+    QStringList m_helloworld;
+    QStringList m_example1;
+    QStringList m_spdlog;
 };
 

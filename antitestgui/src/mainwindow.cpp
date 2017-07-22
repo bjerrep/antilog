@@ -30,6 +30,29 @@ MainWindow::MainWindow(QWidget* parent) :
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()) , this, SLOT(slotTimerHit()));
     ui->spinBoxPeriod->setValue(1000);
+
+        m_helloworld
+                << "hello world"
+                << "who are you";
+
+        m_example1
+                << "2017-01-01 10:20:30:000 ver [fuelcell] on fire"
+                << "2017-01-01 10:20:31:000 deb [fuelcell] sold"
+                << "2017-01-02 10:20:30:000 inf [fuelcell] left the building"
+                << "2017-01-03 10:20:30:000 rel [fuelcell] captured the flag"
+                << "2017-01-03 10:20:30:000 war [fuelcell] que?"
+                << "2017-01-03 10:20:30:000 err [fuelcell] oups"
+                << "2017-01-03 10:20:30:000 fat [fuelcell] arrghhh";
+
+        m_spdlog
+                << "[2017-06-09 00:09:46.850] [console] [info] Welcome to spdlog!"
+                << "[2017-06-09 00:09:46.850] [console] [error] Some error message with arg1.."
+                << "[2017-06-09 00:09:46.850] [console] [warning] Easy padding in numbers like 00000012"
+                << "[2017-06-09 00:09:46.850] [console] [critical] Support for int: 42;  hex: 2a;  oct: 52; bin: 101010"
+                << "[2017-06-09 00:09:46.850] [console] [info] Support for floats 1.23"
+                << "[2017-06-09 00:09:46.850] [console] [info] Positional args are supported too.."
+                << "[2017-06-09 00:09:46.850] [console] [info] left aligned"
+                << "[2017-06-09 00:09:46.850] [console] [info] loggers can be retrieved from a global registry using the spdlog::get(logger_name) function";
 }
 
 MainWindow::~MainWindow()
@@ -102,52 +125,33 @@ void MainWindow::slotTimerHit()
         std::cout << message.toStdString() << '\n';
     }
 
-    ui->listWidgetPreview->addItem(message);
-    ui->listWidgetPreview->scrollToBottom();
+    if (ui->spinBoxPeriod->value() >= 10)
+    {
+        if (ui->listWidgetPreview->count() > 10)
+        {
+            ui->listWidgetPreview->takeItem(0);
+        }
+        ui->listWidgetPreview->addItem(message);
+        ui->listWidgetPreview->scrollToBottom();
+    }
 }
 
 QString MainWindow::getNextMessage()
 {
-    static QStringList helloworld;
-    helloworld
-            << "hello world"
-            << "who are you";
-
-    static QStringList example1;
-    example1
-            << "2017-01-01 10:20:30:000 ver [fuelcell] on fire"
-            << "2017-01-01 10:20:31:000 deb [fuelcell] sold"
-            << "2017-01-02 10:20:30:000 inf [fuelcell] left the building"
-            << "2017-01-03 10:20:30:000 rel [fuelcell] captured the flag"
-            << "2017-01-03 10:20:30:000 war [fuelcell] que?"
-            << "2017-01-03 10:20:30:000 err [fuelcell] oups"
-            << "2017-01-03 10:20:30:000 fat [fuelcell] arrghhh";
-
-    static QStringList spdlog;
-    spdlog
-            << "[2017-06-09 00:09:46.850] [console] [info] Welcome to spdlog!"
-            << "[2017-06-09 00:09:46.850] [console] [error] Some error message with arg1.."
-            << "[2017-06-09 00:09:46.850] [console] [warning] Easy padding in numbers like 00000012"
-            << "[2017-06-09 00:09:46.850] [console] [critical] Support for int: 42;  hex: 2a;  oct: 52; bin: 101010"
-            << "[2017-06-09 00:09:46.850] [console] [info] Support for floats 1.23"
-            << "[2017-06-09 00:09:46.850] [console] [info] Positional args are supported too.."
-            << "[2017-06-09 00:09:46.850] [console] [info] left aligned"
-            << "[2017-06-09 00:09:46.850] [console] [info] loggers can be retrieved from a global registry using the spdlog::get(logger_name) function";
-
     switch (m_messageSelector)
     {
     case 0:
         m_messageSelector = 1;
         if (ui->checkBoxHelloWorld->isChecked())
-            return helloworld[m_helloWorldIndex++ % helloworld.size()];
+            return m_helloworld[m_helloWorldIndex++ % m_helloworld.size()];
     case 1:
         m_messageSelector = 2;
         if (ui->checkBoxExample1->isChecked())
-            return example1[m_example1Index++ % example1.size()];
+            return m_example1[m_example1Index++ % m_example1.size()];
     case 2:
         m_messageSelector = 3;
         if (ui->checkBoxSpdLog->isChecked())
-            return spdlog[m_spdLogIndex++ % spdlog.size()];
+            return m_spdlog[m_spdLogIndex++ % m_spdlog.size()];
     case 3:
         m_messageSelector = 0;
         if (ui->checkBoxSourcesAndModules->isChecked())

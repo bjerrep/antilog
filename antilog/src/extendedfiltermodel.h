@@ -32,7 +32,8 @@ public:
     void clear();
 
 signals:
-    void signalNewFilterItems(ExtendedFilterItem* parent, ExtendedFilterItem* child);
+    void signalNewFilterItemsForDialog(ExtendedFilterItem* parent, ExtendedFilterItem* child);
+    void signalExtendedFiltersModified();
 
 public:
     Qt::CheckState m_newSourcesEnabled = Qt::Checked;

@@ -37,7 +37,7 @@ ExtendedFilterDialog::ExtendedFilterDialog(QWidget* parent, ExtendedFilterModel*
     connect(ui->treeView, &QTreeView::collapsed,
             this, &ExtendedFilterDialog::collapsed);
 
-    connect(filterModel, &ExtendedFilterModel::signalNewFilterItems,
+    connect(filterModel, &ExtendedFilterModel::signalNewFilterItemsForDialog,
             this, &ExtendedFilterDialog::slotAddFilterItems);
 
     drawFilterModel();
@@ -105,11 +105,13 @@ void ExtendedFilterDialog::slotWidgetEnablePressed(bool enabled, ExtendedFilterI
             if (source->getModules().at(i)->getEnableState() != source->getModules().at(i + 1)->getEnableState())
             {
                 source->setEnableState(Qt::PartiallyChecked);
+                emit m_filterModel->signalExtendedFiltersModified();
                 return;
             }
         }
         source->setEnableState(state);
     }
+    emit m_filterModel->signalExtendedFiltersModified();
 }
 
 void ExtendedFilterDialog::slotWidgetSeverityChanged(const QString& severity, ExtendedFilterItem* filterItem)
@@ -132,11 +134,13 @@ void ExtendedFilterDialog::slotWidgetSeverityChanged(const QString& severity, Ex
             if (modules.at(i)->getSeverity() != modules.at(i + 1)->getSeverity())
             {
                 parent->setSeverity(Statics::logLevelFilterOverruled);
+                emit m_filterModel->signalExtendedFiltersModified();
                 return;
             }
         }
         parent->setSeverity(severity);
     }
+    emit m_filterModel->signalExtendedFiltersModified();
 }
 
 void ExtendedFilterDialog::add(ExtendedFilterItem* source, ExtendedFilterItem* module)

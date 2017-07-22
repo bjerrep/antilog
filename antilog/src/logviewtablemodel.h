@@ -33,7 +33,9 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     void clear();
     void erase(int count);
+    bool logEntryIsVisible(LogEntryPtr logEntry);
     void append(LogEntryPtr logEntry);
+    bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex());
     void append(QVector<LogEntryPtr> logEntries);
     void timerEvent(QTimerEvent*);
     void newLogLevel(const QString& level);
@@ -42,11 +44,15 @@ public:
 
 signals:
     void newEntriesAdded();
+    void signalDeletingRows(int count);
+
+private slots:
+    void slotRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last);
 
 private:
-    QVector<LogEntryPtr> m_rowsTotal;
-    QVector<LogEntryPtr> m_visibleRows;
-    QVector<LogEntryPtr> m_rowsBuffered;
+    QVector<LogEntryPtr> m_logEntries;
+    QVector<LogEntryPtr> m_logEntriesVisible;
+    QVector<LogEntryPtr> m_logEntriesPending;
     QString m_logLevel;
     QString m_textFilter = Statics::logLevelFilterOff;
     const ExtendedFilterModel* m_filterModel;

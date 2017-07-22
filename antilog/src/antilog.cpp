@@ -23,25 +23,27 @@ AntiLog::AntiLog(QWidget* parent) :
     ui(new Ui::MainWindow),
     m_inputList(this)
 {
-    load();
-
     ui->setupUi(this);
+    load();
 
     setFont(Statics::options->m_appFont);
     m_logViewTableModel = new LogViewTableModel(this, m_filterModel);
     connect(m_logViewTableModel, &LogViewTableModel::newEntriesAdded,
             this, &AntiLog::slotTableUpdated);
+    connect(m_logViewTableModel, &LogViewTableModel::signalDeletingRows,
+            this, &AntiLog::slotDeletingModelRows);
     ui->tableView->setModel(m_logViewTableModel);
     ui->tableView->setItemDelegate(new LogViewDelegate());
-    connect(ui->tableView->verticalScrollBar(), SIGNAL(valueChanged(int)),
-            this, SLOT(slotLogViewSliderChanged(int)));
+    connect(ui->tableView->verticalScrollBar(), &QScrollBar::valueChanged,
+            this, &AntiLog::slotLogViewSliderChanged);
 
     ui->tableView->verticalHeader()->setDefaultSectionSize(
                 Statics::options->m_logFontHeight + Statics::LogViewMargin);
     ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotShowContextMenu(QPoint)));
+    connect(ui->tableView, &QTableView::customContextMenuRequested,
+            this, &AntiLog::slotShowContextMenu);
 
     ui->checkBoxScroll->setChecked(m_scrollToBottom);
     ui->checkBoxShowSource->setChecked(Statics::options->m_showSource);
@@ -52,8 +54,6 @@ AntiLog::AntiLog(QWidget* parent) :
     ui->comboBoxLogThreshold->setCurrentText(currentLogLevel);
 
     setupExtendedFilters();
-
-    installEventFilter(this);
 
     startTimer(400);
     updateSourceTrafficMeter();
@@ -75,6 +75,10 @@ void AntiLog::save() const
     m_filterModel->save(json);
 
     json["useextendedfilters"] = ui->checkBoxUseFilters->isChecked();
+    json["width"] = geometry().width();
+    json["height"] = geometry().height();
+    json["x"] = geometry().topLeft().x();
+    json["y"] = geometry().topLeft().y();
 
     QFile file(getConfigFilePath());
     if (file.open(QIODevice::WriteOnly))
@@ -99,12 +103,19 @@ void AntiLog::load()
     Statics::formatSchemeModel = new FormatSchemeModel(json);
     Statics::logLevels = new LogLevelCategories(json);
     m_filterModel = new ExtendedFilterModel(json);
+    connect(m_filterModel, &ExtendedFilterModel::signalExtendedFiltersModified,
+            this, &AntiLog::slotExtendedFiltersModified);
 
     m_inputList.load(json);
 
     if (!json.empty())
     {
         m_useExtendedFilters = json["useextendedfilters"].toBool();
+        int w = json["width"].toInt();
+        int h = json["height"].toInt();
+        int x = json["x"].toInt();
+        int y = json["y"].toInt();
+        setGeometry(x, y, w, h);
     }
 }
 
@@ -124,52 +135,55 @@ void AntiLog::closeEvent (QCloseEvent*)
     save();
 }
 
-void AntiLog::on_checkBoxScroll_clicked(bool checked)
+void AntiLog::keyPressEvent(QKeyEvent* keyEvent)
 {
-    m_scrollToBottom = checked;
-    if (checked)
+    if (keyEvent->key() == Qt::Key_C && (keyEvent->modifiers().testFlag(Qt::ControlModifier)))
     {
-        ui->tableView->scrollToBottom();
+        copySelectionToClipboard(TEXT);
+        return;
     }
+    else if (keyEvent->key() == Qt::Key_Delete)
+    {
+        deleteSelection();
+        return;
+    }
+    QWidget::keyPressEvent(keyEvent);
 }
 
-bool AntiLog::eventFilter(QObject* obj, QEvent* event)
-{
-    if (event->type() == QEvent::KeyPress || event->type() == QEvent::ShortcutOverride)
-    {
-        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-        if (keyEvent->matches(QKeySequence::Copy) && ui->tableView->model()->rowCount())
-        {
-            copySelectionToClipboard(HTML);
-            return true;
-        }
-    }
-    return false;
-}
-
-/// Automatically enable scroll-to-end if the user scrolled to the last row
-/// and automatically disable scroll-to-end if the view is scrolled upwards.
+/// Automatically enable scroll-to-end if the user scrolled to the last model row
+/// and automatically disable scroll-to-end if last model row isn't visible.
 ///
 void AntiLog::slotLogViewSliderChanged(int value)
 {
-    if (value == 1 && m_scrollToBottom)
+    // When entries are to be deleted in the model calling beginRemoveRows() triggers
+    // a chain that ends here since the table view is reset to display the first model entry.
+    // The root cause or correct fix remains to be found, this is just creative hacking around.
+    if (value == m_modelRowsDeleted)
     {
-        // ignore and revert, this callback comes when rows are removed in the model
-        ui->tableView->scrollToBottom();
+        m_modelRowsDeleted = -1;
+        if (m_scrollToBottom)
+        {
+            ui->tableView->scrollToBottom();
+        }
+        else
+        {
+            m_firstRowOnDisplay -= m_modelRowsDeleted;
+            ui->tableView->scrollTo(m_logViewTableModel->index(m_firstRowOnDisplay, 0), QAbstractItemView::PositionAtTop);
+        }
         return;
     }
 
     QPoint firstRowPoint = QPoint(0, 6);
-    int firstRowOnDisplay = ui->tableView->indexAt(firstRowPoint).row();
+    m_firstRowOnDisplay = ui->tableView->indexAt(firstRowPoint).row();
 
     int lastRowFromBottomOmgThisCantBeRightOffset =
-            ui->tableView->rowHeight(firstRowOnDisplay) / 2 +
+            ui->tableView->rowHeight(m_firstRowOnDisplay) / 2 +
             ui->tableView->horizontalScrollBar()->height();
 
     QPoint lastRowPoint = ui->tableView->rect().bottomLeft() -
             QPoint(0, lastRowFromBottomOmgThisCantBeRightOffset);
     int lastRowOnDisplay = ui->tableView->indexAt(lastRowPoint).row();
-    int rowsOnDisplay = lastRowOnDisplay - firstRowOnDisplay + 1;
+    int rowsOnDisplay = lastRowOnDisplay - m_firstRowOnDisplay + 1;
     int rowsInModel = ui->tableView->model()->rowCount();
 
     if (value < rowsInModel - rowsOnDisplay)
@@ -180,7 +194,7 @@ void AntiLog::slotLogViewSliderChanged(int value)
             ui->checkBoxScroll->setChecked(m_scrollToBottom);
         }
     }
-    else if (value >= firstRowOnDisplay)
+    else if (value >= m_firstRowOnDisplay)
     {
         if (!m_scrollToBottom)
         {
@@ -190,12 +204,31 @@ void AntiLog::slotLogViewSliderChanged(int value)
     }
 }
 
+void AntiLog::slotDeletingModelRows(int count)
+{
+    m_modelRowsDeleted = count;
+}
+
 void AntiLog::adjustColumnWidth(int width)
 {
     if (!width || width > m_columnWidth)
     {
         m_columnWidth = width;
         ui->tableView->horizontalHeader()->setMinimumSectionSize(width);
+    }
+}
+
+void AntiLog::on_checkBoxScroll_clicked(bool checked)
+{
+    m_scrollToBottom = checked;
+    if (checked)
+    {
+        ui->tableView->scrollToBottom();
+    }
+    else
+    {
+        QPoint firstRowPoint = QPoint(0, 6);
+        m_firstRowOnDisplay = ui->tableView->indexAt(firstRowPoint).row();
     }
 }
 
@@ -315,6 +348,32 @@ void AntiLog::copySelectionToClipboard(CopyFormat format)
     }
 }
 
+void AntiLog::deleteSelection()
+{
+    QVector<std::array<int, 2>> m_set;
+
+    for (int i = 0; i < m_logViewTableModel->rowCount(); i++)
+    {
+        if (ui->tableView->selectionModel()->isRowSelected(i, QModelIndex()))
+        {
+            int first = i;
+            int last = i;
+            for (;
+                 last < m_logViewTableModel->rowCount() && ui->tableView->selectionModel()->isRowSelected(last, QModelIndex());
+                 last++);
+            int count = last - first;
+            m_set.append({first, count});
+            i = last;
+        }
+    }
+
+    while (!m_set.isEmpty())
+    {
+        auto pair = m_set.takeLast();
+        m_logViewTableModel->removeRows(pair[0], pair[1]);
+    }
+}
+
 void AntiLog::on_setupButton_clicked()
 {
     OptionsDialog optionsDialog(*Statics::options, this);
@@ -366,4 +425,9 @@ void AntiLog::on_checkBoxUseFilters_clicked(bool checked)
 {
     m_useExtendedFilters = checked;
     setupExtendedFilters();
+}
+
+void AntiLog::slotExtendedFiltersModified()
+{
+    m_logViewTableModel->redrawVisibleRows();
 }

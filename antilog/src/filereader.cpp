@@ -128,7 +128,7 @@ QStringList FileReader::tailFileByLines(const QString& filename, int lines, qint
 {
     // SO/25823778. Buggy, needs unittesting. And to be rewritten for speed.
     QFile file(filename);
-    if(file.open(QIODevice::ReadOnly))
+    if (file.open(QIODevice::ReadOnly))
     {
         file.seek(file.size() - 2);
 

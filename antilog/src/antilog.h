@@ -38,8 +38,9 @@ private:
         HTML
     };
 
-    bool eventFilter(QObject* obj, QEvent* event);
+    void keyPressEvent(QKeyEvent* keyEvent);
     void copySelectionToClipboard(AntiLog::CopyFormat format);
+    void deleteSelection();
     void adjustColumnWidth(int width);
     void refreshLogView();
     void timerEvent(QTimerEvent*);
@@ -58,6 +59,8 @@ private slots:
     void slotTableUpdated();
     void slotLogViewSliderChanged(int);
     void inputWidgetClosed();
+    void slotExtendedFiltersModified();
+    void slotDeletingModelRows(int count);
 
     void closeEvent (QCloseEvent* event);
     void on_checkBoxScroll_clicked(bool checked);
@@ -81,5 +84,7 @@ private:
     int m_columnWidth = 0;
     int m_sourceTrafficValue = 0;
     bool m_useExtendedFilters = true;
+    int m_modelRowsDeleted = -1;
+    int m_firstRowOnDisplay = 0;
 };
 
