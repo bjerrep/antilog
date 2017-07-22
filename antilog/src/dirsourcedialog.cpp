@@ -22,7 +22,7 @@ DirSourceDialog::DirSourceDialog(DirSource& dirSource, QWidget* parent) :
     if (exec() == QDialog::Accepted)
     {
         dirSource.setName(ui->NameLineEdit->text());
-        dirSource.m_dir = ui->TargetLineEdit->text();
+        dirSource.setDir(ui->TargetLineEdit->text());
         dirSource.m_recursive = ui->RecurseCheckBox->isChecked();
         dirSource.m_mask = ui->FileMaskLineEdit->text();
         dirSource.configureFileReaderProcess();

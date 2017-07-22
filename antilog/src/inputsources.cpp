@@ -62,7 +62,7 @@ void DirSource::slotNewFileReaderData(const QString& data, const QString& source
 void DirSource::slotSystemReady()
 {
     SourceBase::slotSystemReady();
-    QMetaObject::invokeMethod(m_fileReader, "systemReady", Qt::QueuedConnection);
+    configureFileReaderProcess();
 }
 
 void DirSource::accept(InputVisitorBase* v)
