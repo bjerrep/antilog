@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="inputTab">
       <attribute name="title">
@@ -64,6 +64,25 @@
         </layout>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>About</string>
+      </attribute>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>20</y>
+         <width>331</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>AntiLog
+https://github.com/bjerrep/antilog</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>

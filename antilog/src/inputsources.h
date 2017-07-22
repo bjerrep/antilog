@@ -54,12 +54,10 @@ class FileSource : public DirSource
 
 public:
     FileSource(const QJsonObject& json = QJsonObject());
-    //~FileSource();
 
     void save(QJsonObject& json) const override;
     void accept(InputVisitorBase* v) override;
     void setFilenameAndConfigure(QString filename);
-    void slotSystemReady() override;
 
     friend class FileSourceDialog;
 };

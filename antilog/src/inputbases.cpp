@@ -82,6 +82,7 @@ bool SourceBase::isGoodToGo() const
 
 void SourceBase::setEnabled(bool enabled)
 {
+    m_systemReady = true;
     m_enabled = enabled;
 }
 

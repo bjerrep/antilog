@@ -83,7 +83,7 @@ private:
     bool m_scrollToBottom = true;
     int m_columnWidth = 0;
     int m_sourceTrafficValue = 0;
-    bool m_useExtendedFilters = true;
+    bool m_useExtendedFilters = false;
     int m_modelRowsDeleted = -1;
     int m_firstRowOnDisplay = 0;
 };

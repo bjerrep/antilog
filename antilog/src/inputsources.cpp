@@ -154,12 +154,6 @@ void FileSource::setFilenameAndConfigure(QString filename)
     configureFileReaderProcess();
 }
 
-void FileSource::slotSystemReady()
-{
-    SourceBase::slotSystemReady();
-    configureFileReaderProcess();
-}
-
 // ------ UDPSource -------
 
 UDPSource::UDPSource(const QJsonObject& json)
