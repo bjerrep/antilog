@@ -24,8 +24,9 @@ public:
     void save(QJsonObject& json) const;
     QString name() const;
     FormatRuleList& getEntries();
-    void add(FormatRule* formatRule);
-    void deleteFormatEntry(FormatRule* fe);
+    bool hasEntry(const QString& id);
+    void addFormatRule(FormatRule* formatRule);
+    void deleteFormatRule(FormatRule* formatRule);
     LogEntryFormatterPtr findLogEntryFormatter(const QStringList& data) const;
     TableFormat& getTableFormat();
 

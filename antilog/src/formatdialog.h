@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QDialog>
 
 class FormatScheme;
@@ -18,11 +19,15 @@ public:
                           QWidget* parent,
                           const InputList* inputList = nullptr);
     ~FormatDialog();
-    void redrawFormatScheme(const QString& schemeName);
+
+private:
+    void setSchemeFromNameAndRedraw(const QString& schemeName);
 
 private slots:
+    void redraw();
     void slotDeleteWidget(FormatWidget* sender);
     void slotFormatRuleChanged();
+    void updateFormatModel();
 
     void on_comboBoxSchemeName_currentTextChanged(const QString& arg1);
     void on_pushButtonClose_clicked();

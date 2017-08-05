@@ -1,18 +1,13 @@
-#include "formatdialog.h"
+﻿#include "formatdialog.h"
 #include "ui_formatdialog.h"
 #include "formatwidget.h"
 #include "formatschememodel.h"
 #include "formatrule.h"
-#include "antilog.h"
-#include "statics.h"
 #include "inputlist.h"
 #include "sourceandprocessor.h"
 
 #include <QInputDialog>
-#include <QDir>
 #include <QMessageBox>
-#include <QLineEdit>
-#include <QBoxLayout>
 
 FormatDialog::FormatDialog(const QString& schemeName, QWidget* parent, const InputList* inputList)
     : QDialog(parent),
@@ -21,7 +16,13 @@ FormatDialog::FormatDialog(const QString& schemeName, QWidget* parent, const Inp
 {
     ui->setupUi(this);
 
-    redrawFormatScheme(schemeName);
+    setSchemeFromNameAndRedraw(schemeName);
+
+    ui->inactive->setFormatScheme(m_formatScheme);
+    connect(ui->active, &FormatDialogListWidget::signalDrag,
+            this, &FormatDialog::updateFormatModel, Qt::QueuedConnection);
+    connect(ui->inactive, &FormatDialogListWidget::signalDrag,
+            this, &FormatDialog::updateFormatModel, Qt::QueuedConnection);
 }
 
 FormatDialog::~FormatDialog()
@@ -29,16 +30,23 @@ FormatDialog::~FormatDialog()
     delete ui;
 }
 
-void FormatDialog::redrawFormatScheme(const QString& schemeName)
+void FormatDialog::setSchemeFromNameAndRedraw(const QString& schemeName)
 {
     if (schemeName != ui->comboBoxSchemeName->currentText())
     {
+        ui->comboBoxSchemeName->blockSignals(true);
         ui->comboBoxSchemeName->clear();
         ui->comboBoxSchemeName->addItems(Statics::formatSchemeModel->getSchemeNames());
         ui->comboBoxSchemeName->setCurrentText(schemeName);
+        ui->comboBoxSchemeName->blockSignals(false);
     }
 
     m_formatScheme = Statics::formatSchemeModel->getFormatScheme(schemeName);
+    redraw();
+}
+
+void FormatDialog::redraw()
+{
     ui->listWidgetFormatEntries->clear();
 
     foreach (auto fs, m_formatScheme->getEntries())
@@ -55,20 +63,12 @@ void FormatDialog::redrawFormatScheme(const QString& schemeName)
         listWidgetItem->setSizeHint(formatWidget->sizeHint());
     }
 
-    ui->pushButtonAddRule->setEnabled(schemeName != Statics::NoneScheme);
-
-    bool deleteEnabled = (schemeName != Statics::NoneScheme) && m_inputList;
-    if (deleteEnabled && m_inputList->findFormatSchemeUsageCount(schemeName) > 0)
-    {
-        deleteEnabled = false;
-    }
-    ui->pushButtonDeleteScheme->setEnabled(deleteEnabled);
-
-    connect(this, &FormatDialog::signalFormatRuleChanged,
-            Statics::antiLog, &AntiLog::slotFormatRuleChanged);
+    auto formatSchemeName = m_formatScheme->name();
 
     ui->active->clear();
     ui->inactive->clear();
+    ui->inactive->setFormatScheme(m_formatScheme);
+
     foreach (auto&& cellFormat, m_formatScheme->getTableFormat().getCells())
     {
         if (cellFormat.isEnabled())
@@ -80,14 +80,24 @@ void FormatDialog::redrawFormatScheme(const QString& schemeName)
             ui->inactive->addItem(cellFormat.getName());
         }
     }
-    ui->active->setEnabled(schemeName != Statics::NoneScheme);
-    ui->inactive->setEnabled(schemeName != Statics::NoneScheme);
+
+    auto isUserScheme = formatSchemeName != Statics::NoneScheme;
+    ui->pushButtonAddRule->setEnabled(isUserScheme);
+    ui->active->setEnabled(isUserScheme);
+    ui->inactive->setEnabled(isUserScheme);
+
+    bool deleteEnabled = isUserScheme && m_inputList;
+    if (deleteEnabled && m_inputList->findFormatSchemeUsageCount(formatSchemeName) > 0)
+    {
+        deleteEnabled = false;
+    }
+    ui->pushButtonDeleteScheme->setEnabled(deleteEnabled);
 }
 
 void FormatDialog::slotDeleteWidget(FormatWidget* sender)
 {
-    m_formatScheme->deleteFormatEntry(sender->formatEntry());
-    redrawFormatScheme(m_formatScheme->name());
+    m_formatScheme->deleteFormatRule(sender->formatEntry());
+    redraw();
 }
 
 void FormatDialog::slotFormatRuleChanged()
@@ -95,20 +105,26 @@ void FormatDialog::slotFormatRuleChanged()
     emit signalFormatRuleChanged();
 }
 
+void FormatDialog::updateFormatModel()
+{
+    QStringList moduleIdList;
+    for (int i = 0; i < ui->active->model()->rowCount(); i++)
+    {
+        moduleIdList << ui->active->item(i)->text();
+    }
+    m_formatScheme->m_tableFormat.setActiveCells(moduleIdList);
+    redraw();
+}
+
 void FormatDialog::on_comboBoxSchemeName_currentTextChanged(const QString& arg1)
 {
-    redrawFormatScheme(arg1);
+    updateFormatModel();
+    setSchemeFromNameAndRedraw(arg1);
 }
 
 void FormatDialog::on_pushButtonClose_clicked()
 {
-    QStringList active;
-    for (int i = 0; i < ui->active->model()->rowCount(); i++)
-    {
-        active << ui->active->item(i)->text();
-    }
-    m_formatScheme->m_tableFormat.setActiveCells(active);
-
+    updateFormatModel();
     close();
     setResult(QDialog::Accepted);
 }
@@ -133,7 +149,7 @@ void FormatDialog::on_pushButtonNewScheme_clicked()
         }
 
         Statics::formatSchemeModel->addScheme(name);
-        redrawFormatScheme(name);
+        setSchemeFromNameAndRedraw(name);
     }
 }
 
@@ -141,12 +157,12 @@ void FormatDialog::on_pushButtonDeleteScheme_clicked()
 {
     QString name = ui->comboBoxSchemeName->currentText();
     Statics::formatSchemeModel->deleteScheme(name);
-    redrawFormatScheme(Statics::NoneScheme);
+    setSchemeFromNameAndRedraw(Statics::NoneScheme);
 }
 
 void FormatDialog::on_pushButtonAddRule_clicked()
 {
     auto formatRule = new FormatRule();
-    m_formatScheme->add(formatRule);
-    redrawFormatScheme(m_formatScheme->name());
+    m_formatScheme->addFormatRule(formatRule);
+    redraw();
 }

@@ -57,8 +57,8 @@ const FormatSchemeList& FormatSchemeModel::getFormatSchemes() const
 void FormatSchemeModel::constructTestSchemes()
 {
     auto formatScheme = new FormatScheme("Default");
-    formatScheme->add(new FormatRule(FormatRule::MatchingRule::Contains, "verbose"));
-    formatScheme->add(new FormatRule(FormatRule::MatchingRule::Equals, "release"));
+    formatScheme->addFormatRule(new FormatRule(FormatRule::MatchingRule::Contains, "verbose"));
+    formatScheme->addFormatRule(new FormatRule(FormatRule::MatchingRule::Equals, "release"));
     m_entries.append(formatScheme);
 }
 

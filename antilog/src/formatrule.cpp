@@ -11,7 +11,7 @@ FormatRule::FormatRule(const QJsonObject& json) : QObject()
 {
     if (!json.empty())
     {
-        m_scope = json["scope"].toString();
+        m_moduleIdScope = json["scope"].toString();
         setMatchingRuleFromString(json["operation"].toString());
         m_searchTerm = json["searchterm"].toString();
         setColorFromString(json["color"].toString());
@@ -33,9 +33,14 @@ QString FormatRule::searchTerm() const
     return m_searchTerm;
 }
 
+QString FormatRule::getModuleIdScope() const
+{
+    return m_moduleIdScope;
+}
+
 void FormatRule::save(QJsonObject& json) const
 {
-    json["scope"] = m_scope;
+    json["scope"] = m_moduleIdScope;
     json["operation"] = matchingRuleAsString();
     json["searchterm"] = m_searchTerm;
     json["color"] = colorAsString();
@@ -95,9 +100,9 @@ LogEntryFormatterPtr FormatRule::match(const QStringList& logEntries,
     int end = logCellTitles.size() - 1;
 
     // find the column to search in if a specific one is selected
-    if (m_scope != Statics::FormatColumnAny)
+    if (m_moduleIdScope != Statics::FormatColumnAny)
     {
-        start = end = logCellTitles.indexOf(m_scope);
+        start = end = logCellTitles.indexOf(m_moduleIdScope);
     }
     end = qMin(end, logEntries.size() - 1);
 

@@ -16,7 +16,7 @@ FormatWidget::FormatWidget(FormatRule* formatEntry, const TableFormat& tableForm
 {
     ui->setupUi(this);
 
-    auto currentScope = formatEntry->m_scope;
+    auto currentScope = formatEntry->m_moduleIdScope;
     ui->comboBoxScope->clear();
     QStringList categories;
     categories << Statics::FormatColumnAny;
@@ -64,7 +64,7 @@ FormatRule* FormatWidget::formatEntry()
 
 void FormatWidget::on_comboBoxScope_currentTextChanged(const QString &arg1)
 {
-    m_formatRule->m_scope = arg1;
+    m_formatRule->m_moduleIdScope = arg1;
     emit signalFormatRuleChanged();
 }
 

@@ -48,12 +48,24 @@ FormatRuleList& FormatScheme::getEntries()
     return m_formatRules;
 }
 
-void FormatScheme::add(FormatRule* formatRule)
+bool FormatScheme::hasEntry(const QString& id)
+{
+    foreach (auto formatRule, m_formatRules)
+    {
+        if (id == formatRule->getModuleIdScope())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void FormatScheme::addFormatRule(FormatRule* formatRule)
 {
     m_formatRules.append(formatRule);
 }
 
-void FormatScheme::deleteFormatEntry(FormatRule* formatRule)
+void FormatScheme::deleteFormatRule(FormatRule* formatRule)
 {
     int i = m_formatRules.indexOf(formatRule);
 

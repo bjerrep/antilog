@@ -58,7 +58,7 @@ private slots:
     void slotCopyHtmlToClipboard();
     void slotTableUpdated();
     void slotLogViewSliderChanged(int);
-    void inputWidgetClosed();
+    void slotInputWidgetClosed();
     void slotExtendedFiltersModified();
     void slotDeletingModelRows(int count);
 

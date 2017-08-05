@@ -160,7 +160,6 @@ void AntiLog::slotLogViewSliderChanged(int value)
     // The root cause or correct fix remains to be found, this is just creative hacking around.
     if (value == m_modelRowsDeleted)
     {
-        m_modelRowsDeleted = -1;
         if (m_scrollToBottom)
         {
             ui->tableView->scrollToBottom();
@@ -173,7 +172,7 @@ void AntiLog::slotLogViewSliderChanged(int value)
         return;
     }
 
-    QPoint firstRowPoint = QPoint(0, 6);
+    QPoint firstRowPoint = QPoint(0, 2);
     m_firstRowOnDisplay = ui->tableView->indexAt(firstRowPoint).row();
 
     int lastRowFromBottomOmgThisCantBeRightOffset =
@@ -209,6 +208,14 @@ void AntiLog::slotDeletingModelRows(int count)
     m_modelRowsDeleted = count;
 }
 
+void AntiLog::slotTableUpdated()
+{
+    if (m_scrollToBottom)
+    {
+        ui->tableView->scrollToBottom();
+    }
+}
+
 void AntiLog::adjustColumnWidth(int width)
 {
     if (!width || width > m_columnWidth)
@@ -237,7 +244,7 @@ void AntiLog::on_pushButtonInputs_clicked()
     if (!m_inputDialog)
     {
         m_inputDialog = new InputDialog(&m_inputList, this);
-        connect(m_inputDialog, &InputDialog::destroyed, this, &AntiLog::inputWidgetClosed);
+        connect(m_inputDialog, &InputDialog::destroyed, this, &AntiLog::slotInputWidgetClosed);
         m_inputDialog->exec();
     }
 }
@@ -253,14 +260,6 @@ void AntiLog::refreshLogView()
 {
     m_logViewTableModel->redrawVisibleRows();
     slotTableUpdated();
-}
-
-void AntiLog::slotTableUpdated()
-{
-    if (m_scrollToBottom)
-    {
-        ui->tableView->scrollToBottom();
-    }
 }
 
 void AntiLog::updateSourceTrafficMeter()
@@ -291,7 +290,7 @@ void AntiLog::setupExtendedFilters()
     m_filterModel->setActive(m_useExtendedFilters);
 }
 
-void AntiLog::inputWidgetClosed()
+void AntiLog::slotInputWidgetClosed()
 {
     m_inputDialog = nullptr;
 }
@@ -383,6 +382,10 @@ void AntiLog::on_setupButton_clicked()
 void AntiLog::on_pushButtonFormat_clicked()
 {
     FormatDialog formatDialog(Statics::NoneScheme, this, &m_inputList);
+
+    connect(&formatDialog, &FormatDialog::signalFormatRuleChanged,
+            this, &AntiLog::slotFormatRuleChanged);
+
     formatDialog.exec();
 }
 

@@ -59,13 +59,14 @@ public:
     FormatArea setFormatAreaFromString(const QString& range);
 
     QString searchTerm() const;
+    QString getModuleIdScope() const;
     LogEntryFormatterPtr match(const QStringList& cells, const QString& formatschemeName, const QStringList& scopes) const;
     static QStringList getColorList();
     static QStringList getMatchingRules();
     static QStringList getFormatAreas(bool multiRow);
 
 private:
-    QString m_scope = Statics::FormatColumnAny;
+    QString m_moduleIdScope = Statics::FormatColumnAny;
     MatchingRule m_matchingRule = MatchingRule::Contains;
     QString m_searchTerm = "undefined";
     Color m_color = Color::Black;

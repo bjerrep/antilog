@@ -142,7 +142,7 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QListWidget" name="active">
+         <widget class="FormatDialogListWidget" name="active">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -185,7 +185,7 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QListWidget" name="inactive">
+         <widget class="FormatDialogListWidget" name="inactive">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -274,6 +274,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FormatDialogListWidget</class>
+   <extends>QListWidget</extends>
+   <header>src/formatdialoglistwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../resources.qrc"/>
  </resources>
