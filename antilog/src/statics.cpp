@@ -45,10 +45,10 @@ namespace Statics
 
     const QString& AntiLogMessage = "AntiLog Message: ";
 
-    FormatSchemeModel* formatSchemeModel = nullptr;
-    LogLevelCategories* logLevels = nullptr;
-    Options* options = nullptr;
-    AntiLog* antiLog = nullptr;
+    FormatSchemeModel* s_formatSchemeModel = nullptr;
+    LogLevelCategories* s_logLevels = nullptr;
+    Options* s_options = nullptr;
+    AntiLog* s_antiLog = nullptr;
 
 
     QPixmap pixmapIcon(const QString& resourceImage, int height)

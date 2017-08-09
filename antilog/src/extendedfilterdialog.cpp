@@ -27,7 +27,7 @@ ExtendedFilterDialog::ExtendedFilterDialog(QWidget* parent, ExtendedFilterModel*
     ui->checkBoxSorted->setChecked(true);
     ui->checkBoxPersist->setChecked(filterModel->m_persistSourcesAndModules);
 
-    QStringList severities = Statics::logLevels->getCategoryNames();
+    QStringList severities = Statics::s_logLevels->getCategoryNames();
     ui->comboBoxSeverity->addItems(severities);
     ui->comboBoxSeverity->setCurrentText(filterModel->getDefaultSeverity());
 
@@ -65,13 +65,20 @@ void ExtendedFilterDialog::drawFilterModel()
     for (int i = 0; i < m_filterModel->m_sources.count(); i++)
     {
         auto source = m_filterModel->m_sources[i];
-        auto firstModule = source->getModules()[0];
-        add(source, firstModule);
-
-        for (int j = 1; j < source->getModules().count(); j++)
+        if (source->getNofModules())
         {
-            auto nextModule = m_filterModel->m_sources[i]->getModules()[j];
-            add(source, nextModule);
+            auto firstModule = source->getModules()[0];
+            add(source, firstModule);
+
+            for (int j = 1; j < source->getNofModules(); j++)
+            {
+                auto nextModule = m_filterModel->m_sources[i]->getModules()[j];
+                add(source, nextModule);
+            }
+        }
+        else
+        {
+            add(source, nullptr);
         }
     }
 }
@@ -100,7 +107,7 @@ void ExtendedFilterDialog::slotWidgetEnablePressed(bool enabled, ExtendedFilterI
     else
     {
         auto source = filterItem->getParent();
-        for (int i = 0; i < source->getModules().count() - 1; ++i)
+        for (int i = 0; i < source->getNofModules() - 1; ++i)
         {
             if (source->getModules().at(i)->getEnableState() != source->getModules().at(i + 1)->getEnableState())
             {
@@ -157,7 +164,7 @@ void ExtendedFilterDialog::add(ExtendedFilterItem* source, ExtendedFilterItem* m
 
         auto sourceWidget = makeWidget(source);
         ui->treeView->setIndexWidget(m_stdItemModel->index(nextSourceIndex, 1), sourceWidget);
-        if (source->isViewExpanded())
+        if (source->isViewExpanded() && module)
         {
             ui->treeView->expand(m_stdItemModel->index(nextSourceIndex, 0));
             if (ui->checkBoxSorted->isChecked())
@@ -169,6 +176,11 @@ void ExtendedFilterDialog::add(ExtendedFilterItem* source, ExtendedFilterItem* m
     else
     {
         stdItemSource = sourceLookup.at(0);
+    }
+
+    if (!module)
+    {
+        return;
     }
 
     auto stdItemModule = new QStandardItem(module->getName());

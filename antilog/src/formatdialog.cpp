@@ -36,12 +36,12 @@ void FormatDialog::setSchemeFromNameAndRedraw(const QString& schemeName)
     {
         ui->comboBoxSchemeName->blockSignals(true);
         ui->comboBoxSchemeName->clear();
-        ui->comboBoxSchemeName->addItems(Statics::formatSchemeModel->getSchemeNames());
+        ui->comboBoxSchemeName->addItems(Statics::s_formatSchemeModel->getSchemeNames());
         ui->comboBoxSchemeName->setCurrentText(schemeName);
         ui->comboBoxSchemeName->blockSignals(false);
     }
 
-    m_formatScheme = Statics::formatSchemeModel->getFormatScheme(schemeName);
+    m_formatScheme = Statics::s_formatSchemeModel->getFormatScheme(schemeName);
     redraw();
 }
 
@@ -137,7 +137,7 @@ void FormatDialog::on_pushButtonNewScheme_clicked()
                                          "default", &ok);
     if (ok)
     {
-        foreach (auto&& formatScheme, Statics::formatSchemeModel->getFormatSchemes())
+        foreach (auto&& formatScheme, Statics::s_formatSchemeModel->getFormatSchemes())
         {
             if (formatScheme->name() == name)
             {
@@ -148,7 +148,7 @@ void FormatDialog::on_pushButtonNewScheme_clicked()
             }
         }
 
-        Statics::formatSchemeModel->addScheme(name);
+        Statics::s_formatSchemeModel->addScheme(name);
         setSchemeFromNameAndRedraw(name);
     }
 }
@@ -156,7 +156,7 @@ void FormatDialog::on_pushButtonNewScheme_clicked()
 void FormatDialog::on_pushButtonDeleteScheme_clicked()
 {
     QString name = ui->comboBoxSchemeName->currentText();
-    Statics::formatSchemeModel->deleteScheme(name);
+    Statics::s_formatSchemeModel->deleteScheme(name);
     setSchemeFromNameAndRedraw(Statics::NoneScheme);
 }
 

@@ -1,6 +1,7 @@
 #include "inputbases.h"
 #include "formatschememodel.h"
 #include "statics.h"
+#include "antilog.h"
 
 #include <QJsonObject>
 
@@ -49,6 +50,33 @@ void InputItemBase::save(QJsonObject& json) const
     json[Statics::Description] = m_description;
 }
 
+QString InputItemBase::makeNameUnique(const QString& name) const
+{
+    auto itemBases = Statics::s_antiLog->getAllSourcesAndProcessors();
+    bool success;
+
+    for (int i = 1; i < 10; i++)
+    {
+        QString testing = name + "_" + QString::number(i);
+        success = true;
+        foreach (auto itemBase, itemBases)
+        {
+            if (itemBase->getName() == testing)
+            {
+                success = false;
+                break;
+            }
+        }
+        if (!success)
+        {
+            continue;
+        }
+        return testing;
+    }
+    // giving up
+    return name;
+}
+
 // ------ SourceItem -------
 
 SourceBase::SourceBase(const QString& type, const QJsonObject& json)
@@ -70,7 +98,7 @@ void SourceBase::save(QJsonObject& json) const
     InputItemBase::save(json);
 }
 
-bool SourceBase::enabled() const
+bool SourceBase::getEnabled() const
 {
     return m_enabled;
 }
@@ -82,7 +110,6 @@ bool SourceBase::isGoodToGo() const
 
 void SourceBase::setEnabled(bool enabled)
 {
-    m_systemReady = true;
     m_enabled = enabled;
 }
 
@@ -104,7 +131,7 @@ ProcessorBase::~ProcessorBase()
 
 void ProcessorBase::setSchemeFromName(const QString& scheme)
 {
-    m_formatScheme = Statics::formatSchemeModel->getFormatScheme(scheme);
+    m_formatScheme = Statics::s_formatSchemeModel->getFormatScheme(scheme);
 }
 
 FormatScheme* ProcessorBase::getScheme() const

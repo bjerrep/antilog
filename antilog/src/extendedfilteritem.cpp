@@ -14,10 +14,10 @@ ExtendedFilterItem::ExtendedFilterItem(const QJsonObject& json, ExtendedFilterIt
 }
 
 ExtendedFilterItem::ExtendedFilterItem(QString name, Qt::CheckState enabled, const QString& severity, ExtendedFilterItem* parent)
-    : m_name(name),
+    : m_severity(severity), 
+      m_name(name),
       m_enableState(enabled),
       m_isValid(true),
-      m_severity(severity),
       m_parent(parent)
 {
 }

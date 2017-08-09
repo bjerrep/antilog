@@ -6,8 +6,8 @@
 
 #include <QJsonArray>
 
-InputList::InputList(AntiLog* ulw)
-    : m_app(ulw)
+InputList::InputList(AntiLog* antiLog)
+    : m_app(antiLog)
 {
 }
 
@@ -88,3 +88,13 @@ SourceAndProcessor* InputList::getSourceAndProcessor(int index) const
     return m_sourceAndProcessorList[index];
 }
 
+QVector<InputItemBase*> InputList::getAllSourcesAndProcessors() const
+{
+    QVector<InputItemBase*> list;
+    foreach (auto input, m_sourceAndProcessorList)
+    {
+        list.append(input->getSourceEntry());
+        list.append(input->getProcessorEntry());
+    }
+    return list;
+}

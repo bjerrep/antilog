@@ -16,7 +16,7 @@ PassProcessorDialog::PassProcessorDialog(PassProcessor* passProcessor, QWidget* 
     ui->name->setText(passProcessor->getName());
 
     QString scheme = passProcessor->getScheme()->name();
-    ui->comboBoxFormat->addItems(Statics::formatSchemeModel->getSchemeNames());
+    ui->comboBoxFormat->addItems(Statics::s_formatSchemeModel->getSchemeNames());
     ui->comboBoxFormat->setCurrentText(scheme);
 
     setModal(true);

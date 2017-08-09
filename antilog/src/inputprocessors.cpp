@@ -15,7 +15,7 @@ PassProcessor::PassProcessor(const QJsonObject& json)
     }
     else
     {
-        setName("Pass");
+        setName(makeNameUnique("Pass"));
         setSchemeFromName(Statics::NoneScheme);
     }
 }
@@ -58,7 +58,7 @@ RegexProcessor::RegexProcessor(const QJsonObject& json)
     }
     else
     {
-        setName("Regex");
+        setName(makeNameUnique("Regex"));
         setSchemeFromName(Statics::NoneScheme);
         // matches spdlog
         m_regex = "\\[(\\S+) (\\S+)\\] \\[(\\S+)\\] \\[(\\S+)\\] (.*)";

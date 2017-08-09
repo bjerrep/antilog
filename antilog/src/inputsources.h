@@ -28,7 +28,7 @@ public slots:
     void slotSystemReady() override;
 
 protected:
-    void configureFileReaderProcess();
+    void relaunchFileReaderProcess();
 
 private slots:
     void slotNewFileReaderData(const QString& data, const QString& sourceIdentifier);

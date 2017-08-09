@@ -10,6 +10,8 @@
 #include <QSharedPointer>
 #include <QTextDocument>
 
+const int MAX_SOURCENAME_WIDTH(17);
+
 // ------ LogCell -------
 
 LogCell::LogCell()
@@ -59,13 +61,13 @@ LogEntry::~LogEntry()
 
 void LogEntry::determineLogLevel(QString logLevelData)
 {
-    m_level = Statics::logLevels->findLogLevel(logLevelData);
+    m_level = Statics::s_logLevels->findLogLevel(logLevelData);
 }
 
 bool LogEntry::isInScope(const QString& level, const QString& textFilter) const
 {
-    int _level = Statics::logLevels->value(level);
-    int mlevel = Statics::logLevels->value(m_level);
+    int _level = Statics::s_logLevels->value(level);
+    int mlevel = Statics::s_logLevels->value(m_level);
     bool active = _level <= mlevel;
 
     if (active && textFilter != Statics::logLevelFilterOff)
@@ -125,15 +127,16 @@ QString LogEntry::getHtml() const
     }
 
     QString source;
-    if (Statics::options->m_showSource)
+    if (Statics::s_options->m_showSource)
     {
-        const int sourceLength = m_sourceName.size();
+        auto sourceName = m_sourceName.left(MAX_SOURCENAME_WIDTH);
+        const int sourceLength = sourceName.size();
         if (sourceLength > s_sourceFieldWidth)
         {
             s_sourceFieldWidth = sourceLength;
         }
-        int widthInPixels = Statics::options->logFontWidth(s_sourceFieldWidth + Statics::options->m_logViewSpacing);
-        source = QString("<td width=%1><b><small>%2</small></b></td>").arg(widthInPixels).arg(m_sourceName);
+        int widthInPixels = Statics::s_options->logFontWidth(s_sourceFieldWidth + Statics::s_options->m_logViewSpacing);
+        source = QString("<td width=%1><b><small>%2</small></b></td>").arg(widthInPixels).arg(sourceName);
     }
     QString html = source + m_formatScheme->getTableFormat().getEntryCellsAsHtml(subMessages);
     m_htmlCached = "<html>" + css + "<table><tr>" + html + "</tr></table></html>";
@@ -147,7 +150,7 @@ QString LogEntry::getHtml() const
 QString LogEntry::getText() const
 {
     QString source;
-    if (Statics::options->m_showSource)
+    if (Statics::s_options->m_showSource)
     {
         source = m_sourceName.left(s_sourceFieldWidth).leftJustified(s_sourceFieldWidth, ' ') + " - ";
     }

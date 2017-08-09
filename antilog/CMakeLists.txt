@@ -17,9 +17,15 @@ add_executable(
     ${src}
     )
 
-set(CMAKE_CXX_FLAGS "-fno-elide-constructors -pedantic-errors -ansi")
-set(CMAKE_CXX_FLAGS " -Wextra -Wall -Winit-self -Wold-style-cast -Woverloaded-virtual")
-set(CMAKE_CXX_FLAGS " -Wuninitialized -Wmissing-declarations -std=c++98")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-elide-constructors -pedantic-errors")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wall -Winit-self -Wold-style-cast -Woverloaded-virtual")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wuninitialized -Wmissing-declarations -std=c++98")
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ansi")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-braces -Wmissing-field-initializers")
+endif()
 
 add_definitions(
     -DQT_USE_FAST_CONCATENATION

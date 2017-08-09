@@ -49,7 +49,7 @@ bool TableCellFormat::operator == (const TableCellFormat& other) const
 
 int TableCellFormat::pixelWidth() const
 {
-    return Statics::options->logFontWidth(m_length);
+    return Statics::s_options->logFontWidth(m_length);
 }
 
 // ------ TableFormat -------
@@ -76,7 +76,7 @@ void TableFormat::load(const QJsonObject& json)
     m_cellFormats.clear();
     if (json.empty())
     {
-        constructDefaultSetup(Statics::options->logFontMetrics());
+        constructDefaultSetup(Statics::s_options->logFontMetrics());
         return;
     }
     auto jsonArray = json["tablecellformats"].toArray();
@@ -228,17 +228,17 @@ void TableFormat::add(const QString& name, const QString& html1, const QString& 
     m_cellFormats.append(TableCellFormat(name, html1, html2, width));
 }
 
-void TableFormat::recalculate(const QFontMetrics& fontMetrics)
+void TableFormat::recalculate(const QFontMetrics& /*fontMetrics*/)
 {
     // missing
 }
 
-void TableFormat::constructDefaultSetup(const QFontMetrics& fontMetrics)
+void TableFormat::constructDefaultSetup(const QFontMetrics& /*fontMetrics*/)
 {
-    const int space = Statics::options->m_logViewSpacing;
+    const int space = Statics::s_options->m_logViewSpacing;
     m_cellFormats.clear();
 
-    foreach (auto cell, Statics::options->m_cellNames.m_cells)
+    foreach (auto cell, Statics::s_options->m_cellNames.m_cells)
     {
         const QString& name = cell.m_name;
 

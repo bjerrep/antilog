@@ -7,6 +7,11 @@
 #include <QFileSystemWatcher>
 #include <QThread>
 
+/// Start a file reader on the given file. If the file is not found
+/// the reader will start once the file shows up after startReader() is called.
+/// The reader does not deal with files dissapearing and then returning again.
+/// Once constructed connect to signalNewData and call startReader()
+///
 FileReader::FileReader(const QString& filename, int lastNumlines)
     : m_filename(filename),
       m_lastNumLines(lastNumlines),
@@ -15,6 +20,11 @@ FileReader::FileReader(const QString& filename, int lastNumlines)
     setup();
 }
 
+/// Start a file reader on all files below rootdir with the given mask, optionally recursive.
+/// All directories seen will be added to a file watcher which will add new files in the
+/// directories if they match the mask.
+/// Once constructed connect to signalNewData and call startReader()
+///
 FileReader::FileReader(const QString& rootDir, bool recursive, const QString& mask)
     : m_rootDir(rootDir),
       m_recursive(recursive),
@@ -26,19 +36,21 @@ FileReader::FileReader(const QString& rootDir, bool recursive, const QString& ma
 
 FileReader::~FileReader()
 {
-    if (m_watcher)
-    {
-        m_watcher->deleteLater();
-    }
     m_thread->requestInterruption();
 }
 
 void FileReader::setup()
 {
-    m_watcher = new QFileSystemWatcher();
-    connect(m_watcher, &QFileSystemWatcher::fileChanged,
+    connect(&m_watcher, &QFileSystemWatcher::fileChanged,
             this, &FileReader::slotFileChanged);
+    connect(&m_watcher, &QFileSystemWatcher::directoryChanged,
+            this, &FileReader::slotDirectoryChanged);
 
+    connect(&m_missingFilesWatcher, &QFileSystemWatcher::directoryChanged,
+            this, &FileReader::slotCheckForMissingFile);
+
+    // threaded since startReader() will block if the last part of a file
+    // should be loaded right away
     m_thread = new QThread;
     moveToThread(m_thread);
     m_thread->start();
@@ -46,26 +58,25 @@ void FileReader::setup()
             m_thread, &QThread::deleteLater);
 }
 
-void FileReader::systemReady()
-{
-    startReader();
-}
-
 QString FileReader::sourceIdentification(const QString& filename) const
 {
     return QFileInfo(filename).fileName();
 }
 
-int FileReader::glob(const QString& dir, QStringList& files, QStringList& directories, const QString& filter, bool recurse)
+int FileReader::glob(const QString& directory,
+                     QStringList& files,
+                     QStringList& directories,
+                     const QString& mask,
+                     bool recurse)
 {
-    QDir dirObj(dir);
-    QStringList filterList = {filter};
+    QDir dirObj(directory);
+    QStringList filterList = {mask};
     QFileInfoList fileInfoList = dirObj.entryInfoList(filterList, QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files);
     foreach (auto fileInfo, fileInfoList)
     {
         if (fileInfo.isDir() && recurse)
         {
-            glob(fileInfo.absoluteFilePath(), files, directories, filter, recurse);
+            glob(fileInfo.absoluteFilePath(), files, directories, mask, recurse);
         }
 
         if (fileInfo.isFile())
@@ -89,7 +100,6 @@ int FileReader::glob(const QString& dir, QStringList& files, QStringList& direct
 void FileReader::startReader()
 {
     QStringList files;
-    QStringList directories;
 
     if (m_mode == FILE)
     {
@@ -97,7 +107,13 @@ void FileReader::startReader()
     }
     else
     {
+        QStringList directories;
         glob(m_rootDir, files, directories, m_mask, m_recursive);
+        m_watcher.addPath(m_rootDir);
+        foreach (auto directory, directories)
+        {
+            m_watcher.addPath(directory);
+        }
     }
 
     foreach (auto file, files)
@@ -115,14 +131,18 @@ void FileReader::startReader()
                 }
             }
 
-            m_watcher->addPath(file);
+            m_watcher.addPath(file);
+        }
+        else
+        {
+            if (m_mode == FILE)
+            {
+                m_missingFiles.append(file);
+                auto directory = QFileInfo(file).absolutePath();
+                m_missingFilesWatcher.addPath(directory);
+            }
         }
     }
-}
-
-bool FileReader::isRunning()
-{
-    return m_watcher;
 }
 
 QStringList FileReader::tailFileByLines(const QString& filename, int lines, qint64& pos)
@@ -137,7 +157,9 @@ QStringList FileReader::tailFileByLines(const QString& filename, int lines, qint
         while (!terminate)
         {
             if (file.read(1) == "\n")
+            {
                 --lines;
+            }
             terminate = !lines || (file.pos() <= 1);
             if (!terminate)
             {
@@ -195,7 +217,34 @@ void FileReader::slotFileChanged(const QString& filename)
     }
 }
 
+void FileReader::slotDirectoryChanged(const QString& directory)
+{
+    QStringList files, directories;
 
+    glob(directory, files, directories, m_mask, false);
 
+    auto existingFiles = m_watcher.files();
+    foreach (auto file, files)
+    {
+        if (!existingFiles.contains(file))
+        {
+            auto fqn = QDir(directory).filePath(file);
+            m_watcher.addPath(fqn);
+            return;
+        }
+    }
+}
 
-
+void FileReader::slotCheckForMissingFile(const QString& directory)
+{
+    foreach (auto missingFile, m_missingFiles)
+    {
+        if (QFileInfo(missingFile).absolutePath() == directory)
+        {
+            m_watcher.addPath(missingFile);
+            m_missingFilesWatcher.removePath(directory);
+            m_missingFiles.takeAt(m_missingFiles.indexOf(missingFile));
+            return;
+        }
+    }
+}

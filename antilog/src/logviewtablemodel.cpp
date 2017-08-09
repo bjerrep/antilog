@@ -28,7 +28,7 @@ void LogViewDelegate::paint(QPainter* painter,
         doc.setHtml(html);
         painter->save();
         painter->translate(option.rect.topLeft() + QPoint(0, -2));
-        doc.setDefaultFont(Statics::options->m_logFont);
+        doc.setDefaultFont(Statics::s_options->m_logFont);
         doc.drawContents(painter);
         painter->restore();
     }
@@ -53,7 +53,7 @@ QVariant LogViewTableModel::headerData(int section, Qt::Orientation orientation,
     }
     else if (role == Qt::FontRole)
     {
-        return Statics::options->m_logFont;
+        return Statics::s_options->m_logFont;
     }
 
     return QVariant();
@@ -82,7 +82,7 @@ QVariant LogViewTableModel::data(const QModelIndex &index, int role) const
     }
     else if (role == Qt::FontRole)
     {
-        return Statics::options->m_logFont;
+        return Statics::s_options->m_logFont;
     }
     return QVariant();
 }
@@ -123,7 +123,7 @@ void LogViewTableModel::erase(int count)
     }
 }
 
-void LogViewTableModel::slotRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
+void LogViewTableModel::slotRowsAboutToBeRemoved(const QModelIndex&, int first, int last)
 {
     emit signalDeletingRows(last - first + 1);
 }
@@ -137,7 +137,7 @@ bool LogViewTableModel::logEntryIsVisible(LogEntryPtr logEntry)
 void LogViewTableModel::append(QVector<LogEntryPtr> logEntries)
 {
     int toBeDeleted = m_logEntries.size() + logEntries.size() -
-            Statics::options->m_maxRowsInLogModel;
+            Statics::s_options->m_maxRowsInLogModel;
 
     if (toBeDeleted > 0)
     {

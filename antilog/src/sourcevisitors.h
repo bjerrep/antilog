@@ -75,7 +75,4 @@ public:
     void visit(UDPSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
-
-private:
-    Ui::inputWidget* ui;
 };

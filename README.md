@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bjerrep/antilog.svg?branch=master)](https://travis-ci.org/bjerrep/antilog)
+
 # antilog
 
 Antilog is a small and naive graphical logviewer.  It attempts to make it simpler to monitor a number of log sources in one central place with e.g. filters that can be changed at runtime. Antilog will also as any application save and reload its configuration between application runs. So compared to tail and grep unrestricted flexibility is replaced with a hopefully more userfriendly tool.
@@ -15,7 +17,7 @@ mkdir build && cd build
 cmake ..
 make
 ```
-Binaries can then be found in ./bin. Building has so far only been done with Qt 5.9 on linux. There are no extraordinary dependencies for building except cmake & Qt.
+Binaries can then be found in ./bin. Building has so far only been done with Qt 5.9 on linux. There are no extraordinary dependencies for building except cmake & Qt. For building on ubuntu the .travis.yml file might give some clues for building on older ubuntu releases.
 
 
 ## executables

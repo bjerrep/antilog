@@ -27,6 +27,8 @@ public:
     explicit AntiLog(QWidget* parent = nullptr);
     ~AntiLog();
 
+    QVector<InputItemBase*> getAllSourcesAndProcessors() const;
+
 private:
     void save() const;
     void load();

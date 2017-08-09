@@ -26,7 +26,7 @@ AntiLog::AntiLog(QWidget* parent) :
     ui->setupUi(this);
     load();
 
-    setFont(Statics::options->m_appFont);
+    setFont(Statics::s_options->m_appFont);
     m_logViewTableModel = new LogViewTableModel(this, m_filterModel);
     connect(m_logViewTableModel, &LogViewTableModel::newEntriesAdded,
             this, &AntiLog::slotTableUpdated);
@@ -38,7 +38,7 @@ AntiLog::AntiLog(QWidget* parent) :
             this, &AntiLog::slotLogViewSliderChanged);
 
     ui->tableView->verticalHeader()->setDefaultSectionSize(
-                Statics::options->m_logFontHeight + Statics::LogViewMargin);
+                Statics::s_options->m_logFontHeight + Statics::LogViewMargin);
     ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -46,11 +46,11 @@ AntiLog::AntiLog(QWidget* parent) :
             this, &AntiLog::slotShowContextMenu);
 
     ui->checkBoxScroll->setChecked(m_scrollToBottom);
-    ui->checkBoxShowSource->setChecked(Statics::options->m_showSource);
+    ui->checkBoxShowSource->setChecked(Statics::s_options->m_showSource);
 
-    QString currentLogLevel = Statics::options->m_logThreshold;
+    QString currentLogLevel = Statics::s_options->m_logThreshold;
     ui->comboBoxLogThreshold->clear();
-    ui->comboBoxLogThreshold->addItems(Statics::logLevels->getCategoryNames());
+    ui->comboBoxLogThreshold->addItems(Statics::s_logLevels->getCategoryNames());
     ui->comboBoxLogThreshold->setCurrentText(currentLogLevel);
 
     setupExtendedFilters();
@@ -69,9 +69,9 @@ void AntiLog::save() const
 {
     QJsonObject json;
     m_inputList.save(json);
-    Statics::formatSchemeModel->save(json);
-    Statics::logLevels->save(json);
-    Statics::options->save(json);
+    Statics::s_formatSchemeModel->save(json);
+    Statics::s_logLevels->save(json);
+    Statics::s_options->save(json);
     m_filterModel->save(json);
 
     json["useextendedfilters"] = ui->checkBoxUseFilters->isChecked();
@@ -98,10 +98,10 @@ void AntiLog::load()
     QJsonDocument doc(QJsonDocument::fromJson(file.readAll()));
     auto json = doc.object();
 
-    Statics::antiLog = this;
-    Statics::options = new Options(json);
-    Statics::formatSchemeModel = new FormatSchemeModel(json);
-    Statics::logLevels = new LogLevelCategories(json);
+    Statics::s_antiLog = this;
+    Statics::s_options = new Options(json);
+    Statics::s_formatSchemeModel = new FormatSchemeModel(json);
+    Statics::s_logLevels = new LogLevelCategories(json);
     m_filterModel = new ExtendedFilterModel(json);
     connect(m_filterModel, &ExtendedFilterModel::signalExtendedFiltersModified,
             this, &AntiLog::slotExtendedFiltersModified);
@@ -117,6 +117,11 @@ void AntiLog::load()
         int y = json["y"].toInt();
         setGeometry(x, y, w, h);
     }
+}
+
+QVector<InputItemBase*> AntiLog::getAllSourcesAndProcessors() const
+{
+    return m_inputList.getAllSourcesAndProcessors();
 }
 
 QString AntiLog::getConfigFilePath()
@@ -375,7 +380,7 @@ void AntiLog::deleteSelection()
 
 void AntiLog::on_setupButton_clicked()
 {
-    OptionsDialog optionsDialog(*Statics::options, this);
+    OptionsDialog optionsDialog(*Statics::s_options, this);
     optionsDialog.exec();
 }
 
@@ -396,7 +401,7 @@ void AntiLog::slotFormatRuleChanged()
 
 void AntiLog::on_comboBoxLogThreshold_currentIndexChanged(const QString& arg1)
 {
-    Statics::options->m_logThreshold = arg1;
+    Statics::s_options->m_logThreshold = arg1;
     m_logViewTableModel->newLogLevel(arg1);
 }
 
@@ -408,7 +413,7 @@ void AntiLog::on_lineEditTextFilter_textChanged(const QString& arg1)
 
 void AntiLog::on_checkBoxShowSource_clicked(bool checked)
 {
-    Statics::options->m_showSource = checked;
+    Statics::s_options->m_showSource = checked;
     m_logViewTableModel->redrawVisibleRows();
 }
 

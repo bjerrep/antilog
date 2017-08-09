@@ -31,10 +31,11 @@ private slots:
     void on_spinBoxPeriod_valueChanged(int arg1);
     void on_checkBoxAppendSerial_clicked(bool checked);
 
+    void on_pushButtonDeleteFile_clicked();
+
 private:
     Ui::MainWindow* ui;
     QTimer* m_timer;
-    QString m_filename;
     int m_serial = 0;
     bool m_appendSerial = false;
     int m_messageSelector = 0;

@@ -8,7 +8,7 @@ class QWidget;
 class LogFormatModel;
 class FormatSchemeModel;
 class LogLevelCategories;
-class Options;
+struct Options;
 class AntiLog;
 
 namespace Statics
@@ -55,10 +55,10 @@ namespace Statics
 
     extern const QString& AntiLogMessage;
 
-    extern FormatSchemeModel* formatSchemeModel;
-    extern LogLevelCategories* logLevels;
-    extern Options* options;
-    extern AntiLog* antiLog;
+    extern FormatSchemeModel* s_formatSchemeModel;
+    extern LogLevelCategories* s_logLevels;
+    extern Options* s_options;
+    extern AntiLog* s_antiLog;
 
     int widgetIcon(const QString& resourceImage, QWidget* widget, int height = Statics::iconHeight);
     QPixmap pixmapIcon(const QString& resourceImage, int height = Statics::iconHeight);

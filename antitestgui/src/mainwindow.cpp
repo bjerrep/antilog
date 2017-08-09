@@ -186,3 +186,8 @@ void MainWindow::on_checkBoxAppendSerial_clicked(bool checked)
 {
     m_appendSerial = checked;
 }
+
+void MainWindow::on_pushButtonDeleteFile_clicked()
+{
+    QFile::remove(ui->lineEditFile->text());
+}

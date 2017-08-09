@@ -46,7 +46,7 @@ void FormatDialogListWidget::dragMoveEvent(QDragMoveEvent* event)
     }
 }
 
-void FormatDialogListWidget::slotContentChanged(QListWidgetItem *item)
+void FormatDialogListWidget::slotContentChanged(QListWidgetItem* /*item*/)
 {
     emit signalDrag();
 }

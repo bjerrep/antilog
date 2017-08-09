@@ -26,6 +26,7 @@ public:
     QString getDescription() const;
     void setDescription(const QString& getDescription);
     virtual void save(QJsonObject& json) const = 0;
+    QString makeNameUnique(const QString& name) const;
 
 private:
     QString m_name = "Default";
@@ -47,7 +48,7 @@ public:
     virtual void save(QJsonObject& json) const override = 0;
 
     virtual void setEnabled(bool enabled);
-    bool enabled() const;
+    bool getEnabled() const;
     bool isGoodToGo() const;
 
 public slots:

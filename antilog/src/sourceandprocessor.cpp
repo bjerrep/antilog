@@ -42,12 +42,12 @@ QJsonObject SourceAndProcessor::getJson() const
 
 bool SourceAndProcessor::isOn()
 {
-    return m_sourceEntry->enabled();
+    return m_sourceEntry->getEnabled();
 }
 
 void SourceAndProcessor::toggleEnable()
 {
-    m_sourceEntry->setEnabled(!m_sourceEntry->enabled());
+    m_sourceEntry->setEnabled(!m_sourceEntry->getEnabled());
 }
 
 void SourceAndProcessor::connectSignalsAndSlots()

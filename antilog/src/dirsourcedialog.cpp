@@ -25,7 +25,7 @@ DirSourceDialog::DirSourceDialog(DirSource& dirSource, QWidget* parent) :
         dirSource.setDir(ui->TargetLineEdit->text());
         dirSource.m_recursive = ui->RecurseCheckBox->isChecked();
         dirSource.m_mask = ui->FileMaskLineEdit->text();
-        dirSource.configureFileReaderProcess();
+        dirSource.relaunchFileReaderProcess();
     }
 }
 
@@ -81,7 +81,7 @@ void DirSourceDialog::on_CancelPushButton_clicked()
     setResult(QDialog::Rejected);
 }
 
-void DirSourceDialog::on_RecurseCheckBox_clicked(bool checked)
+void DirSourceDialog::on_RecurseCheckBox_clicked(bool /*checked*/)
 {
     updateUi(ui->TargetLineEdit->text());
 }

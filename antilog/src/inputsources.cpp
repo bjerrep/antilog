@@ -20,7 +20,7 @@ DirSource::DirSource(const QJsonObject& json)
 {
     if (json.empty())
     {
-        setName("Dir");
+        setName(makeNameUnique("Dir"));
         m_dir = "/var/log";
         m_mask = "*";
         return;
@@ -33,7 +33,7 @@ DirSource::DirSource(const QJsonObject& json)
         setDescription("not configured");
     else
         setDescription(m_dir);
-    configureFileReaderProcess();
+    relaunchFileReaderProcess();
 }
 
 DirSource::DirSource(const QString& type, const QJsonObject& json)
@@ -62,7 +62,7 @@ void DirSource::slotNewFileReaderData(const QString& data, const QString& source
 void DirSource::slotSystemReady()
 {
     SourceBase::slotSystemReady();
-    configureFileReaderProcess();
+    relaunchFileReaderProcess();
 }
 
 void DirSource::accept(InputVisitorBase* v)
@@ -70,7 +70,7 @@ void DirSource::accept(InputVisitorBase* v)
     v->visit(this);
 }
 
-void DirSource::configureFileReaderProcess()
+void DirSource::relaunchFileReaderProcess()
 {
     if (isGoodToGo())
     {
@@ -82,7 +82,7 @@ void DirSource::configureFileReaderProcess()
         }
         else
         {
-            const int linesToLoad = Statics::options->m_numberOfLinesToLoad * !m_tailOnly;
+            const int linesToLoad = Statics::s_options->m_numberOfLinesToLoad * !m_tailOnly;
             m_fileReader = new FileReader(m_filepath, linesToLoad);
         }
 
@@ -106,13 +106,13 @@ void DirSource::setDir(QString dir)
 {
     setDescription(dir);
     m_dir = dir;
-    configureFileReaderProcess();
+    relaunchFileReaderProcess();
 }
 
 void DirSource::setEnabled(bool enabled)
 {
     SourceBase::setEnabled(enabled);
-    configureFileReaderProcess();
+    relaunchFileReaderProcess();
 }
 
 // ------ FileSource -------
@@ -122,7 +122,7 @@ FileSource::FileSource(const QJsonObject& json)
 {
     if (json.empty())
     {
-        setName("File");
+        setName(makeNameUnique("File"));
         return;
     }
 
@@ -132,7 +132,7 @@ FileSource::FileSource(const QJsonObject& json)
         setDescription("not configured");
     else
         setDescription(m_filepath);
-    configureFileReaderProcess();
+    relaunchFileReaderProcess();
 }
 
 void FileSource::save(QJsonObject& json) const
@@ -151,7 +151,7 @@ void FileSource::setFilenameAndConfigure(QString filename)
 {
     setDescription(filename);
     m_filepath = filename;
-    configureFileReaderProcess();
+    relaunchFileReaderProcess();
 }
 
 // ------ UDPSource -------
@@ -161,7 +161,7 @@ UDPSource::UDPSource(const QJsonObject& json)
 {
     if (json.empty())
     {
-        setName("UDP");
+        setName(makeNameUnique("UDP"));
         setPort(m_port);
         return;
     }

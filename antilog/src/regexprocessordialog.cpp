@@ -31,8 +31,8 @@ RegexProcessorDialog::RegexProcessorDialog(RegexProcessor* regexProcessor, QWidg
     ui->checkBoxOnlyOutputMatches->setChecked(regexProcessor->m_onlyPassRegexMatches);
 
     QString scheme = regexProcessor->getScheme()->name();
-    ui->comboBoxFormat->addItems(Statics::formatSchemeModel->getSchemeNames());
-    ui->comboBoxFormat->setCurrentIndex(Statics::formatSchemeModel->getSchemeNameIndex(scheme));
+    ui->comboBoxFormat->addItems(Statics::s_formatSchemeModel->getSchemeNames());
+    ui->comboBoxFormat->setCurrentIndex(Statics::s_formatSchemeModel->getSchemeNameIndex(scheme));
     ui->lineEditTestSource->setText("[2017-06-09 00:09:46.850] [console] [info] Support for floats 1.23");
 
     updateDialog();
@@ -81,7 +81,7 @@ void RegexProcessorDialog::updateDialog()
     }
 }
 
-void RegexProcessorDialog::layoutChanged(QListWidgetItem* current, QListWidgetItem* previous)
+void RegexProcessorDialog::layoutChanged(QListWidgetItem*, QListWidgetItem*)
 {
     m_nofActiveCells = ui->listWidgetActive->count();
     updateDialog();

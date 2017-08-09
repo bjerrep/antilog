@@ -74,17 +74,17 @@ void ExtendedFilterModel::registerLogEntry(LogEntryPtr logEntry)
     }
 
     auto moduleName = logEntry->getModuleName();
-    if (moduleName.isNull())
-    {
-        return;
-    }
-
     auto sourceName = logEntry->getSourceName();
 
     foreach (auto sourceFilterItem, m_sources)
     {
         if (sourceFilterItem->getName() == sourceName)
         {
+            if (moduleName.isNull())
+            {
+                return;
+            }
+
             // the source already exist
             foreach (auto moduleChild, sourceFilterItem->getModules())
             {
@@ -106,10 +106,18 @@ void ExtendedFilterModel::registerLogEntry(LogEntryPtr logEntry)
 
     // new source
     auto sourceFilterItem = new ExtendedFilterItem(sourceName, m_newSourcesEnabled, getDefaultSeverity(), nullptr);
-    auto moduleFilterItem = new ExtendedFilterItem(moduleName, m_newSourcesEnabled, getDefaultSeverity(), sourceFilterItem);
-    sourceFilterItem->addModule(moduleFilterItem);
-    m_sources.append(sourceFilterItem);
-    emit signalNewFilterItemsForDialog(sourceFilterItem, moduleFilterItem);
+    if (!moduleName.isNull())
+    {
+        auto moduleFilterItem = new ExtendedFilterItem(moduleName, m_newSourcesEnabled, getDefaultSeverity(), sourceFilterItem);
+        sourceFilterItem->addModule(moduleFilterItem);
+        m_sources.append(sourceFilterItem);
+        emit signalNewFilterItemsForDialog(sourceFilterItem, moduleFilterItem);
+    }
+    else
+    {
+        m_sources.append(sourceFilterItem);
+        emit signalNewFilterItemsForDialog(sourceFilterItem, nullptr);
+    }
 }
 
 bool ExtendedFilterModel::isMatched(LogEntryPtr logEntry) const
@@ -123,6 +131,11 @@ bool ExtendedFilterModel::isMatched(LogEntryPtr logEntry) const
     {
         if (source->getName() == logEntry->getSourceName())
         {
+            if (!source->getNofModules())
+            {
+                return source->getEnableState() == Qt::Checked;
+            }
+
             auto moduleName = logEntry->getModuleName();
             foreach (auto module, source->getModules())
             {

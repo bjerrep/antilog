@@ -107,6 +107,6 @@ void FormatSchemeModel::slotNewLogFont()
 {
     foreach(auto scheme, m_entries)
     {
-        scheme->getTableFormat().recalculate(Statics::options->logFontMetrics());
+        scheme->getTableFormat().recalculate(Statics::s_options->logFontMetrics());
     }
 }

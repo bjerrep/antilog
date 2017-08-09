@@ -6,6 +6,7 @@
 
 class AntiLog;
 class SourceAndProcessor;
+class InputItemBase;
 
 /// Container for the SourceAndProcessor objects made with the InputDialog.
 /// A source together with a processor is called an 'input'.
@@ -15,7 +16,7 @@ class InputList : public QObject
     Q_OBJECT
 
 public:
-    InputList(AntiLog* ulw);
+    InputList(AntiLog* antiLog);
     ~InputList();
 
     void save(QJsonObject& json) const;
@@ -26,6 +27,8 @@ public:
     int findFormatSchemeUsageCount(const QString& schemeName) const;
     SourceAndProcessor* getSourceAndProcessor(int index);
     SourceAndProcessor* getSourceAndProcessor(int index) const;
+    QVector<InputItemBase*> getAllSourcesAndProcessors() const;
+
 
 private:
     QList<SourceAndProcessor*> m_sourceAndProcessorList;

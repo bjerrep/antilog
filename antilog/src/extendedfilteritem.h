@@ -9,7 +9,7 @@ class ExtendedWidget;
 using ExtendedFilterList = QVector<ExtendedFilterItem*>;
 Q_DECLARE_METATYPE(ExtendedFilterList)
 
-struct ExtendedFilterItem
+class ExtendedFilterItem
 {
     Q_GADGET
 
@@ -22,6 +22,7 @@ public:
     QString getName() const { return m_name; }
     Qt::CheckState getEnableState() const { return m_enableState; }
     const ExtendedFilterList& getModules() const { return m_modules; }
+    int getNofModules() const { return m_modules.count(); }
     ExtendedFilterItem* getParent() const { return m_parent; }
     QString getSeverity() const { return m_severity; }
     ExtendedWidget* getWidget() const { return m_widget; }

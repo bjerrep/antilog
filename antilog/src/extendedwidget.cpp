@@ -39,7 +39,7 @@ void ExtendedWidget::setEnableState(Qt::CheckState state)
 void ExtendedWidget::setSeverity(QString severity)
 {
     ui->severity->blockSignals(true);
-    QStringList severities = Statics::logLevels->getCategoryNames();
+    QStringList severities = Statics::s_logLevels->getCategoryNames();
     if (m_filterItem->isParent() && severity == Statics::logLevelFilterOverruled)
     {
         severities.insert(0, Statics::logLevelFilterOverruled);
