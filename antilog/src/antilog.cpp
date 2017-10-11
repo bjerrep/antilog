@@ -17,6 +17,7 @@
 #include <QClipboard>
 #include <QTableView>
 #include <QProgressBar>
+#include <QKeyEvent>
 
 AntiLog::AntiLog(QWidget* parent) :
     QWidget(parent),
