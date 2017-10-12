@@ -5,13 +5,13 @@ compiler:
 
 before_install:
   - sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1397BC53640DB551
-  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt591-trusty
+  - sudo apt-add-repository --yes ppa:ubuntu-toolchain-r/test
+  - sudo apt-add-repository --yes ppa:beineri/opt-qt591-trusty
   - sudo apt-get update -qq
  
 install:
   - sudo apt-get install -qq g++-6
-  - sudo apt-get install -qq qt59-meta-full
+  - sudo apt-get --yes install qt59-meta-full
   - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
 
 before_script:
