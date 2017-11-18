@@ -10,12 +10,23 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt5Widgets)
 find_package(Qt5Network)
 
-file(GLOB src src/*.cpp src/*.h src/*.ui *.qrc)
+file(GLOB_RECURSE src src/*.cpp src/*.h src/*.ui *.qrc)
 
 add_executable(
     ${PROJECT_NAME}
     ${src}
     )
+
+include_directories(
+    src
+    src/column
+    src/extendedfilter
+    src/inputs
+    src/logentry
+    src/format
+    )
+    
+set(CMAKE_AUTOUIC_SEARCH_PATHS src/format)    
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-elide-constructors -pedantic-errors")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wall -Winit-self -Wold-style-cast -Woverloaded-virtual")

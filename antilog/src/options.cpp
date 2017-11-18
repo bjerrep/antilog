@@ -1,10 +1,17 @@
 #include "options.h"
+#include "columndefinitions.h"
 
 #include <QFontMetrics>
 
 Options::Options(const QJsonObject& json)
 {
     load(json);
+    m_columnDefinitions = new ColumnDefinitions(json);
+}
+
+Options::~Options()
+{
+    delete m_columnDefinitions;
 }
 
 void Options::save(QJsonObject& json) const
@@ -19,6 +26,8 @@ void Options::save(QJsonObject& json) const
     opt["appFontPoint"] = m_appFont.pointSize();
     opt["showsource"] = m_showSource;
     json["options"] = opt;
+
+    m_columnDefinitions->save(json);
 }
 
 void Options::setLogFont(const QString& family, int point)
@@ -36,6 +45,11 @@ QFontMetrics Options::logFontMetrics() const
 int Options::logFontWidth(int length) const
 {
     return logFontMetrics().width(QString(length, '0'));
+}
+
+ColumnDefinitions* Options::getColumnDefinitions() const
+{
+    return m_columnDefinitions;
 }
 
 void Options::load(const QJsonObject& json)

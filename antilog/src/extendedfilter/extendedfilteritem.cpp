@@ -1,0 +1,78 @@
+#include "extendedfilteritem.h"
+#include "extendedwidget.h"
+#include "statics.h"
+
+#include <QJsonObject>
+#include <QJsonArray>
+
+ExtendedFilterItem::ExtendedFilterItem(const QJsonObject& json, ExtendedFilterItem* parent)
+{
+    m_name = json["name"].toString();
+    m_severity = json["severity"].toString();
+    m_enableState = static_cast<Qt::CheckState>(Statics::metaIndex(staticMetaObject, "StateProperty", json["state"].toString()));
+    m_parent = parent;
+}
+
+ExtendedFilterItem::ExtendedFilterItem(QString name, Qt::CheckState enabled, const QString& severity, ExtendedFilterItem* parent)
+    : m_severity(severity), 
+      m_name(name),
+      m_enableState(enabled),
+      m_isValid(true),
+      m_parent(parent)
+{
+}
+
+ExtendedFilterItem::~ExtendedFilterItem()
+{
+    qDeleteAll(m_extendedFilterList);
+}
+
+void ExtendedFilterItem::save(QJsonObject& json) const
+{
+    json["name"] = m_name;
+    json["severity"] = m_severity;
+    json["state"] = QVariant::fromValue(m_enableState).toString();
+}
+
+void ExtendedFilterItem::addModule(ExtendedFilterItem* filterItem)
+{
+    m_extendedFilterList.append(filterItem);
+}
+
+bool ExtendedFilterItem::isParent() const
+{
+    return !m_parent;
+}
+
+bool ExtendedFilterItem::isViewExpanded() const
+{
+    return m_viewExpanded;
+}
+
+void ExtendedFilterItem::setViewExpanded(bool expanded)
+{
+    m_viewExpanded = expanded;
+}
+
+void ExtendedFilterItem::setEnableState(Qt::CheckState state)
+{
+    m_enableState = state;
+    if (m_extendedWidget)
+    {
+        m_extendedWidget->setEnableState(state);
+    }
+}
+
+void ExtendedFilterItem::setSeverity(QString severity)
+{
+    m_severity = severity;
+    if (m_extendedWidget)
+    {
+        m_extendedWidget->setSeverity(severity);
+    }
+}
+
+void ExtendedFilterItem::setWidget(ExtendedWidget* widget)
+{
+    m_extendedWidget = widget;
+}

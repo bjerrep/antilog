@@ -1,0 +1,8 @@
+[2017-06-09 00:09:46.850] [main] [info] Welcome to spdlog!
+[2017-06-09 00:09:46.850] [task1] [error] Some error message with arg1..
+[2017-06-09 00:09:46.850] [window] [warning] Easy padding in numbers like 00000012
+[2017-06-09 00:09:46.850] [task2] [critical] Support for int: 42;  hex: 2a;  oct: 52; bin: 101010
+[2017-06-09 00:09:46.850] [task1] [info] Support for floats 1.23
+[2017-06-09 00:09:46.850] [task2] [info] Positional args are supported too..
+[2017-06-09 00:09:46.850] [main] [info] left aligned                  
+[2017-06-09 00:09:46.850] [window] [info] loggers can be retrieved from a global registry using the spdlog::get(logger_name) function

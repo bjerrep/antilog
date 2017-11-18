@@ -103,13 +103,13 @@
        <number>6</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="rightMargin">
        <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <item>
        <widget class="QComboBox" name="comboBoxLogThreshold">
@@ -173,10 +173,16 @@ filters</string>
       <item>
        <widget class="QProgressBar" name="progressBarTraffic">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
+         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
         </property>
         <property name="maximum">
          <number>10</number>

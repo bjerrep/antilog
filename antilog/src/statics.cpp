@@ -25,28 +25,27 @@ namespace Statics
     const QString& Inputs = "inputs";
     const QString& TailOnly = "tailonly";
 
-    const QString& Date = "Date";
-    const QString& Time = "Time";
-    const QString& Level = "Level";
-    const QString& Id = "Id";
-    const QString& Message = "Message";
+    const QString& DefaultDateName = "Date";
+    const QString& DefaultTimeName = "Time";
+    const QString& DefaultSeverityName = "Severity";
+    const QString& DefaultModuleIdName = "ModuleId";
+    const QString& DefaultTextName = "Message";
+    const QString& DefaultAnyName = "Any";
 
     const QString& NoneScheme = "None";
 
-    const QString& FormatColumnAny = "Any";
+    const QString& LogSeverityFilterOff = "All";
+    const QString& LogSeverityFilterOverruled = "-";
 
-    const QString& logLevelFilterOff = "All";
-    const QString& logLevelFilterOverruled = "-";
-
-    const int iconHeight = 50;
-    const int verticalMargin = 8;
+    const int InputIconHeight = 50;
+    const int InputIconVerticalMargin = 8;
 
     bool SystemReady = false;
 
     const QString& AntiLogMessage = "AntiLog Message: ";
 
     FormatSchemeModel* s_formatSchemeModel = nullptr;
-    LogLevelCategories* s_logLevels = nullptr;
+    LogSeverityCategories* s_logSeverities = nullptr;
     Options* s_options = nullptr;
     AntiLog* s_antiLog = nullptr;
 
@@ -85,5 +84,10 @@ namespace Statics
     {
         auto meta = metaObject.property(metaObject.indexOfProperty(var)).enumerator();
         return meta.keyToValue(key.toStdString().c_str());
+    }
+
+    Options *getOptions()
+    {
+        return s_options;
     }
 }

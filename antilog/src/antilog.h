@@ -8,7 +8,7 @@
 
 class InputDialog;
 class InputTableViewModel;
-class LogLevelCategories;
+class LogSeverityCategories;
 class InputItemBase;
 class LogViewTableModel;
 class ExtendedFilterModel;
@@ -79,7 +79,7 @@ private slots:
 private:
     Ui::MainWindow* ui;
     LogViewTableModel* m_logViewTableModel = nullptr;
-    ExtendedFilterModel* m_filterModel = nullptr;
+    ExtendedFilterModel* m_extendedFilterModel = nullptr;
     InputDialog* m_inputDialog = nullptr;
     InputList m_inputList;
     bool m_scrollToBottom = true;
@@ -88,5 +88,6 @@ private:
     bool m_useExtendedFilters = false;
     int m_modelRowsDeleted = -1;
     int m_firstRowOnDisplay = 0;
+    QString m_version;
 };
 

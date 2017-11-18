@@ -29,7 +29,7 @@ There are 3 executables after a full build, antilog (the logviewer), antiudp (st
 This is the viewer application. Typically the first thing to do is to make a formatting scheme for a source, followed by a input configuration linking a source to a processor. 
 
 #### Formatting scheme
-Here a formatting scheme is made that matches the output from the [spdlog](https://github.com/gabime/spdlog) example application. The fields in the 'active' view are predefined but can be reordered to match e.g. the output groups from a regex processor. The only field that have any special meaning is 'Level' which can be used in the log view to filter out unwanted log levels.
+Here a formatting scheme is made that matches the output from the [spdlog](https://github.com/gabime/spdlog) example application. The fields in the 'active' view are predefined but can be reordered to match e.g. the output groups from a regex processor. The only field that have any special meaning is 'Severity' which can be used in the log view to filter out unwanted log levels.
 
 ![](misc/formatscheme.png) 
 

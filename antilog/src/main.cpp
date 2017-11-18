@@ -4,8 +4,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    AntiLog ulw;
-    ulw.show();
+    AntiLog antilog;
+    antilog.show();
 
     return a.exec();
 }

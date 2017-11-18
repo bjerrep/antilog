@@ -7,7 +7,7 @@
 class QWidget;
 class LogFormatModel;
 class FormatSchemeModel;
-class LogLevelCategories;
+class LogSeverityCategories;
 struct Options;
 class AntiLog;
 
@@ -33,21 +33,20 @@ namespace Statics
     extern const QString& Inputs;
     extern const QString& TailOnly;
 
-    extern const QString& Date;
-    extern const QString& Time;
-    extern const QString& Level;
-    extern const QString& Id;
-    extern const QString& Message;
+    extern const QString& DefaultDateName; // remove - only used for default init
+    extern const QString& DefaultTimeName;
+    extern const QString& DefaultSeverityName;
+    extern const QString& DefaultModuleIdName;
+    extern const QString& DefaultTextName;
+    extern const QString& DefaultAnyName;
 
     extern const QString& NoneScheme;
 
-    extern const QString& FormatColumnAny;
+    extern const QString& LogSeverityFilterOff;
+    extern const QString& LogSeverityFilterOverruled;
 
-    extern const QString& logLevelFilterOff;
-    extern const QString& logLevelFilterOverruled;
-
-    extern const int iconHeight;
-    extern const int verticalMargin;
+    extern const int InputIconHeight;
+    extern const int InputIconVerticalMargin;
 
     const int LogViewMargin = 8;
 
@@ -56,13 +55,15 @@ namespace Statics
     extern const QString& AntiLogMessage;
 
     extern FormatSchemeModel* s_formatSchemeModel;
-    extern LogLevelCategories* s_logLevels;
+    extern LogSeverityCategories* s_logSeverities;
     extern Options* s_options;
     extern AntiLog* s_antiLog;
 
-    int widgetIcon(const QString& resourceImage, QWidget* widget, int height = Statics::iconHeight);
-    QPixmap pixmapIcon(const QString& resourceImage, int height = Statics::iconHeight);
-    QWidget* widgetIcon(const QString& resourceImage, int height = Statics::iconHeight);
+    Options* getOptions();
+
+    int widgetIcon(const QString& resourceImage, QWidget* widget, int height = Statics::InputIconHeight);
+    QPixmap pixmapIcon(const QString& resourceImage, int height = Statics::InputIconHeight);
+    QWidget* widgetIcon(const QString& resourceImage, int height = Statics::InputIconHeight);
     int metaIndex(const QMetaObject& metaObject, const char* var, const QString& key);
 }
 
