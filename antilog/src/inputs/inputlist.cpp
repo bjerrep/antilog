@@ -2,7 +2,6 @@
 #include "antilog.h"
 #include "sourceandprocessor.h"
 #include "formatscheme.h"
-#include "statics.h"
 
 #include <QJsonArray>
 

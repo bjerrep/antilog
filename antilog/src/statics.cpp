@@ -42,12 +42,27 @@ namespace Statics
 
     bool SystemReady = false;
 
+    Options *instOptions()
+    {
+        return s_options;
+    }
+
+    AntiLog *instAntiLog()
+    {
+        return s_antiLog;
+    }
+
+    GlobalColumnConfig* instColumnLibrary()
+    {
+        return m_globalColumnConfig;
+    }
+
     const QString& AntiLogMessage = "AntiLog Message: ";
 
-    FormatSchemeModel* s_formatSchemeModel = nullptr;
     LogSeverityCategories* s_logSeverities = nullptr;
     Options* s_options = nullptr;
     AntiLog* s_antiLog = nullptr;
+    GlobalColumnConfig* m_globalColumnConfig = nullptr;
 
 
     QPixmap pixmapIcon(const QString& resourceImage, int height)
@@ -83,11 +98,6 @@ namespace Statics
     int metaIndex(const QMetaObject& metaObject, const char* var, const QString& key)
     {
         auto meta = metaObject.property(metaObject.indexOfProperty(var)).enumerator();
-        return meta.keyToValue(key.toStdString().c_str());
-    }
-
-    Options *getOptions()
-    {
-        return s_options;
+        return meta.keyToValue(key.toLatin1());
     }
 }

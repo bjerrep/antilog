@@ -28,7 +28,7 @@ void LogViewDelegate::paint(QPainter* painter,
         doc.setHtml(html);
         painter->save();
         painter->translate(option.rect.topLeft() + QPoint(0, -2));
-        doc.setDefaultFont(Statics::getOptions()->m_logFont);
+        doc.setDefaultFont(Statics::instOptions()->m_logFont);
         doc.drawContents(painter);
         painter->restore();
     }
@@ -68,7 +68,7 @@ QVariant LogViewTableModel::data(const QModelIndex &index, int role) const
     }
     else if (role == Qt::FontRole)
     {
-        return Statics::getOptions()->m_logFont;
+        return Statics::instOptions()->m_logFont;
     }
     return QVariant();
 }
@@ -123,7 +123,7 @@ bool LogViewTableModel::logEntryIsVisible(LogEntryPtr logEntry)
 void LogViewTableModel::append(QVector<LogEntryPtr> logEntries)
 {
     int toBeDeleted = m_logEntries.size() + logEntries.size() -
-            Statics::getOptions()->m_maxRowsInLogModel;
+            Statics::instOptions()->m_maxRowsInLogModel;
 
     if (toBeDeleted > 0)
     {

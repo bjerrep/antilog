@@ -1,9 +1,10 @@
 #include "formatscheme.h"
+#include "formatschememodel.h"
 #include "formatrule.h"
 
 
-FormatScheme::FormatScheme(const QJsonObject& json)
-    : m_tableFormat(json)
+FormatScheme::FormatScheme(const QJsonObject& json, FormatSchemes *parentModel)
+    : m_parent(parentModel)
 {
     if (json.empty())
     {
@@ -17,16 +18,20 @@ FormatScheme::FormatScheme(const QJsonObject& json)
         auto formatEntry = new FormatRule(scheme);
         m_formatRuleList.append(formatEntry);
     }
+    m_schemeColumnModel = new SchemeColumnModel(json);
 }
 
-FormatScheme::FormatScheme(const QString& name)
-    : m_name(name)
+FormatScheme::FormatScheme(const QString& name, FormatSchemes *parentModel)
+    : m_name(name),
+      m_parent(parentModel)
 {
+    m_schemeColumnModel = new SchemeColumnModel();
 }
 
 FormatScheme::~FormatScheme()
 {
     qDeleteAll(m_formatRuleList);
+    delete m_schemeColumnModel;
 }
 
 void FormatScheme::save(QJsonObject& json) const
@@ -40,7 +45,7 @@ void FormatScheme::save(QJsonObject& json) const
     }
     json["setup"] = result;
     json["name"] = m_name;
-    m_tableFormat.save(json);
+    m_schemeColumnModel->save(json);
 }
 
 QString FormatScheme::getName() const
@@ -57,7 +62,7 @@ bool FormatScheme::hasEntry(const QString& id)
 {
     foreach (auto formatRule, m_formatRuleList)
     {
-        if (id == formatRule->getModuleIdScope())
+        if (id == formatRule->getColumnType())
         {
             return true;
         }
@@ -80,18 +85,125 @@ void FormatScheme::deleteFormatRule(FormatRule* formatRule)
     }
 }
 
-LogEntryFormatterPtr FormatScheme::findLogEntryFormatter(const QStringList& logMessages) const
+QString FormatScheme::tableHtml(
+        const QStringList& logCells,
+        const QString& sourceData,
+        const FormatRuleList& formatRuleList,
+        const GlobalColumnTypeList& columnTypeList,
+        const GlobalColumnConfig* tableFormat)
 {
-    foreach (auto formatRule, m_formatRuleList)
+    int cellIndex = 0;
+    QString css;
+    QString html;
+
+    for (auto cell: logCells)
     {
-        auto logEntryFormat = formatRule->match(logMessages, m_name, m_tableFormat.getEnabledColumns());
-        if (logEntryFormat)
-            return logEntryFormat;
+        RuleHits* ruleHits = 0;
+
+        for (auto rule: formatRuleList)
+        {
+            if (rule->getColumnType() == columnTypeList[cellIndex] || rule->getColumnType() == GlobalColumn::ANY)
+            {
+                RuleHit* ruleHit = rule->findLogHit(cell);
+                if (ruleHit)
+                {
+                    if (!ruleHits)
+                    {
+                        ruleHits = new RuleHits();
+                    }
+                    ruleHits->m_ruleHitList.append(ruleHit);
+                }
+            }
+        }
+
+        if (ruleHits)
+        {
+            const int nofHits = ruleHits->m_ruleHitList.size();
+            for (int i = 0; i < nofHits; i++)
+            {
+                const RuleHit* hit = ruleHits->m_ruleHitList[i];
+                const QString& tag = hit->m_rule->getTag();
+                css += hit->m_rule->getCSS(tag);
+                const QString& pre = hit->m_rule->getPreHtml(tag);
+                const QString& post = hit->m_rule->getPostHtml();
+                cell.insert(hit->m_end, post);
+                cell.insert(hit->m_start, pre);
+            }
+        }
+
+        if (logCells.size() == columnTypeList.size())
+        {
+            html += tableFormat->getTableDataHtml(cell, columnTypeList[cellIndex]);
+        }
+        else
+        {
+            html += tableFormat->getTableDataHtml(cell, GlobalColumn::UNKNOWN);
+        }
+        cellIndex++;
     }
-    return LogEntryFormatterPtr();
+
+    if (!css.isEmpty())
+    {
+        css = "<style>" + css + "</style>";
+    }
+    html = "<html>" + css + "<table><tr>" + sourceData + html + "</tr></table></html>";
+    return html;
 }
 
-TableFormat& FormatScheme::getTableFormat()
+QString FormatScheme::tableText(const QStringList &logCells,
+                                const QString &sourceData,
+                                const GlobalColumnTypeList &columnTypeList)
 {
-    return m_tableFormat;
+    QString text;
+    int index = 0;
+
+    for (auto cell: logCells)
+    {
+        GlobalColumn::ColumnType tpe = columnTypeList[index];
+        int width = m_parent->getGlobalColumns()->getTableCellFormatMap()[tpe]->getLength();
+        if (width <= 0)
+            text += cell + " ";
+        else
+            text += cell.leftJustified(width, ' ', true) + " ";
+        index++;
+    }
+    return sourceData + text;
 }
+
+QString FormatScheme::getTableRowHtml(const QStringList& logEntries, QString sourceName)
+{
+    if (!sourceName.isEmpty())
+    {
+        int sourceWidth = Statics::instOptions()->getSourceStringMaxWidth(sourceName.size());
+        sourceName = sourceName.left(sourceWidth);
+        int widthInPixels = Statics::instOptions()->logFontWidth(sourceWidth);
+        sourceName = QString("<td width=%1><b><small>%2</small></b></td>").arg(widthInPixels).arg(sourceName);
+    }
+
+    QString html = tableHtml(logEntries,
+                             sourceName,
+                             m_formatRuleList,
+                             m_schemeColumnModel->getEnabledColumnTypes(),
+                             m_parent->getGlobalColumns());
+    return html;
+}
+
+QString FormatScheme::getTableRowText(const QStringList &logEntries, QString sourceName)
+{
+    if (!sourceName.isEmpty())
+    {
+        int sourceWidth = Statics::instOptions()->getSourceStringMaxWidth(sourceName.size());
+        sourceName = sourceName.left(sourceWidth) + " ";
+    }
+
+    QString text = tableText(logEntries,
+                             sourceName,
+                             m_schemeColumnModel->getEnabledColumnTypes());
+    return text;
+}
+
+SchemeColumnModel& FormatScheme::getColumnSetup()
+{
+    return *m_schemeColumnModel;
+}
+

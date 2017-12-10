@@ -5,6 +5,7 @@
 #include <QDialog>
 
 class QFileSystemWatcher;
+class AntiLog;
 
 namespace Ui {
     class FileSourceDialog;
@@ -15,7 +16,7 @@ class FileSourceDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit FileSourceDialog(FileSource& fileSource, QWidget* parent);
+    explicit FileSourceDialog(FileSource& fileSource, AntiLog* parent);
     ~FileSourceDialog();
 
 private:

@@ -81,18 +81,13 @@ void DirSource::relaunchFileReaderProcess()
         }
         else
         {
-            const int linesToLoad = Statics::getOptions()->m_numberOfLinesToLoad * !m_tailOnly;
+            const int linesToLoad = Statics::instOptions()->m_numberOfBytesToTail * !m_tailOnly;
             m_fileReader = new FileReader(m_filepath, linesToLoad);
         }
 
         connect(m_fileReader, &FileReader::signalNewData,
-                this, &DirSource::slotNewFileReaderData,
-                Qt::QueuedConnection);
-        if (Statics::SystemReady)
-        {
-            m_fileReader->startReader();
-        }
-
+                this, &DirSource::slotNewFileReaderData, Qt::QueuedConnection);
+        m_fileReader->startReader();
     }
     else
     {
@@ -191,7 +186,10 @@ void UDPSource::accept(InputVisitorBase* v)
 
 void UDPSource::openSocket()
 {
-    m_socket = new QUdpSocket(this);
+    if (!m_socket)
+    {
+        m_socket = new QUdpSocket(this);
+    }
     if (m_socket->state() != QUdpSocket::BoundState)
     {
         if (!m_socket->bind(QHostAddress::LocalHost, m_port))

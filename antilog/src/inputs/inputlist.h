@@ -29,7 +29,6 @@ public:
     SourceAndProcessor* getSourceAndProcessor(int index) const;
     QVector<InputItemBase*> getAllSourcesAndProcessors() const;
 
-
 private:
     QList<SourceAndProcessor*> m_sourceAndProcessorList;
     AntiLog* m_app;

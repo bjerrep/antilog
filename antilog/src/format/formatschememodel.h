@@ -5,17 +5,18 @@
 #include <QVector>
 
 class FormatScheme;
+class GlobalColumnConfig;
 
 using FormatSchemeList = QVector<FormatScheme*>;
 
 
 /// Container for available FormatSchemes
 ///
-class FormatSchemeModel
+class FormatSchemes
 {
 public:
-    FormatSchemeModel(const QJsonObject& json);
-    ~FormatSchemeModel();
+    FormatSchemes(const QJsonObject& json, GlobalColumnConfig *columnnLibrary);
+    ~FormatSchemes();
 
     void save(QJsonObject& json) const;
     FormatScheme* getFormatScheme(const QString& name);
@@ -24,13 +25,12 @@ public:
     int getSchemeNameIndex(const QString& name);
     void addScheme(const QString& name);
     void deleteScheme(const QString& name);
-
-public slots:
-    void slotNewLogFont();
+    GlobalColumnConfig* getGlobalColumns();
 
 private:
     void load(const QJsonObject& json);
 
 private:
     FormatSchemeList m_formatSchemeList;
+    GlobalColumnConfig* m_columnLibrary;
 };

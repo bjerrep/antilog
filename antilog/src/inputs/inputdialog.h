@@ -1,12 +1,29 @@
 #pragma once
 
 #include <QDialog>
+#include <QTableView>
 
 namespace Ui { class inputDialog; }
 class InputList;
 class InputTableViewModel;
 class AntiLog;
 class InputItemBase;
+
+
+
+class InputTableView : public QTableView
+{
+public:
+    InputTableView(QWidget* parent);
+
+    void setImageWidths(int width);
+
+    void resizeEvent(QResizeEvent* event);
+
+private:
+    int m_imageWidths = 0;
+};
+
 
 class InputDialog : public QDialog
 {
@@ -26,7 +43,7 @@ public:
 
     int insertInputItemWidget(int row, int column, InputItemBase* inputItem);
     int addImageToTable(int row, int column, QString imageResource);
-    int redrawRow(int rowIndex);
+    void redrawRow(int rowIndex);
     void redrawTable();
     QModelIndex getSelectedModelIndex(int column) const;
 
@@ -44,8 +61,9 @@ private slots:
 
 private:
     Ui::inputDialog* ui;
+    InputTableView* m_tableView;
     InputTableViewModel* m_inputTableViewModel;
     InputList* m_inputList;
-    AntiLog* m_app;
+    AntiLog* m_antiLog;
 };
 

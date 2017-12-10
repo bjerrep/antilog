@@ -3,25 +3,26 @@
 #include "statics.h"
 #include "logseverities.h"
 #include "formatschememodel.h"
-#include "tableformat.h"
+#include "globalcolumnconfig.h"
 #include "formatrule.h"
+#include "schemecolumnmodel.h"
 
 #include <QComboBox>
 #include <QCheckBox>
 
 
-FormatWidget::FormatWidget(FormatRule* formatRule, const TableFormat& tableFormat, QWidget* parent) :
+FormatWidget::FormatWidget(FormatRule* formatRule, const SchemeColumnModel& columnSetup, QWidget* parent) :
     QWidget(parent),
     ui(new Ui::FormatWidget),
     m_formatRule(formatRule)
 {
     ui->setupUi(this);
 
-    auto currentScope = Column::getCellTypeAsString(formatRule->m_columnType);
+    auto currentScope = GlobalColumn::staticGetTypeAsString(formatRule->m_columnType);
     ui->comboBoxSeverity->clear();
     QStringList categories;
-    categories << Column::getCellTypeAsString(Column::ANY);
-    categories << tableFormat.getEnabledColumnsStringList();
+    categories << GlobalColumn::staticGetTypeAsString(GlobalColumn::ANY);
+    categories << columnSetup.getColumnTypeStringlist();
     ui->comboBoxSeverity->addItems(categories);
     ui->comboBoxSeverity->setCurrentText(currentScope);
 
@@ -30,7 +31,7 @@ FormatWidget::FormatWidget(FormatRule* formatRule, const TableFormat& tableForma
     ui->comboBoxOperation->addItems(FormatRule::getMatchingRules());
     ui->comboBoxOperation->setCurrentText(currentOperation);
 
-    ui->comboBoxSearchTerm->setCurrentText(formatRule->searchTerm());
+    ui->comboBoxSearchTerm->setCurrentText(formatRule->getSearchTerm());
 
     const QString& currentColor = formatRule->colorAsString();
     ui->comboBoxColor->clear();
@@ -61,12 +62,6 @@ FormatWidget::~FormatWidget()
 FormatRule* FormatWidget::formatEntry()
 {
     return m_formatRule;
-}
-
-void FormatWidget::on_comboBoxScope_currentTextChanged(const QString &arg1)
-{
-    m_formatRule->m_columnType = Column::getCellTypeFromString(arg1);
-    emit signalFormatRuleChanged();
 }
 
 void FormatWidget::on_comboBoxOperation_currentIndexChanged(const QString &arg1)
@@ -114,5 +109,11 @@ void FormatWidget::on_comboBoxSelection_currentTextChanged(const QString &arg1)
 void FormatWidget::on_checkBoxCase_clicked(bool checked)
 {
     m_formatRule->m_case = checked;
+    emit signalFormatRuleChanged();
+}
+
+void FormatWidget::on_comboBoxSeverity_currentTextChanged(const QString &arg1)
+{
+    m_formatRule->m_columnType = GlobalColumn::staticGetTypeFromString(arg1);
     emit signalFormatRuleChanged();
 }

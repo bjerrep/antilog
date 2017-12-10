@@ -3,6 +3,7 @@
 #include <QDialog>
 
 class PassProcessor;
+class AntiLog;
 
 namespace Ui
 {
@@ -14,7 +15,7 @@ class PassProcessorDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PassProcessorDialog(PassProcessor* passProcessor, QWidget* parent);
+    explicit PassProcessorDialog(PassProcessor* passProcessor, AntiLog* parent);
     ~PassProcessorDialog();
 
     const PassProcessor* processor() const;

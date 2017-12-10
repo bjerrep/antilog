@@ -1,23 +1,21 @@
 #include "options.h"
-#include "columndefinitions.h"
+#include "globalcolumnconfig.h"
 
 #include <QFontMetrics>
 
 Options::Options(const QJsonObject& json)
 {
     load(json);
-    m_columnDefinitions = new ColumnDefinitions(json);
 }
 
 Options::~Options()
 {
-    delete m_columnDefinitions;
 }
 
 void Options::save(QJsonObject& json) const
 {
     QJsonObject opt;
-    opt["numberOfLinesToLoad"] = m_numberOfLinesToLoad;
+    opt["numberOfBytesToTail"] = m_numberOfBytesToTail;
     opt["maxRowsInLogModel"] = m_maxRowsInLogModel;
     opt["logThreshold"] = m_logThreshold;
     opt["logFontFamily"] = m_logFont.family();
@@ -26,8 +24,6 @@ void Options::save(QJsonObject& json) const
     opt["appFontPoint"] = m_appFont.pointSize();
     opt["showsource"] = m_showSource;
     json["options"] = opt;
-
-    m_columnDefinitions->save(json);
 }
 
 void Options::setLogFont(const QString& family, int point)
@@ -47,9 +43,14 @@ int Options::logFontWidth(int length) const
     return logFontMetrics().width(QString(length, '0'));
 }
 
-ColumnDefinitions* Options::getColumnDefinitions() const
+int Options::getSourceStringMaxWidth(int size)
 {
-    return m_columnDefinitions;
+    if (size > m_sourceDataWidth && m_sourceDataWidth < MAX_WIDTH)
+    {
+        m_sourceDataWidth = qMin(size, MAX_WIDTH);
+        emit signalInvalidated();
+    }
+    return m_sourceDataWidth;
 }
 
 void Options::load(const QJsonObject& json)
@@ -58,11 +59,12 @@ void Options::load(const QJsonObject& json)
     {
         m_appFont = QFont("Noto", 9);
         setLogFont("Source Code Pro", 9);
+
         return;
     }
 
     auto opt = json["options"].toObject();
-    m_numberOfLinesToLoad = opt["numberOfLinesToLoad"].toInt();
+    m_numberOfBytesToTail = opt["numberOfBytesToTail"].toInt();
     m_maxRowsInLogModel = opt["maxRowsInLogModel"].toInt();
     m_logThreshold = opt["logThreshold"].toString();
 

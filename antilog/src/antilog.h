@@ -29,6 +29,9 @@ public:
 
     QVector<InputItemBase*> getAllSourcesAndProcessors() const;
 
+    FormatSchemes* getFormatSchemeModel();
+    GlobalColumnConfig* getGlobalColumnConfig();
+
 private:
     void save() const;
     void load();
@@ -50,12 +53,13 @@ private:
     void setupExtendedFilters();
 
 public slots:
-    void slotFormatRuleChanged();
+    void slotRedrawLogView();
     void slotNewLogEntry(InputItemBase* processor, LogEntryPtr logEntry);
     void slotSourceTrafficMonitor(SourceBase*, QString, QString);
 
 private slots:
     void slotShowContextMenu(const QPoint& pos);
+    void slotLogEntryInfo();
     void slotCopyTextToClipboard();
     void slotCopyHtmlToClipboard();
     void slotTableUpdated();
@@ -89,5 +93,6 @@ private:
     int m_modelRowsDeleted = -1;
     int m_firstRowOnDisplay = 0;
     QString m_version;
+    FormatSchemes* m_formatSchemes = nullptr;
 };
 

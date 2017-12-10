@@ -1,5 +1,4 @@
 #include "formatrule.h"
-#include "logentryformatter.h"
 #include "statics.h"
 
 #include <QObject>
@@ -10,7 +9,7 @@ FormatRule::FormatRule(const QJsonObject& json) : QObject()
 {
     if (!json.empty())
     {
-        m_columnType = Column::getCellTypeFromString(json["scope"].toString());
+        m_columnType = GlobalColumn::staticGetTypeFromString(json["scope"].toString());
         setMatchingRuleFromString(json["operation"].toString());
         m_searchTerm = json["searchterm"].toString();
         setColorFromString(json["color"].toString());
@@ -27,19 +26,19 @@ FormatRule::FormatRule(MatchingRule key, const QString& value)
 {
 }
 
-QString FormatRule::searchTerm() const
+QString FormatRule::getSearchTerm() const
 {
     return m_searchTerm;
 }
 
-Column::ColumnType FormatRule::getModuleIdScope() const
+GlobalColumn::ColumnType FormatRule::getColumnType() const
 {
     return m_columnType;
 }
 
 void FormatRule::save(QJsonObject& json) const
 {
-    json["scope"] = Column::getCellTypeAsString(m_columnType);
+    json["scope"] = GlobalColumn::staticGetTypeAsString(m_columnType);
     json["operation"] = matchingRuleAsString();
     json["searchterm"] = m_searchTerm;
     json["color"] = colorAsString();
@@ -91,84 +90,6 @@ FormatRule::FormatArea FormatRule::setFormatAreaFromString(const QString& range)
             static_cast<FormatArea>(Statics::metaIndex(staticMetaObject, "FormatAreaProperty", range));
 }
 
-LogEntryFormatterPtr FormatRule::match(const QStringList& logEntries,
-                                       const QString& formatschemeName,
-                                       const ColumnTypeList& columnTypeList) const
-{
-    QList<int> rowHits;
-
-    int start = 0;
-    int end = columnTypeList.size() - 1;
-
-    // find the column to search in if a specific one is selected
-    if (m_columnType != Column::ANY)
-    {
-        start = end = columnTypeList.indexOf(m_columnType);
-    }
-    end = qMin(end, logEntries.size() - 1);
-
-    const QString& searchTerm = m_case ? m_searchTerm : m_searchTerm.toLower();
-
-    for(int i = start; i <= end; i++)
-    {
-        const QString& logEntry = m_case ? logEntries.at(i) : logEntries.at(i).toLower();
-
-        if (m_matchingRule == MatchingRule::Contains)
-        {
-            if (logEntry.indexOf(searchTerm) >= 0)
-            {
-                rowHits.append(i);
-            }
-        }
-        else // Operation::Equals
-        {
-            if (logEntry == searchTerm)
-            {
-                rowHits.append(i);
-            }
-        }
-    }
-
-    if (rowHits.size() == 0)
-        return LogEntryFormatterPtr();
-
-    LogEntryFormatterPtr logEntryFormatter(new LogEntryFormatter(formatschemeName));
-
-    end = qMin(columnTypeList.size(), logEntries.size());
-
-    for(int i = 0; i < end; i++)
-    {
-        const QString subMessage = logEntries.at(i);
-        LogCellFormatter logCellFormatter(subMessage);
-
-        if (m_formatArea == FormatArea::Word)
-        {
-            logCellFormatter.wordMode(searchTerm, m_case);
-        }
-
-        if (m_formatArea == FormatArea::Line || rowHits.contains(i))
-        {
-            if (m_bold)
-            {
-                logCellFormatter.setBold();
-            }
-            if (m_color != Color::Black)
-            {
-                const QString color = QVariant::fromValue(m_color).toString();
-                logCellFormatter.setColor(color);
-            }
-            if (m_bgcolor != Color::White)
-            {
-                const QString color = QVariant::fromValue(m_bgcolor).toString();
-                logCellFormatter.setBackgroundColor(color);
-            }
-        }
-        logEntryFormatter->addLogCellFormatter(logCellFormatter);
-    }
-
-    return logEntryFormatter;
-}
-
 QStringList FormatRule::getColorList()
 {
     QStringList ret;
@@ -206,3 +127,77 @@ QStringList FormatRule::getFormatAreas(bool multiRow)
     ret << QVariant::fromValue(FormatArea::Line).toString();
     return ret;
 }
+
+RuleHit* FormatRule::findLogHit(const QString &cell)
+{
+    RuleHit* ruleHit = nullptr;
+    const QString& cellTerm = m_case ? cell : cell.toLower();
+    const QString& target = m_case ? m_searchTerm : m_searchTerm.toLower();
+
+    if (m_matchingRule == MatchingRule::Contains)
+    {
+        int index = cell.indexOf(target);
+        if (index >= 0)
+        {
+            switch(m_formatArea)
+            {
+            case FormatArea::Word:
+                ruleHit = new RuleHit(index, index + target.size(), this);
+                break;
+            case FormatArea::Cell:
+                ruleHit = new RuleHit(0, cell.size(), this);
+                break;
+            case FormatArea::Line:
+                ruleHit = new RuleHit(-1, -1, this);
+                break;
+            }
+        }
+    }
+    else // Operation::Equals
+    {
+        if (cellTerm == target)
+        {
+            ruleHit = new RuleHit(-1, -1, this);
+        }
+    }
+    return ruleHit;
+}
+
+QString FormatRule::getTag() const
+{
+    return colorAsString() + bgColorAsString();
+}
+
+QString FormatRule::getCSS(const QString &tag) const
+{
+    QString css;
+
+    if (m_formatArea == FormatArea::Line)
+    {
+        css += "tr";
+    }
+    else
+    {
+        css += "span." + tag;
+    }
+
+    css += "{color: " + colorAsString() +";background-color:" + bgColorAsString() + ";";
+
+    if (m_formatArea == FormatArea::Line)
+    {
+        css += "display: block;";
+    }
+    return css + "}";
+}
+
+QString FormatRule::getPreHtml(const QString &tag) const
+{
+    return "<span class=\"" + tag + "\">";
+}
+
+QString FormatRule::getPostHtml() const
+{
+    return "</span>";
+}
+
+

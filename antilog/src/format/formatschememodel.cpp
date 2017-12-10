@@ -1,32 +1,34 @@
 #include "formatschememodel.h"
 #include "formatscheme.h"
+#include "globalcolumnconfig.h"
 #include "statics.h"
 #include "formatrule.h"
 #include "options.h"
 
-FormatSchemeModel::FormatSchemeModel(const QJsonObject& json)
+FormatSchemes::FormatSchemes(const QJsonObject& json, GlobalColumnConfig* columnnLibrary)
+    : m_columnLibrary(columnnLibrary)
 {
-    m_formatSchemeList.append(new FormatScheme(Statics::NoneScheme));
+    m_formatSchemeList.append(new FormatScheme(Statics::NoneScheme, this));
     load(json);
 }
 
-FormatSchemeModel::~FormatSchemeModel()
+FormatSchemes::~FormatSchemes()
 {
     qDeleteAll(m_formatSchemeList);
 }
 
-void FormatSchemeModel::load(const QJsonObject& json)
+void FormatSchemes::load(const QJsonObject& json)
 {
     auto inputs = json["formatmodel"].toArray();
     foreach (auto input, inputs)
     {
         auto obj = input.toObject();
-        auto formatScheme = new FormatScheme(obj);
+        auto formatScheme = new FormatScheme(obj, this);
         m_formatSchemeList.append(formatScheme);
     }
 }
 
-void FormatSchemeModel::save(QJsonObject& json) const
+void FormatSchemes::save(QJsonObject& json) const
 {
     QJsonArray ret;
     foreach (auto setup, m_formatSchemeList)
@@ -44,7 +46,7 @@ void FormatSchemeModel::save(QJsonObject& json) const
     }
 }
 
-FormatScheme* FormatSchemeModel::getFormatScheme(const QString& name)
+FormatScheme* FormatSchemes::getFormatScheme(const QString& name)
 {
     foreach (auto scheme, m_formatSchemeList)
     {
@@ -54,12 +56,12 @@ FormatScheme* FormatSchemeModel::getFormatScheme(const QString& name)
     return m_formatSchemeList.first();
 }
 
-const FormatSchemeList& FormatSchemeModel::getFormatSchemes() const
+const FormatSchemeList& FormatSchemes::getFormatSchemes() const
 {
     return m_formatSchemeList;
 }
 
-QStringList FormatSchemeModel::getSchemeNames()
+QStringList FormatSchemes::getSchemeNames()
 {
     QStringList names;
     foreach (auto formatScheme, m_formatSchemeList)
@@ -69,7 +71,7 @@ QStringList FormatSchemeModel::getSchemeNames()
     return names;
 }
 
-int FormatSchemeModel::getSchemeNameIndex(const QString& name)
+int FormatSchemes::getSchemeNameIndex(const QString& name)
 {
     for(int i = 0; i < m_formatSchemeList.size(); i++)
     {
@@ -81,12 +83,12 @@ int FormatSchemeModel::getSchemeNameIndex(const QString& name)
     return -1;
 }
 
-void FormatSchemeModel::addScheme(const QString& name)
+void FormatSchemes::addScheme(const QString& name)
 {
-    m_formatSchemeList.append(new FormatScheme(name));
+    m_formatSchemeList.append(new FormatScheme(name, this));
 }
 
-void FormatSchemeModel::deleteScheme(const QString& name)
+void FormatSchemes::deleteScheme(const QString& name)
 {
     if (name == Statics::NoneScheme)
     {
@@ -100,10 +102,7 @@ void FormatSchemeModel::deleteScheme(const QString& name)
     }
 }
 
-void FormatSchemeModel::slotNewLogFont()
+GlobalColumnConfig *FormatSchemes::getGlobalColumns()
 {
-    foreach(auto scheme, m_formatSchemeList)
-    {
-        scheme->getTableFormat().recalculate(Statics::getOptions()->logFontMetrics());
-    }
+    return m_columnLibrary;
 }

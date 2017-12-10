@@ -1,15 +1,38 @@
 #pragma once
 
-#include "logentryformatter.h"
 #include "statics.h"
+#include "schemecolumn.h"
 
 #include <QObject>
 
+class FormatRule;
 
-/// The FormatRule objects are configured by FormatWidgets in the FormatDialog.
+class RuleHit
+{
+public:
+    RuleHit(int start, int end, FormatRule* rule)
+        : m_start(start),
+          m_end(end),
+          m_rule(rule)
+    {}
+
+    int m_start;
+    int m_end;
+    FormatRule* m_rule;
+};
+
+using RuleHitList = QVector<RuleHit*>;
+
+class RuleHits
+{
+public:
+    RuleHitList m_ruleHitList;
+};
+
+
+/// A FormatRule knows how to generate a RuleHits object for a text and how to html format it afterwards.
+/// FormatRules are configured by FormatWidgets in the FormatDialog.
 /// A FormatRule is owned by a FormatScheme which has a list of FormatRules.
-/// It is the FormatRule that constructs LogEntryFormatter objects which can be part
-/// of the LogEntry objects.
 ///
 class FormatRule : public QObject
 {
@@ -57,17 +80,20 @@ public:
     MatchingRule setMatchingRuleFromString(const QString& operation);
     FormatArea setFormatAreaFromString(const QString& range);
 
-    QString searchTerm() const;
-    Column::ColumnType getModuleIdScope() const;
-    LogEntryFormatterPtr match(const QStringList& logEntries,
-                               const QString& formatschemeName,
-                               const ColumnTypeList& columnTypeList) const;
+    QString getSearchTerm() const;
+    GlobalColumn::ColumnType getColumnType() const;
     static QStringList getColorList();
     static QStringList getMatchingRules();
     static QStringList getFormatAreas(bool multiRow);
 
+    RuleHit* findLogHit(const QString& cell);
+    QString getTag() const;
+    QString getCSS(const QString& tag) const;
+    QString getPreHtml(const QString& tag) const;
+    QString getPostHtml() const;
+
 private:
-    Column::ColumnType m_columnType = Column::ANY;
+    GlobalColumn::ColumnType m_columnType = GlobalColumn::ANY;
     MatchingRule m_matchingRule = MatchingRule::Contains;
     QString m_searchTerm = "undefined";
     Color m_color = Color::Black;
@@ -84,3 +110,4 @@ private:
     friend class FormatWidget;
 };
 
+using FormatRuleList = QVector<FormatRule*>;

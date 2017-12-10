@@ -9,7 +9,9 @@ InputItemBase::InputItemBase(const QString& type, const QJsonObject& json)
     : m_className(type)
 {
     if (json.empty())
+    {
         return;
+    }
     m_name = json[Statics::Name].toString();
     m_description = json[Statics::Description].toString();
 }
@@ -52,7 +54,7 @@ void InputItemBase::save(QJsonObject& json) const
 
 QString InputItemBase::makeNameUnique(const QString& name) const
 {
-    auto itemBases = Statics::s_antiLog->getAllSourcesAndProcessors();
+    auto itemBases = Statics::instAntiLog()->getAllSourcesAndProcessors();
     bool success;
 
     for (int i = 1; i < 10; i++)
@@ -126,7 +128,7 @@ ProcessorBase::~ProcessorBase()
 
 void ProcessorBase::setSchemeFromName(const QString& scheme)
 {
-    m_formatScheme = Statics::s_formatSchemeModel->getFormatScheme(scheme);
+    m_formatScheme = Statics::instAntiLog()->getFormatSchemeModel()->getFormatScheme(scheme);
 }
 
 FormatScheme* ProcessorBase::getScheme() const

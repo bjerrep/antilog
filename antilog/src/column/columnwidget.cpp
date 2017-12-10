@@ -1,6 +1,7 @@
 #include "columnwidget.h"
 #include "ui_columnwidget.h"
-#include "columndefinitions.h"
+#include "globalcolumn.h"
+
 
 ColumnWidget::ColumnWidget(const QStringList& columnTypes, QWidget *parent)
     : QWidget(parent),
@@ -14,7 +15,7 @@ ColumnWidget::ColumnWidget(const QStringList& columnTypes, QWidget *parent)
     blockSignals(false);
 }
 
-ColumnWidget::ColumnWidget(const Column* column,
+ColumnWidget::ColumnWidget(const GlobalColumn* columnFormat,
                            const QStringList& columnTypes,
                            QWidget *parent)
     : QWidget(parent),
@@ -22,11 +23,11 @@ ColumnWidget::ColumnWidget(const Column* column,
 {
     ui->setupUi(this);
     blockSignals(true);
-    ui->lineEdit_name->setText(column->getName());
+    ui->lineEdit_name->setText(columnFormat->getName());
     ui->comboBox_type->addItems(columnTypes);
-    ui->comboBox_type->setCurrentText(column->getCellTypeAsString());
-    ui->checkBox_enable->setChecked(column->isEnabled());
-    m_uid = column->getUid();
+    ui->comboBox_type->setCurrentText(columnFormat->getTypeAsString());
+    ui->checkBox_enable->setChecked(columnFormat->isEnabled());
+    columnFormat->save(m_json);
     blockSignals(false);
 }
 
@@ -40,17 +41,16 @@ int ColumnWidget::getHeight() const
     return ui->lineEdit_name->height();
 }
 
-Column* ColumnWidget::getColumn() const
+GlobalColumn *ColumnWidget::getColumn() const
 {
-    auto column = new Column(ui->comboBox_type->currentText(),
-                      ui->lineEdit_name->text(),
-                      ui->checkBox_enable->checkState() == Qt::Checked,
-                      m_uid);
     if (m_deleted)
     {
-        column->setDeleted();
+        return nullptr;
     };
-    return column;
+    auto columnFormat = new GlobalColumn(m_json);
+    columnFormat->setName(ui->lineEdit_name->text());
+    columnFormat->setTypeFromString(ui->comboBox_type->currentText());
+    return columnFormat;
 }
 
 void ColumnWidget::on_pushButton_delete_clicked()

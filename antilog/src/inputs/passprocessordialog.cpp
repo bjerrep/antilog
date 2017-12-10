@@ -5,8 +5,9 @@
 #include "inputprocessors.h"
 #include "formatscheme.h"
 #include "formatschememodel.h"
+#include "antilog.h"
 
-PassProcessorDialog::PassProcessorDialog(PassProcessor* passProcessor, QWidget* parent) :
+PassProcessorDialog::PassProcessorDialog(PassProcessor* passProcessor, AntiLog* parent) :
     QDialog(parent),
     ui(new Ui::PassProcessorDialog),
     m_passProcessor(passProcessor)
@@ -17,7 +18,7 @@ PassProcessorDialog::PassProcessorDialog(PassProcessor* passProcessor, QWidget* 
     ui->name->setText(passProcessor->getName());
 
     QString scheme = passProcessor->getScheme()->getName();
-    ui->comboBoxFormat->addItems(Statics::s_formatSchemeModel->getSchemeNames());
+    ui->comboBoxFormat->addItems(Statics::instAntiLog()->getFormatSchemeModel()->getSchemeNames());
     ui->comboBoxFormat->setCurrentText(scheme);
 
     setModal(true);

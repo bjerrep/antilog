@@ -6,10 +6,11 @@
 
 class QWidget;
 class LogFormatModel;
-class FormatSchemeModel;
+class FormatSchemes;
 class LogSeverityCategories;
-struct Options;
+class Options;
 class AntiLog;
+class GlobalColumnConfig;
 
 namespace Statics
 {
@@ -33,7 +34,7 @@ namespace Statics
     extern const QString& Inputs;
     extern const QString& TailOnly;
 
-    extern const QString& DefaultDateName; // remove - only used for default init
+    extern const QString& DefaultDateName;
     extern const QString& DefaultTimeName;
     extern const QString& DefaultSeverityName;
     extern const QString& DefaultModuleIdName;
@@ -54,12 +55,15 @@ namespace Statics
 
     extern const QString& AntiLogMessage;
 
-    extern FormatSchemeModel* s_formatSchemeModel;
-    extern LogSeverityCategories* s_logSeverities;
+    GlobalColumnConfig* instColumnLibrary();
+    Options* instOptions();
+    AntiLog* instAntiLog();
+
+    extern GlobalColumnConfig* m_globalColumnConfig;
     extern Options* s_options;
     extern AntiLog* s_antiLog;
 
-    Options* getOptions();
+    extern LogSeverityCategories* s_logSeverities;
 
     int widgetIcon(const QString& resourceImage, QWidget* widget, int height = Statics::InputIconHeight);
     QPixmap pixmapIcon(const QString& resourceImage, int height = Statics::InputIconHeight);

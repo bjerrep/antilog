@@ -4,6 +4,8 @@
 
 class UDPSource;
 
+class AntiLog;
+
 namespace Ui
 {
 class UdpSourceDialog;
@@ -14,7 +16,7 @@ class UdpSourceDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit UdpSourceDialog(UDPSource* udpSource, QWidget* parent);
+    explicit UdpSourceDialog(UDPSource* udpSource, AntiLog* parent);
     ~UdpSourceDialog();
 
 private slots:

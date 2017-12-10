@@ -1,8 +1,10 @@
 #pragma once
 
-#include "columndefinitions.h"
-
 #include <QWidget>
+#include <QJsonObject>
+
+class GlobalColumn;
+
 
 namespace Ui {
 class ColumnWidget;
@@ -15,13 +17,14 @@ class ColumnWidget : public QWidget
 public:
     ColumnWidget(const QStringList& columnTypes,
                  QWidget *parent);
-    ColumnWidget(const Column* column,
+
+    ColumnWidget(const GlobalColumn* column,
                  const QStringList& columnTypes,
                  QWidget *parent);
     ~ColumnWidget();
 
     int getHeight() const;
-    Column* getColumn() const;
+    GlobalColumn* getColumn() const;
 
 signals:
     void signalColumnWidgetDeleted();
@@ -32,5 +35,5 @@ private slots:
 private:
     Ui::ColumnWidget *ui;
     bool m_deleted = false;
-    int m_uid = -1;
+    QJsonObject m_json;
 };

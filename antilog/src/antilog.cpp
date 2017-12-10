@@ -19,6 +19,7 @@
 #include <QTableView>
 #include <QProgressBar>
 #include <QKeyEvent>
+#include <QMessageBox>
 
 AntiLog::AntiLog(QWidget* parent) :
     QWidget(parent),
@@ -28,7 +29,7 @@ AntiLog::AntiLog(QWidget* parent) :
     ui->setupUi(this);
     load();
 
-    setFont(Statics::s_options->m_appFont);
+    setFont(Statics::instOptions()->m_appFont);
     m_logViewTableModel = new LogViewTableModel(this, m_extendedFilterModel);
     connect(m_logViewTableModel, &LogViewTableModel::newEntriesAdded,
             this, &AntiLog::slotTableUpdated);
@@ -40,7 +41,7 @@ AntiLog::AntiLog(QWidget* parent) :
             this, &AntiLog::slotLogViewSliderChanged);
 
     ui->tableView->verticalHeader()->setDefaultSectionSize(
-                Statics::s_options->m_logFontHeight + Statics::LogViewMargin);
+                Statics::instOptions()->m_logFontHeight + Statics::LogViewMargin);
     ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -48,9 +49,9 @@ AntiLog::AntiLog(QWidget* parent) :
             this, &AntiLog::slotShowContextMenu);
 
     ui->checkBoxScroll->setChecked(m_scrollToBottom);
-    ui->checkBoxShowSource->setChecked(Statics::s_options->m_showSource);
+    ui->checkBoxShowSource->setChecked(Statics::instOptions()->m_showSource);
 
-    QString currentLogSeverity = Statics::s_options->m_logThreshold;
+    QString currentLogSeverity = Statics::instOptions()->m_logThreshold;
     ui->comboBoxLogThreshold->clear();
     ui->comboBoxLogThreshold->addItems(Statics::s_logSeverities->getCategoryNames());
     ui->comboBoxLogThreshold->setCurrentText(currentLogSeverity);
@@ -66,21 +67,23 @@ AntiLog::~AntiLog()
     delete ui;
     delete m_extendedFilterModel;
 
-    delete Statics::s_options;
-    delete Statics::s_formatSchemeModel;
+    delete Statics::instOptions();
+    delete m_formatSchemes;
     delete Statics::s_logSeverities;
+    delete Statics::m_globalColumnConfig;
 }
 
 void AntiLog::save() const
 {
     QJsonObject json;
     m_inputList.save(json);
-    Statics::s_formatSchemeModel->save(json);
+    m_formatSchemes->save(json);
     Statics::s_logSeverities->save(json);
-    Statics::s_options->save(json);
+    Statics::instOptions()->save(json);
     m_extendedFilterModel->save(json);
 
     json["useextendedfilters"] = ui->checkBoxUseFilters->isChecked();
+    Statics::instColumnLibrary()->save(json);
     json["width"] = geometry().width();
     json["height"] = geometry().height();
     json["x"] = geometry().topLeft().x();
@@ -106,8 +109,14 @@ void AntiLog::load()
     auto json = doc.object();
 
     Statics::s_antiLog = this;
+
     Statics::s_options = new Options(json);
-    Statics::s_formatSchemeModel = new FormatSchemeModel(json);
+    Statics::m_globalColumnConfig = new GlobalColumnConfig(json);
+    connect(Statics::instOptions(), &Options::signalInvalidated,
+            this, &AntiLog::slotRedrawLogView,
+            Qt::QueuedConnection);
+
+    m_formatSchemes = new FormatSchemes(json, Statics::instColumnLibrary());
     Statics::s_logSeverities = new LogSeverityCategories(json);
     m_extendedFilterModel = new ExtendedFilterModel(json);
     connect(m_extendedFilterModel, &ExtendedFilterModel::signalExtendedFiltersModified,
@@ -130,6 +139,16 @@ void AntiLog::load()
 QVector<InputItemBase*> AntiLog::getAllSourcesAndProcessors() const
 {
     return m_inputList.getAllSourcesAndProcessors();
+}
+
+FormatSchemes* AntiLog::getFormatSchemeModel()
+{
+    return m_formatSchemes;
+}
+
+GlobalColumnConfig *AntiLog::getGlobalColumnConfig()
+{
+    return Statics::m_globalColumnConfig;
 }
 
 QString AntiLog::getConfigFilePath()
@@ -317,9 +336,20 @@ void AntiLog::slotShowContextMenu(const QPoint& pos)
     auto globalPos = ui->tableView->mapToGlobal(pos);
     QMenu contextMenu;
     contextMenu.addSection("Copy selection");
+    contextMenu.addAction("Info about this entry", this, &AntiLog::slotLogEntryInfo);
     contextMenu.addAction("As text", this, &AntiLog::slotCopyTextToClipboard);
     contextMenu.addAction("As html", this, &AntiLog::slotCopyHtmlToClipboard);
     contextMenu.exec(globalPos);
+}
+
+void AntiLog::slotLogEntryInfo()
+{
+    int index = ui->tableView->selectionModel()->currentIndex().row();
+    auto logEntryPtr = static_cast<LogEntryPtr>(ui->tableView->model()->index(index, 0).data().value<LogEntryPtr>());
+
+    QMessageBox::information(this, "Logentry",
+                             logEntryPtr->toString(),
+                             QMessageBox::Ok);
 }
 
 void AntiLog::slotCopyTextToClipboard()
@@ -388,22 +418,22 @@ void AntiLog::deleteSelection()
 
 void AntiLog::on_setupButton_clicked()
 {
-    OptionsDialog optionsDialog(*Statics::s_options, this);
+    OptionsDialog optionsDialog(*Statics::s_options, this, Statics::instColumnLibrary());
     optionsDialog.exec();
 }
 
 void AntiLog::on_pushButtonFormat_clicked()
 {
-    QString schemeToLoad = Statics::s_formatSchemeModel->getSchemeNames().back();
+    QString schemeToLoad = m_formatSchemes->getSchemeNames().back();
     FormatDialog formatDialog(schemeToLoad, this, &m_inputList);
 
     connect(&formatDialog, &FormatDialog::signalFormatRuleChanged,
-            this, &AntiLog::slotFormatRuleChanged);
+            this, &AntiLog::slotRedrawLogView);
 
     formatDialog.exec();
 }
 
-void AntiLog::slotFormatRuleChanged()
+void AntiLog::slotRedrawLogView()
 {
     m_logViewTableModel->redrawVisibleRows();
 }

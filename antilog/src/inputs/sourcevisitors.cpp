@@ -146,31 +146,32 @@ void GetInputDialogWidget::visit(RegexProcessor* regexProcessor)
 
 // ------ GetDialog -------
 
-GetDialog::GetDialog()
+GetDialog::GetDialog(AntiLog* antiLog)
+    : m_antiLog(antiLog)
 {
 }
 
 void GetDialog::visit(FileSource* visitor)
 {
-    FileSourceDialog temp(*visitor, this);
+    FileSourceDialog temp(*visitor, m_antiLog);
 }
 
 void GetDialog::visit(DirSource* visitor)
 {
-    DirSourceDialog temp(*visitor, this);
+    DirSourceDialog temp(*visitor, m_antiLog);
 }
 
 void GetDialog::visit(UDPSource* visitor)
 {
-    UdpSourceDialog temp(visitor, this);
+    UdpSourceDialog temp(visitor, m_antiLog);
 }
 
 void GetDialog::visit(PassProcessor* visitor)
 {
-    PassProcessorDialog temp(visitor, this);
+    PassProcessorDialog temp(visitor, m_antiLog);
 }
 
 void GetDialog::visit(RegexProcessor* visitor)
 {
-    RegexProcessorDialog temp(visitor, this);
+    RegexProcessorDialog temp(visitor, m_antiLog);
 }

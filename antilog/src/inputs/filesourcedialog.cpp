@@ -1,13 +1,14 @@
 #include "filesourcedialog.h"
 #include "ui_filesourcedialog.h"
 #include "filereader.h"
+#include "antilog.h"
 
 #include <QFileDialog>
 #include <QRadioButton>
 #include <QFileSystemWatcher>
 
 
-FileSourceDialog::FileSourceDialog(FileSource& fileSource, QWidget* parent) :
+FileSourceDialog::FileSourceDialog(FileSource& fileSource, AntiLog *parent) :
     QDialog(parent),
     ui(new Ui::FileSourceDialog),
     m_fileSource(fileSource)

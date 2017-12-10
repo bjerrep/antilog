@@ -1,8 +1,6 @@
 #include "logentry.h"
 #include "logseverities.h"
-#include "logentryformatter.h"
 #include "formatscheme.h"
-#include "tableformat.h"
 #include "options.h"
 #include "statics.h"
 
@@ -10,55 +8,30 @@
 #include <QSharedPointer>
 #include <QTextDocument>
 
-const int MAX_SOURCENAME_WIDTH(17);
-
-// ------ LogCell -------
-
-LogCell::LogCell()
-    : m_text(QString())
-{
-}
-
-LogCell::LogCell(Column::ColumnType key, const QString& text)
-    : m_key(key),
-      m_text(text)
-{
-}
-
-// ------ LogEntry -------
 
 int LogEntry::s_staticSerial = 0;
-int LogEntry::s_sourceFieldWidth = 0;
 
-LogEntry::LogEntry(const QString& message, const QString& sourceName, FormatScheme* formatScheme)
+LogEntry::LogEntry(const QString& cell, const QString& sourceName, FormatScheme* formatScheme)
     : m_formatScheme(formatScheme),
-      m_sourceName(sourceName)
+      m_sourceName(sourceName),
+      m_cells(cell)
 {
-    m_logCells.append(LogCell(Column::TEXT, message));
 }
 
-LogEntry::LogEntry(const QStringList& texts, const QString& sourceName, FormatScheme* formatScheme)
+LogEntry::LogEntry(const QStringList& cells, const QString& sourceName, FormatScheme* formatScheme)
     : m_formatScheme(formatScheme),
-      m_sourceName(sourceName)
+      m_sourceName(sourceName),
+      m_cells(cells)
 {
-    ColumnTypeList rows = formatScheme->getTableFormat().getEnabledColumns();
-
-    int loops = qMin(texts.size(), rows.size());
-
-    for (int i = 0; i < loops; i++)
+    int logSeverityIndex = formatScheme->getColumnSetup().getLogSeverityIndex();
+    if (logSeverityIndex >= 0 && logSeverityIndex < cells.count())
     {
-        m_logCells.append(LogCell(rows.at(i), texts.at(i)));
-    }
-    int logSeverityIndex = formatScheme->getTableFormat().getLogSeverityIndex();
-    if (logSeverityIndex >= 0 && logSeverityIndex < texts.count())
-    {
-        determineLogSeverity(texts.at(logSeverityIndex));
+        determineLogSeverity(cells.at(logSeverityIndex));
     }
 }
 
 LogEntry::~LogEntry()
 {
-    s_sourceFieldWidth = 0;
 }
 
 void LogEntry::determineLogSeverity(QString logSeverityString)
@@ -74,9 +47,9 @@ bool LogEntry::isInScope(const QString& severity, const QString& textFilter) con
 
     if (active && textFilter != Statics::LogSeverityFilterOff)
     {
-        foreach (auto&& logCell, m_logCells)
+        foreach (const QString& cell, m_cells)
         {
-            if (logCell.m_text.contains(textFilter))
+            if (cell.contains(textFilter))
             {
                 return true;
             }
@@ -84,16 +57,6 @@ bool LogEntry::isInScope(const QString& severity, const QString& textFilter) con
         return false;
     }
     return active;
-}
-
-QStringList LogEntry::getEntriesList() const
-{
-    QStringList ret;
-    foreach (auto logCell, m_logCells)
-    {
-        ret << logCell.m_text;
-    }
-    return ret;
 }
 
 int LogEntry::getWidth() const
@@ -113,30 +76,10 @@ QString LogEntry::getHtml() const
         return m_htmlCached;
     }
 
-    QStringList subMessages = getEntriesList();
-    QString css;
-    LogEntryFormatterPtr logEntryFormatter = m_formatScheme->findLogEntryFormatter(subMessages);
-
-    if (logEntryFormatter)
-    {
-        subMessages = logEntryFormatter->textsAsHtml(subMessages);
-        css = logEntryFormatter->getStylesheets();
-    }
-
-    QString source;
-    if (Statics::getOptions()->m_showSource)
-    {
-        auto sourceName = m_sourceName.left(MAX_SOURCENAME_WIDTH);
-        const int sourceLength = sourceName.size();
-        if (sourceLength > s_sourceFieldWidth)
-        {
-            s_sourceFieldWidth = sourceLength;
-        }
-        int widthInPixels = Statics::getOptions()->logFontWidth(s_sourceFieldWidth + Statics::getOptions()->m_logViewSpacing);
-        source = QString("<td width=%1><b><small>%2</small></b></td>").arg(widthInPixels).arg(sourceName);
-    }
-    QString html = source + m_formatScheme->getTableFormat().getEntryCellsAsHtml(subMessages);
-    m_htmlCached = "<html>" + css + "<table><tr>" + html + "</tr></table></html>";
+    if (Statics::instOptions()->m_showSource)
+        m_htmlCached = m_formatScheme->getTableRowHtml(m_cells, m_sourceName);
+    else
+        m_htmlCached = m_formatScheme->getTableRowHtml(m_cells);
 
     QTextDocument doc;
     doc.setHtml(m_htmlCached);
@@ -146,12 +89,10 @@ QString LogEntry::getHtml() const
 
 QString LogEntry::getText() const
 {
-    QString source;
-    if (Statics::getOptions()->m_showSource)
-    {
-        source = m_sourceName.left(s_sourceFieldWidth).leftJustified(s_sourceFieldWidth, ' ') + " - ";
-    }
-    return source + m_formatScheme->getTableFormat().getEntryCellsAsText(getEntriesList());
+    if (Statics::instOptions()->m_showSource)
+        return m_formatScheme->getTableRowText(m_cells, m_sourceName);
+    else
+        return m_formatScheme->getTableRowText(m_cells);
 }
 
 QString LogEntry::getSourceName() const
@@ -161,14 +102,22 @@ QString LogEntry::getSourceName() const
 
 QString LogEntry::getModuleName() const
 {
-    foreach (auto logCell, m_logCells)
+    int index = m_formatScheme->getColumnSetup().getModuleIdIndex();
+
+    if (index != SchemeColumnModel::IndexNotFound && index < m_cells.size())
     {
-        if (logCell.m_key == Column::MODULEID)
-        {
-            return logCell.m_text;
-        }
+        return m_cells[index];
     }
-    return QString();
+
+    return "N/A";
+}
+
+QString LogEntry::toString() const
+{
+    return
+            "Module: " + getModuleName() + "\n" +
+            "Source: " + getSourceName() + "\n" +
+            "FormatScheme: " + m_formatScheme->getName();
 }
 
 void LogEntry::invalidateCachedHtml() const

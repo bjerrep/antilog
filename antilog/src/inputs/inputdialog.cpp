@@ -9,12 +9,39 @@
 
 #include <QScrollBar>
 #include <QMenu>
+#include <QTableView>
 
 
-InputDialog::InputDialog(InputList* inputList, AntiLog* ulw) :
-    QDialog(ulw),
+InputTableView::InputTableView(QWidget *parent) : QTableView(parent)
+{
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionMode(QAbstractItemView::SingleSelection);
+
+    horizontalHeader()->hide();
+    verticalHeader()->hide();
+}
+
+void InputTableView::setImageWidths(int width)
+{
+    m_imageWidths = width;
+}
+
+void InputTableView::resizeEvent(QResizeEvent *event)
+{
+    int width = (event->size().width() - 2 * m_imageWidths) / 2;
+    setColumnWidth(0, width);
+    setColumnWidth(1, m_imageWidths);
+    setColumnWidth(2, width);
+    setColumnWidth(3, m_imageWidths);
+    QTableView::resizeEvent(event);
+}
+
+
+
+InputDialog::InputDialog(InputList* inputList, AntiLog* antiLog) :
+    QDialog(antiLog),
     ui(new Ui::inputDialog),
-    m_app(ulw)
+    m_antiLog(antiLog)
 {
     setObjectName("Input configuration");
     setAttribute( Qt::WA_DeleteOnClose );
@@ -22,22 +49,23 @@ InputDialog::InputDialog(InputList* inputList, AntiLog* ulw) :
 
     m_inputList = inputList;
 
-    m_inputTableViewModel = new InputTableViewModel(inputList, ulw);
-    ui->tableView->setModel(m_inputTableViewModel);
-
-    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_inputTableViewModel = new InputTableViewModel(inputList, antiLog);
+    m_tableView = new InputTableView(this);
+    ui->verticalLayout->insertWidget(0, m_tableView);
+    m_tableView->setModel(m_inputTableViewModel);
 
     redrawTable();
 
+    connect(m_tableView, &InputTableView::doubleClicked, this, &InputDialog::on_tableView_doubleClicked);
+
     // vertical size
-    ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-    ui->tableView->verticalHeader()->setDefaultSectionSize(
+    m_tableView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    m_tableView->verticalHeader()->setDefaultSectionSize(
                 Statics::InputIconHeight +
                 2 * Statics::InputIconVerticalMargin);
 
-    ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotShowContextMenu(QPoint)));
+    m_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotShowContextMenu(QPoint)));
 }
 
 InputDialog::~InputDialog()
@@ -51,9 +79,8 @@ int InputDialog::insertInputItemWidget(int row, int column, InputItemBase* input
     auto index = m_inputTableViewModel->index(row, column);
     auto* getWidget = new GetInputDialogWidget();
     inputItem->accept(getWidget);
-    ui->tableView->setIndexWidget(index, getWidget);
+    m_tableView->setIndexWidget(index, getWidget);
     int width = getWidget->width();
-    ui->tableView->setColumnWidth(column, width);
     return width;
 }
 
@@ -64,58 +91,51 @@ int InputDialog::addImageToTable(int row, int column, QString imageResource)
     label->setAlignment(Qt::AlignCenter);
     label->setPixmap(Statics::pixmapIcon(imageResource));
     int width = label->pixmap()->width() + 10;
-    ui->tableView->setIndexWidget(index, label);
-    ui->tableView->setColumnWidth(column, width);
+    m_tableView->setIndexWidget(index, label);
     return width;
 }
 
-int InputDialog::redrawRow(int row)
+void InputDialog::redrawRow(int row)
 {
-    int widthSum = 0;
+    insertInputItemWidget(row,
+                          Column::Source,
+                          m_inputList->getSourceAndProcessor(row)->getSourceEntry());
 
-    widthSum += insertInputItemWidget(row,
-                                      Column::Source,
-                                      m_inputList->getSourceAndProcessor(row)->getSourceEntry());
+    addImageToTable(row, Column::Arrow, ":/artwork/artwork/arrow.svg");
 
-    widthSum += addImageToTable(row, Column::Arrow, ":/artwork/artwork/arrow.svg");
-
-    widthSum += insertInputItemWidget(row,
-                                      Column::Processor,
-                                      m_inputList->getSourceAndProcessor(row)->getProcessorEntry());
+    insertInputItemWidget(row,
+                          Column::Processor,
+                          m_inputList->getSourceAndProcessor(row)->getProcessorEntry());
 
     bool isOn = m_inputList->getSourceAndProcessor(row)->isOn();
 
-    widthSum += addImageToTable(row, Column::Enable, isOn ?
+    int width = addImageToTable(row, Column::Enable, isOn ?
                                     ":/artwork/artwork/on.svg" :
                                     ":/artwork/artwork/off.svg");
+
+    m_tableView->setImageWidths(width);
 
     for(int i = 0; i < m_inputTableViewModel->columnCount(); i++)
     {
         QModelIndex index = m_inputTableViewModel->index(row, i);
-        ui->tableView->indexWidget(index)->setEnabled(isOn);
+        m_tableView->indexWidget(index)->setEnabled(isOn);
     }
-
-    widthSum += ui->tableView->verticalScrollBar()->width();
-
-    return widthSum;
+    QResizeEvent firstEntryFailsRedraw = QResizeEvent(m_tableView->size(), m_tableView->size());
+    m_tableView->resizeEvent(&firstEntryFailsRedraw);
 }
 
 void InputDialog::redrawTable()
 {
-    int width = 0;
-
     for(int i = 0; i < m_inputList->count(); i++)
     {
-        width = redrawRow(i);
+        redrawRow(i);
     }
-
-    ui->tableView->setMinimumWidth(width + 4); // + 1 per row
     m_inputTableViewModel->layoutChanged();
 }
 
 void InputDialog::slotShowContextMenu(const QPoint& pos)
 {
-    auto globalPos = ui->tableView->mapToGlobal(pos);
+    auto globalPos = m_tableView->mapToGlobal(pos);
     QMenu contextMenu;
     contextMenu.addAction("Delete", this, SLOT(slotDeleteInput()));
     contextMenu.addAction("Source type", this, SLOT(slotChangeSource()));
@@ -127,7 +147,7 @@ void InputDialog::slotShowContextMenu(const QPoint& pos)
 
 QModelIndex InputDialog::getSelectedModelIndex(int column) const
 {
-    auto rows = ui->tableView->selectionModel()->selectedRows();
+    auto rows = m_tableView->selectionModel()->selectedRows();
     return m_inputTableViewModel->index(rows[0].row(), column);
 }
 
@@ -166,14 +186,14 @@ void InputDialog::on_tableView_doubleClicked(const QModelIndex& index )
     case Column::Source:
     {
         auto* sourceEntry = m_inputList->getSourceAndProcessor(index.row())->getSourceEntry();
-        GetDialog getDialog;
+        GetDialog getDialog(m_antiLog);
         sourceEntry->accept(&getDialog);
         break;
     }
     case Column::Processor:
     {
         auto* sourceEntry = m_inputList->getSourceAndProcessor(index.row())->getProcessorEntry();
-        GetDialog getDialog;
+        GetDialog getDialog(m_antiLog);
         sourceEntry->accept(&getDialog);
         break;
     }
@@ -202,7 +222,7 @@ void InputDialog::on_pushButtonNewInput_clicked()
 
         auto sap = new SourceAndProcessor(sources.takeAt(sourceRow), processors.takeAt(processorRow));
         m_inputTableViewModel->append(sap);
-        ui->tableView->selectRow(m_inputTableViewModel->rowCount() - 1);
+        m_tableView->selectRow(m_inputTableViewModel->rowCount() - 1);
 
         redrawTable();
     }
@@ -215,3 +235,4 @@ void InputDialog::on_pushButtonClose_clicked()
     close();
     setResult(QDialog::Accepted);
 }
+

@@ -3,7 +3,7 @@
 #include <QDialog>
 
 class ColumnWidget;
-class ColumnDefinitions;
+class GlobalColumnConfig;
 
 namespace Ui {
 class ColumnDialog;
@@ -14,7 +14,7 @@ class ColumnDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ColumnDialog(ColumnDefinitions* columnDefinitions, QWidget *parent = 0);
+    explicit ColumnDialog(GlobalColumnConfig* columnTableFormat, QWidget *parent = 0);
     ~ColumnDialog();
 
 private:
@@ -25,12 +25,10 @@ private:
 private slots:
     void slotColumnWidgetDeleted();
     void on_pushButton_ok_clicked();
-
     void on_pushButton_new_clicked();
-
     void on_pushButton_reset_clicked();
 
 private:
     Ui::ColumnDialog *ui;
-    ColumnDefinitions* m_columnDefinitions;
+    GlobalColumnConfig* m_globalColumnConfig;
 };

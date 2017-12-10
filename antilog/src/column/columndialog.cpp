@@ -1,15 +1,14 @@
 #include "columndialog.h"
 #include "ui_columndialog.h"
 #include "columnwidget.h"
-#include "columndefinitions.h"
+#include "schemecolumn.h"
 
-ColumnDialog::ColumnDialog(ColumnDefinitions *columnDefinitions, QWidget *parent)
+ColumnDialog::ColumnDialog(GlobalColumnConfig* columnTableFormat, QWidget *parent)
     : QDialog(parent),
       ui(new Ui::ColumnDialog),
-      m_columnDefinitions(columnDefinitions)
+      m_globalColumnConfig(columnTableFormat)
 {
     ui->setupUi(this);
-
     updateView();
 }
 
@@ -31,14 +30,15 @@ void ColumnDialog::addWidget(ColumnWidget *columnWidget)
 void ColumnDialog::updateView()
 {
     ui->listWidget_columns->clear();
-    foreach (auto column, m_columnDefinitions->getColumnTypeList())
+    const auto& formatMap = m_globalColumnConfig->getTableCellFormatMap();
+    for (auto it = formatMap.begin(); it != formatMap.end(); it++)
     {
-        if (column->getCellType() == Column::ANY)
+        if (it.key() == GlobalColumn::ANY)
         {
             continue;
         }
-        auto widget = new ColumnWidget(column,
-                                       m_columnDefinitions->getColumnTypeStringlist(),
+        auto widget = new ColumnWidget(it.value(),
+                                       m_globalColumnConfig->getColumnTypesAsStringlist(),
                                        ui->listWidget_columns);
         addWidget(widget);
     }
@@ -46,18 +46,21 @@ void ColumnDialog::updateView()
 
 void ColumnDialog::updateColumnDefinitions()
 {
-    ColumnList columnList;
+    GlobalColumnList newColumnList;
 
     // add back existing ColumnWidgets (who haven't got the "deleted" flag set)
     for (int i = 0; i < ui->listWidget_columns->count(); i++)
     {
         auto item = ui->listWidget_columns->item(i);
         auto widget = qobject_cast<ColumnWidget*>(ui->listWidget_columns->itemWidget(item));
-        auto column = widget->getColumn();
-        columnList.append(column);
+        auto columnFormat = widget->getColumn();
+        if (columnFormat)
+        {
+        newColumnList.append(columnFormat);
+        }
     }
 
-    m_columnDefinitions->refreshColumns(columnList);
+    m_globalColumnConfig->refreshColumns(newColumnList);
 
     // and update the listview with the refreshed list
     updateView();
@@ -77,12 +80,13 @@ void ColumnDialog::on_pushButton_ok_clicked()
 
 void ColumnDialog::on_pushButton_new_clicked()
 {
-    auto widget = new ColumnWidget(m_columnDefinitions->getColumnTypeStringlist(), ui->listWidget_columns);
+    auto widget = new ColumnWidget(m_globalColumnConfig->getColumnTypesAsStringlist(),
+                                   ui->listWidget_columns);
     addWidget(widget);
 }
 
 void ColumnDialog::on_pushButton_reset_clicked()
 {
-    m_columnDefinitions->reset();
+    m_globalColumnConfig->constructDefaultSetup();
     updateView();
 }

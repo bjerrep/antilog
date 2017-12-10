@@ -1,16 +1,14 @@
 #pragma once
 
-#include "logentryformatter.h"
-#include "tableformat.h"
+#include "formatrule.h"
+#include "schemecolumnmodel.h"
 
 #include <QJsonObject>
 #include <QVector>
 
 class FormatRule;
+class FormatSchemes;
 
-using FormatRuleList = QVector<FormatRule*>;
-
-///
 /// The FormatScheme is a named collection of FormatRule objects.
 /// The None formatscheme is always added at program start. This is non editable
 /// and contains no FormatEntry objects.
@@ -18,8 +16,8 @@ using FormatRuleList = QVector<FormatRule*>;
 class FormatScheme
 {
 public:
-    FormatScheme(const QJsonObject& json);
-    FormatScheme(const QString& getName);
+    FormatScheme(const QJsonObject& json, FormatSchemes* parentModel);
+    FormatScheme(const QString& getName, FormatSchemes* parentModel);
     ~FormatScheme();
 
     void save(QJsonObject& json) const;
@@ -28,13 +26,26 @@ public:
     bool hasEntry(const QString& id);
     void addFormatRule(FormatRule* formatRule);
     void deleteFormatRule(FormatRule* formatRule);
-    LogEntryFormatterPtr findLogEntryFormatter(const QStringList& data) const;
-    TableFormat& getTableFormat();
+
+    QString tableHtml(const QStringList& logCells,
+                      const QString& sourceData,
+                      const FormatRuleList& formatRuleList,
+                      const GlobalColumnTypeList& columnTypeList,
+                      const GlobalColumnConfig* tableFormat);
+
+    QString tableText(const QStringList& logCells,
+                      const QString& sourceData,
+                      const GlobalColumnTypeList& columnTypeList);
+
+    QString getTableRowHtml(const QStringList& logEntries, QString sourceName = QString());
+    QString getTableRowText(const QStringList& logEntries, QString sourceName = QString());
+    SchemeColumnModel& getColumnSetup();
 
 private:
     FormatRuleList m_formatRuleList;
     QString m_name;
-    TableFormat m_tableFormat;
+    SchemeColumnModel* m_schemeColumnModel;
+    FormatSchemes* m_parent;
 
     friend class FormatDialog;
 };

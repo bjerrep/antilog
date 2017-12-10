@@ -1,8 +1,6 @@
 ﻿#include "inputprocessors.h"
 #include "sourcevisitors.h"
-#include "logentryformatter.h"
 #include "formatscheme.h"
-#include "tableformat.h"
 #include "logentry.h"
 
 PassProcessor::PassProcessor(const QJsonObject& json)
@@ -84,7 +82,7 @@ void RegexProcessor::setRegex(const QString& regex)
 {
     m_regex = regex;
     updateDescription();
-    m_nofEnabledRows = getScheme()->getTableFormat().nofEnabledColumns();
+    m_nofEnabledRows = getScheme()->getColumnSetup().getNofEnabledColumns();
 }
 
 int RegexProcessor::getNofEnabledColumns() const
@@ -126,7 +124,7 @@ void RegexProcessor::slotNewData(SourceBase* source, QString data, QString sourc
     setInputItem(source);
     auto rows = applyRegex(data);
 
-    if (m_onlyPassRegexMatches && getScheme()->getTableFormat().getNofEnabledColumns() == rows.count())
+    if (getScheme()->getColumnSetup().getNofEnabledColumns() == rows.count())
     {
         auto logEntryPtr = LogEntryPtr(new LogEntry(rows, sourceIdentifier, getScheme()));
         signalNewProcessorData(this, logEntryPtr);

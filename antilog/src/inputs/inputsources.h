@@ -57,6 +57,8 @@ public:
 
     void save(QJsonObject& json) const override;
     void accept(InputVisitorBase* v) override;
+
+private:
     void setFilenameAndConfigure(QString filename);
 
     friend class FileSourceDialog;

@@ -1,10 +1,11 @@
 #include "dirsourcedialog.h"
 #include "ui_dirsourcedialog.h"
 #include "filereader.h"
+#include "antilog.h"
 
 #include <QFileDialog>
 
-DirSourceDialog::DirSourceDialog(DirSource& dirSource, QWidget* parent) :
+DirSourceDialog::DirSourceDialog(DirSource& dirSource, AntiLog* parent) :
     QDialog(parent),
     ui(new Ui::DirSourceDialog)
 {

@@ -4,6 +4,8 @@
 
 #include <QDialog>
 
+class GlobalColumnConfig;
+
 namespace Ui
 {
 class OptionsDialog;
@@ -14,7 +16,7 @@ class OptionsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit OptionsDialog(Options& options, QWidget* parent);
+    OptionsDialog(Options& options, QWidget* parent, GlobalColumnConfig* columnTableFormat);
     ~OptionsDialog();
 
 private slots:
@@ -25,4 +27,5 @@ private slots:
 private:
     Ui::OptionsDialog* ui;
     Options& m_options;
+    GlobalColumnConfig* m_columnTableFormat = 0;
 };

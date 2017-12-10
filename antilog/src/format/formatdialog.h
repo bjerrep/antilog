@@ -5,6 +5,7 @@
 class FormatScheme;
 class FormatWidget;
 class InputList;
+class FormatSchemes;
 
 namespace Ui {
 class FormatDialog;
@@ -42,4 +43,5 @@ private:
     Ui::FormatDialog* ui;
     FormatScheme* m_formatScheme = nullptr;
     const InputList* m_inputList = nullptr;
+    FormatSchemes* m_formatSchemeModel = nullptr;
 };

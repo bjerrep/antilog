@@ -7,15 +7,58 @@
 #include <QFileSystemWatcher>
 #include <QThread>
 
+void FileReaderThread::tailFileByBytes(const QString &filename, int bytes, qint64 &pos)
+{
+    QFile file(filename);
+    QString sourcename = QFileInfo(filename).fileName();
+
+    if (file.open(QIODevice::ReadOnly))
+    {
+        QByteArray line;
+        if (file.size() - bytes > 0)
+        {
+            file.seek(file.size() - bytes);
+            line = file.readLine();
+        }
+        int i = 0;
+        int mark = 100;
+
+        while(!line.isEmpty())
+        {
+            line = file.readLine();
+            if (!line.isEmpty())
+            {
+                emit signalNewData(line, sourcename);
+
+                // prof that this threading code is flawed in some way. Loading a large file
+                // blocks the main loop so it isn't continuesly updating (which is nice).
+                if (++i % mark == 0)
+                {
+                    if (mark < 3200)
+                    {
+                        mark *= 2;
+                    }
+                    QCoreApplication::processEvents();
+                }
+            }
+        }
+        pos = file.pos();
+    }
+}
+
+
+
 /// Start a file reader on the given file. If the file is not found
 /// the reader will start once the file shows up after startReader() is called.
 /// The reader does not deal with files dissapearing and then returning again.
 /// Once constructed connect to signalNewData and call startReader()
 ///
-FileReader::FileReader(const QString& filename, int lastNumlines)
-    : m_filename(filename),
-      m_lastNumLines(lastNumlines),
+FileReader::FileReader(const QString& filename, int nofBytesToTail)
+    :
+      m_filename(filename),
+      m_nofBytesToTail(nofBytesToTail),
       m_mode(FILE)
+
 {
     setup();
 }
@@ -25,8 +68,9 @@ FileReader::FileReader(const QString& filename, int lastNumlines)
 /// directories if they match the mask.
 /// Once constructed connect to signalNewData and call startReader()
 ///
-FileReader::FileReader(const QString& rootDir, bool recursive, const QString& mask)
-    : m_rootDir(rootDir),
+FileReader::FileReader( const QString& rootDir, bool recursive, const QString& mask)
+    :
+      m_rootDir(rootDir),
       m_recursive(recursive),
       m_mask(mask),
       m_mode(DIR)
@@ -36,7 +80,8 @@ FileReader::FileReader(const QString& rootDir, bool recursive, const QString& ma
 
 FileReader::~FileReader()
 {
-    m_thread->requestInterruption();
+    m_fileReaderThread.quit();
+    m_fileReaderThread.wait(1000);
 }
 
 void FileReader::setup()
@@ -45,20 +90,11 @@ void FileReader::setup()
             this, &FileReader::slotFileChanged);
     connect(&m_watcher, &QFileSystemWatcher::directoryChanged,
             this, &FileReader::slotDirectoryChanged);
-
     connect(&m_missingFilesWatcher, &QFileSystemWatcher::directoryChanged,
             this, &FileReader::slotCheckForMissingFile);
-
-    // threaded since startReader() will block if the last part of a file
-    // should be loaded right away
-    m_thread = new QThread;
-    moveToThread(m_thread);
-    m_thread->start();
-    connect(m_thread, &QThread::finished,
-            m_thread, &QThread::deleteLater);
 }
 
-QString FileReader::sourceIdentification(const QString& filename) const
+QString FileReader::getSourcename(const QString& filename) const
 {
     return QFileInfo(filename).fileName();
 }
@@ -127,13 +163,16 @@ void FileReader::startReader()
         {
             m_positions[file] = QFile(file).size();
 
-            if (m_lastNumLines)
+            if (m_nofBytesToTail)
             {
-                QStringList lines = tailFileByLines(file, m_lastNumLines, m_positions[file]);
-                foreach (auto line, lines)
-                {
-                    emit signalNewData(line, sourceIdentification(file));
-                }
+                FileReaderThread* fileReadThread = new FileReaderThread;
+                connect(fileReadThread, &FileReaderThread::signalNewData,
+                        this, &FileReader::slotNewFileReaderData, Qt::QueuedConnection);
+
+                fileReadThread->moveToThread(&m_fileReaderThread);
+                m_fileReaderThread.start();
+                connect(&m_fileReaderThread, &QThread::finished, fileReadThread, &QObject::deleteLater);
+                emit fileReadThread->tailFileByBytes(file, m_nofBytesToTail, m_positions[file]);
             }
 
             m_watcher.addPath(file);
@@ -148,6 +187,11 @@ void FileReader::startReader()
             }
         }
     }
+}
+
+void FileReader::slotNewFileReaderData(const QString& data, const QString& sourceIdentifier)
+{
+    emit signalNewData(data, sourceIdentifier);
 }
 
 QStringList FileReader::tailFileByLines(const QString& filename, int lines, qint64& pos)
@@ -210,7 +254,7 @@ void FileReader::slotFileChanged(const QString& filename)
             pos = file.pos();
             if (!data.isEmpty())
             {
-                emit signalNewData(data, sourceIdentification(filename));
+                emit signalNewData(data, getSourcename(filename));
             }
             else
             {

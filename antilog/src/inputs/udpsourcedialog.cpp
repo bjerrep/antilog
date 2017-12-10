@@ -2,12 +2,13 @@
 #include "ui_udpsourcedialog.h"
 #include "statics.h"
 #include "inputsources.h"
+#include "antilog.h"
 
 #include <QFileDialog>
 #include <QLineEdit>
 
 
-UdpSourceDialog::UdpSourceDialog(UDPSource* udpSource, QWidget* parent) :
+UdpSourceDialog::UdpSourceDialog(UDPSource* udpSource, AntiLog* parent) :
     QDialog(parent),
     ui(new Ui::UdpSourceDialog),
     m_udpSource(udpSource)

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>576</width>
+    <width>590</width>
     <height>524</height>
    </rect>
   </property>
@@ -141,7 +141,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
-          <string>View</string>
+          <string>Sources &amp;&amp; Modules View</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
@@ -239,7 +239,7 @@
         <string>O.k.</string>
        </property>
        <property name="icon">
-        <iconset resource="../resources.qrc">
+        <iconset resource="../../resources.qrc">
          <normaloff>:/artwork/artwork/button_ok.svg</normaloff>:/artwork/artwork/button_ok.svg</iconset>
        </property>
       </widget>
@@ -249,7 +249,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../resources.qrc"/>
+  <include location="../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

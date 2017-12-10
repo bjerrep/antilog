@@ -1,5 +1,5 @@
 #pragma once
-#include "tableformat.h"
+#include "schemecolumn.h"
 #include <QWidget>
 
 class FormatRule;
@@ -13,7 +13,7 @@ class FormatWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit FormatWidget(FormatRule* formatScheme, const TableFormat& tableFormat, QWidget* parent);
+    explicit FormatWidget(FormatRule* formatScheme, const SchemeColumnModel& columnSetup, QWidget* parent);
     ~FormatWidget();
 
     FormatRule* formatEntry();
@@ -23,7 +23,6 @@ signals:
     void signalFormatRuleChanged();
 
 private slots:
-    void on_comboBoxScope_currentTextChanged(const QString &arg1);
     void on_comboBoxOperation_currentIndexChanged(const QString &arg1);
     void on_comboBoxSearchTerm_editTextChanged(const QString &arg1);
     void on_checkBoxBold_clicked(bool checked);
@@ -32,6 +31,7 @@ private slots:
     void on_comboBoxBgcolor_currentIndexChanged(const QString &arg1);
     void on_comboBoxSelection_currentTextChanged(const QString &arg1);
     void on_checkBoxCase_clicked(bool checked);
+    void on_comboBoxSeverity_currentTextChanged(const QString &arg1);
 
 private:
     Ui::FormatWidget* ui;

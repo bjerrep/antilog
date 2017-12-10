@@ -7,6 +7,7 @@
 
 #include <QJsonObject>
 
+class AntiLog;
 
 class GetName : public InputVisitorBase
 {
@@ -65,14 +66,17 @@ private:
 };
 
 
-class GetDialog : public QWidget, public InputVisitorBase
+class GetDialog : public InputVisitorBase
 {
 public:
-    GetDialog();
+    GetDialog(AntiLog* antiLog);
 
     void visit(FileSource* fileSource);
     void visit(DirSource* dirSource);
     void visit(UDPSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
+
+private:
+    AntiLog* m_antiLog;
 };
