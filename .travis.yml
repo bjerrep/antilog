@@ -10,7 +10,7 @@ before_install:
   - sudo apt-get update -qq
  
 install:
-  - sudo apt-get install -qq g++-6
+  - sudo apt-get install -qq g++-6 qt5-default
   - sudo apt-get --yes install qt59-meta-full
   - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
 
