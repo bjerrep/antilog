@@ -10,6 +10,7 @@
 #include <QScrollBar>
 #include <QMenu>
 #include <QTableView>
+#include <QHeaderView>
 
 
 InputTableView::InputTableView(QWidget *parent) : QTableView(parent)

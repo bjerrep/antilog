@@ -40,7 +40,11 @@ QFontMetrics Options::logFontMetrics() const
 
 int Options::logFontWidth(int length) const
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    return logFontMetrics().horizontalAdvance(QString(length, '0'));
+#else
     return logFontMetrics().width(QString(length, '0'));
+#endif
 }
 
 int Options::getSourceStringMaxWidth(int size)
