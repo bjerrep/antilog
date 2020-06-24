@@ -7,8 +7,10 @@ class ExtendedFilterModel;
 class ExtendedWidget;
 class QStandardItemModel;
 
+typedef std::array<ExtendedFilterItem*, 2> FilterArrayType;
+
 namespace Ui {
-class ExtendedFilterDialog;
+    class ExtendedFilterDialog;
 }
 
 class ExtendedFilterDialog : public QDialog
@@ -46,6 +48,5 @@ private:
     Ui::ExtendedFilterDialog* ui;
     ExtendedFilterModel* m_extendedFilterModel;
     QStandardItemModel* m_standardItemModel;
-    QVector<std::array<ExtendedFilterItem*, 2>> m_buffered;
+    QVector<FilterArrayType> m_buffered;
 };
-

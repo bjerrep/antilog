@@ -1,5 +1,5 @@
 #pragma once
-#include "schemecolumn.h"
+#include "column/schemecolumn.h"
 #include <QWidget>
 
 class FormatRule;

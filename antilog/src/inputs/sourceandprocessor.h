@@ -1,7 +1,7 @@
 #pragma once
 
 #include "inputbases.h"
-#include "logentry.h"
+#include "logentry/logentry.h"
 
 #include <QObject>
 #include <QJsonObject>

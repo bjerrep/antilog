@@ -1,7 +1,7 @@
 #pragma once
 
-#include "inputlist.h"
-#include "logentry.h"
+#include "inputs/inputlist.h"
+#include "logentry/logentry.h"
 
 #include <QObject>
 #include <QWidget>

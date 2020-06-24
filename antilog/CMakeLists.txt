@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(antilog)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
@@ -19,14 +18,9 @@ add_executable(
 
 include_directories(
     src
-    src/column
-    src/extendedfilter
-    src/inputs
-    src/logentry
-    src/format
     )
-    
-set(CMAKE_AUTOUIC_SEARCH_PATHS src/format)    
+
+set(CMAKE_AUTOUIC_SEARCH_PATHS src/format)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-elide-constructors -pedantic-errors")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wall -Winit-self -Wold-style-cast -Woverloaded-virtual")

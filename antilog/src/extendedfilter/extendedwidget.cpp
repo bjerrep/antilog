@@ -2,7 +2,7 @@
 #include "ui_extendedwidget.h"
 #include "extendedfiltermodel.h"
 #include "statics.h"
-#include "logseverities.h"
+#include "logentry/logseverities.h"
 
 ExtendedWidget::ExtendedWidget(ExtendedFilterItem* filterItem, QWidget* parent) :
     QWidget(parent),

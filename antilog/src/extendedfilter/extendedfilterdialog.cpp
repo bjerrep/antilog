@@ -4,7 +4,7 @@
 #include "extendedwidget.h"
 #include "ui_extendedwidget.h"
 #include "statics.h"
-#include "logseverities.h"
+#include "logentry/logseverities.h"
 
 #include <QTreeView>
 #include <QStandardItemModel>
@@ -199,7 +199,7 @@ void ExtendedFilterDialog::slotAddFilterItems(ExtendedFilterItem* source, Extend
 {
     if (!ui->checkBoxAutoUpdate->isChecked())
     {
-        m_buffered.append({source, module});
+        m_buffered.append(FilterArrayType{source, module});
         return;
     }
     if (!m_buffered.isEmpty())

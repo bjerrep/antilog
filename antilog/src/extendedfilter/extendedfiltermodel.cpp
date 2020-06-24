@@ -1,5 +1,5 @@
 #include "extendedfiltermodel.h"
-#include "logseverities.h"
+#include "logentry/logseverities.h"
 #include "extendedwidget.h"
 
 #include <QJsonObject>

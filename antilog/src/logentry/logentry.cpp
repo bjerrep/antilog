@@ -1,6 +1,6 @@
 #include "logentry.h"
 #include "logseverities.h"
-#include "formatscheme.h"
+#include "format/formatscheme.h"
 #include "options.h"
 #include "statics.h"
 

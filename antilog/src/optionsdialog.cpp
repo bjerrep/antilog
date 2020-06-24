@@ -1,7 +1,7 @@
 #include "optionsdialog.h"
 #include "ui_optionsdialog.h"
-#include "columndialog.h"
-#include "globalcolumnconfig.h"
+#include "column/columndialog.h"
+#include "column/globalcolumnconfig.h"
 #include "statics.h"
 #include "options.h"
 

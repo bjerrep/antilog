@@ -1,7 +1,7 @@
 #pragma once
 
 #include "extendedfilteritem.h"
-#include "logentry.h"
+#include "logentry/logentry.h"
 
 
 /// Registers input source names and module names from incomming log entries in a tree.

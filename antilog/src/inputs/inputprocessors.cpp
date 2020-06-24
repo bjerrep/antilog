@@ -1,7 +1,7 @@
 ﻿#include "inputprocessors.h"
 #include "sourcevisitors.h"
-#include "formatscheme.h"
-#include "logentry.h"
+#include "format/formatscheme.h"
+#include "logentry/logentry.h"
 
 PassProcessor::PassProcessor(const QJsonObject& json)
     : ProcessorBase(__func__, json)

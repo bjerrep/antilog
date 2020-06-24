@@ -1,6 +1,6 @@
 #pragma once
 
-#include "logentry.h"
+#include "logentry/logentry.h"
 
 #include <QObject>
 #include <QString>

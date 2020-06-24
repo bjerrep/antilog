@@ -1,5 +1,5 @@
 #include "options.h"
-#include "globalcolumnconfig.h"
+#include "column/globalcolumnconfig.h"
 
 #include <QFontMetrics>
 

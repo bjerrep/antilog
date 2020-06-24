@@ -1,14 +1,14 @@
 #include "antilog.h"
 #include "ui_antilog.h"
-#include "inputdialog.h"
+#include "inputs/inputdialog.h"
 #include "optionsdialog.h"
-#include "formatdialog.h"
-#include "extendedfilterdialog.h"
-#include "extendedfiltermodel.h"
-#include "formatschememodel.h"
-#include "logseverities.h"
-#include "logviewtablemodel.h"
-#include "columndialog.h"
+#include "format/formatdialog.h"
+#include "extendedfilter/extendedfilterdialog.h"
+#include "extendedfilter/extendedfiltermodel.h"
+#include "format/formatschememodel.h"
+#include "logentry/logseverities.h"
+#include "logentry/logviewtablemodel.h"
+#include "column/columndialog.h"
 
 #include <QJsonDocument>
 #include <QScrollBar>

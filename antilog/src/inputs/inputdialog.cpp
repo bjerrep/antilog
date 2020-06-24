@@ -11,6 +11,7 @@
 #include <QMenu>
 #include <QTableView>
 #include <QHeaderView>
+#include <QResizeEvent>
 
 
 InputTableView::InputTableView(QWidget *parent) : QTableView(parent)

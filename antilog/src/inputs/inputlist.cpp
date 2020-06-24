@@ -1,7 +1,7 @@
 #include "inputlist.h"
 #include "antilog.h"
 #include "sourceandprocessor.h"
-#include "formatscheme.h"
+#include "format/formatscheme.h"
 
 #include <QJsonArray>
 

@@ -1,11 +1,11 @@
 #include "formatwidget.h"
 #include "ui_formatwidget.h"
 #include "statics.h"
-#include "logseverities.h"
+#include "logentry/logseverities.h"
 #include "formatschememodel.h"
-#include "globalcolumnconfig.h"
+#include "column/globalcolumnconfig.h"
 #include "formatrule.h"
-#include "schemecolumnmodel.h"
+#include "column/schemecolumnmodel.h"
 
 #include <QComboBox>
 #include <QCheckBox>

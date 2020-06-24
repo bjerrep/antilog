@@ -1,6 +1,6 @@
 #include "formatschememodel.h"
 #include "formatscheme.h"
-#include "globalcolumnconfig.h"
+#include "column/globalcolumnconfig.h"
 #include "statics.h"
 #include "formatrule.h"
 #include "options.h"

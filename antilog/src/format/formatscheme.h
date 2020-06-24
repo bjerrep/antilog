@@ -1,7 +1,7 @@
 #pragma once
 
 #include "formatrule.h"
-#include "schemecolumnmodel.h"
+#include "column/schemecolumnmodel.h"
 
 #include <QJsonObject>
 #include <QVector>

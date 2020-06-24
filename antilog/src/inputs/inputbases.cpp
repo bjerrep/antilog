@@ -1,5 +1,5 @@
 #include "inputbases.h"
-#include "formatschememodel.h"
+#include "format/formatschememodel.h"
 #include "statics.h"
 #include "antilog.h"
 

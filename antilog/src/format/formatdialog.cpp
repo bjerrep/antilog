@@ -4,7 +4,7 @@
 #include "formatscheme.h"
 #include "formatschememodel.h"
 #include "formatrule.h"
-#include "inputlist.h"
+#include "inputs/inputlist.h"
 #include "antilog.h"
 
 #include <QInputDialog>

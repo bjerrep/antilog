@@ -1,10 +1,10 @@
 #include "passprocessordialog.h"
 #include "ui_passprocessordialog.h"
 #include "statics.h"
-#include "formatdialog.h"
 #include "inputprocessors.h"
-#include "formatscheme.h"
-#include "formatschememodel.h"
+#include "format/formatdialog.h"
+#include "format/formatscheme.h"
+#include "format/formatschememodel.h"
 #include "antilog.h"
 
 PassProcessorDialog::PassProcessorDialog(PassProcessor* passProcessor, AntiLog* parent) :

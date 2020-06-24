@@ -1,6 +1,6 @@
 #include "logviewtablemodel.h"
 #include "options.h"
-#include "extendedfiltermodel.h"
+#include "extendedfilter/extendedfiltermodel.h"
 
 #include <QTextDocument>
 #include <QStyleOptionViewItem>

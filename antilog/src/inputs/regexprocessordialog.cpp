@@ -1,9 +1,9 @@
 #include "regexprocessordialog.h"
 #include "ui_regexprocessordialog.h"
 #include "inputprocessors.h"
-#include "formatdialog.h"
-#include "formatscheme.h"
-#include "formatschememodel.h"
+#include "format/formatdialog.h"
+#include "format/formatscheme.h"
+#include "format/formatschememodel.h"
 #include "antilog.h"
 
 

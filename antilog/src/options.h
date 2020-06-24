@@ -2,7 +2,7 @@
 
 #include "statics.h"
 
-#include "globalcolumnconfig.h"
+#include "column/globalcolumnconfig.h"
 
 #include <QJsonObject>
 #include <QJsonArray>

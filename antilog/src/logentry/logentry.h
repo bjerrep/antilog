@@ -1,6 +1,6 @@
 #pragma once
 
-#include "schemecolumn.h"
+#include "column/schemecolumn.h"
 #include "statics.h"
 
 #include <QObject>
