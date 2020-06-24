@@ -1,5 +1,6 @@
 #include "inputdialog.h"
 #include "ui_inputdialog.h"
+#include "ui_inputwidget.h"
 #include "newinputdialog.h"
 #include "inputtableviewmodel.h"
 #include "sourcevisitors.h"
@@ -12,7 +13,7 @@
 #include <QTableView>
 #include <QHeaderView>
 #include <QResizeEvent>
-
+#include <QLabel>
 
 InputTableView::InputTableView(QWidget *parent) : QTableView(parent)
 {

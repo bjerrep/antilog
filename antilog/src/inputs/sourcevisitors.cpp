@@ -4,7 +4,7 @@
 #include "passprocessordialog.h"
 #include "regexprocessordialog.h"
 #include "udpsourcedialog.h"
-
+#include "ui_inputwidget.h"
 
 void GetName::visit(FileSource* visitor)
 {

@@ -2,12 +2,15 @@
 
 #include "inputsources.h"
 #include "inputprocessors.h"
-#include "ui_inputwidget.h"
 #include "inputvisitorbase.h"
 
 #include <QJsonObject>
+#include <QWidget>
 
 class AntiLog;
+namespace Ui {
+    class inputWidget;
+}
 
 class GetName : public InputVisitorBase
 {
