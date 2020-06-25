@@ -23,6 +23,7 @@ private slots:
     void on_fileSelectButton_clicked();
     void on_pushButtonOk_clicked();
     void on_name_textChanged(const QString &arg1);
+    void on_address_textChanged(const QString &arg1);
     void on_port_textChanged(const QString &arg1);
 
 private:

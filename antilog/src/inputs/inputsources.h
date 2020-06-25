@@ -76,6 +76,8 @@ public:
     void accept(InputVisitorBase* v) override;
     void setEnabled(bool enabled) override;
     void start();
+    QString getAddress() const;
+    void setAddress(QString address);
     int getPort() const;
     void setPort(int port);
 
@@ -88,6 +90,7 @@ private slots:
 
 private:
     QUdpSocket* m_socket = nullptr;
+    QString m_address = "localhost";
     int m_port = 12345;
     QString m_sourceDescriptor;
 };

@@ -20,19 +20,25 @@ int main(int argc, char *argv[])
                                                "(prefix with 'stdbuf -oL -eL' to disable console buffering)");
     parser.addOption(forwardInputOption);
     QCommandLineOption portOption("p", "port (default 12345)", "port", "12345");
+    QCommandLineOption hostOption("host", "address to bind to (default localhost)", "host", "localhost");
     parser.addOption(portOption);
+    parser.addOption(hostOption);
     parser.process(app);
 
     bool forwardToStdout = parser.isSet(forwardInputOption);
     int port = parser.value(portOption).toInt();
 
     QUdpSocket socket;
-    socket.bind(QHostAddress::LocalHost, port);
+    QHostAddress host_address = QHostAddress::LocalHost;
+    if (parser.value(hostOption).toUtf8() != "localhost")
+    {
+        host_address = QHostAddress(parser.value(hostOption));
+    }
 
     std::string lineInput;
     while (getline(std::cin, lineInput))
     {
-        socket.writeDatagram(lineInput.c_str(), QHostAddress::LocalHost, port);
+        socket.writeDatagram(lineInput.c_str(), host_address, port);
         if (forwardToStdout)
         {
             // stdout is buffered but how to disable that from within the application

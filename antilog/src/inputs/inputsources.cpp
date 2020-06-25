@@ -156,10 +156,12 @@ UDPSource::UDPSource(const QJsonObject& json)
     if (json.empty())
     {
         setName(makeNameUnique("UDP"));
+        setAddress(m_address);
         setPort(m_port);
         return;
     }
 
+    setAddress(json["address"].toString());
     setPort(json["port"].toString().toInt());
 }
 
@@ -176,6 +178,7 @@ UDPSource::~UDPSource()
 void UDPSource::save(QJsonObject& json) const
 {
     SourceBase::save(json);
+    json["address"] = m_address;
     json["port"] = QString::number(m_port);
 }
 
@@ -192,7 +195,7 @@ void UDPSource::openSocket()
     }
     if (m_socket->state() != QUdpSocket::BoundState)
     {
-        if (!m_socket->bind(QHostAddress::LocalHost, m_port))
+        if (!m_socket->bind(QHostAddress(m_address), m_port))
         {
             warn("error binding udpsocket " << m_port);
         }
@@ -201,7 +204,7 @@ void UDPSource::openSocket()
             connect(m_socket, SIGNAL(readyRead()), this, SLOT(slotNewUdpSocketData()));
         }
     }
-    m_sourceDescriptor = getName() + " " + QString::number(m_port);
+    m_sourceDescriptor = getName() + " " + m_address + ":" + QString::number(m_port);
 }
 
 void UDPSource::slotSystemReady()
@@ -255,6 +258,22 @@ void UDPSource::start()
     }
 }
 
+QString UDPSource::getAddress() const
+{
+    return m_address;
+}
+
+void UDPSource::setAddress(QString address)
+{
+    m_address = address;
+    if (isGoodToGo())
+    {
+        setEnabled(false);
+        setEnabled(true);
+    }
+    setDescription(m_address + ":" + QString::number(m_port));
+}
+
 int UDPSource::getPort() const
 {
     return m_port;
@@ -268,7 +287,7 @@ void UDPSource::setPort(int port)
         setEnabled(false);
         setEnabled(true);
     }
-    setDescription("Port " + QString::number(m_port));
+    setDescription(m_address + ":" + QString::number(m_port));
 }
 
 // ------ Statics -------
@@ -308,4 +327,3 @@ void getAllSourceTypes(InputItemList& list)
     list.append(new DirSource());
     list.append(new UDPSource());
 }
-
