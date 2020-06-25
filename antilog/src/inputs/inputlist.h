@@ -1,5 +1,7 @@
 #pragma once
 
+#include "inputs/inputbases.h"
+
 #include <QObject>
 #include <QList>
 #include <QJsonObject>
@@ -10,6 +12,7 @@ class InputItemBase;
 
 /// Container for the SourceAndProcessor objects made with the InputDialog.
 /// A source together with a processor is called an 'input'.
+/// Owned by the antilog class.
 ///
 class InputList : public QObject
 {
@@ -27,7 +30,7 @@ public:
     int findFormatSchemeUsageCount(const QString& schemeName) const;
     SourceAndProcessor* getSourceAndProcessor(int index);
     SourceAndProcessor* getSourceAndProcessor(int index) const;
-    QVector<InputItemBase*> getAllSourcesAndProcessors() const;
+    InputItemVector getAllSourcesAndProcessors() const;
 
 private:
     QList<SourceAndProcessor*> m_sourceAndProcessorList;

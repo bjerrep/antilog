@@ -87,9 +87,9 @@ SourceAndProcessor* InputList::getSourceAndProcessor(int index) const
     return m_sourceAndProcessorList[index];
 }
 
-QVector<InputItemBase*> InputList::getAllSourcesAndProcessors() const
+InputItemVector InputList::getAllSourcesAndProcessors() const
 {
-    QVector<InputItemBase*> list;
+    InputItemVector list;
     foreach (auto input, m_sourceAndProcessorList)
     {
         list.append(input->getSourceEntry());

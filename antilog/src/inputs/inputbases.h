@@ -36,6 +36,7 @@ private:
 
 
 using InputItemList = QList<InputItemBase*>;
+using InputItemVector = QVector<InputItemBase*>;
 
 class SourceBase : public InputItemBase
 {

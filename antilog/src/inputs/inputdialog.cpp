@@ -142,9 +142,9 @@ void InputDialog::slotShowContextMenu(const QPoint& pos)
     QMenu contextMenu;
     contextMenu.addAction("Delete", this, SLOT(slotDeleteInput()));
     contextMenu.addAction("Source type", this, SLOT(slotChangeSource()));
-    contextMenu.addAction("Edit source", this, SLOT(slotEditSource()));
+    contextMenu.addAction("Edit source (fixit)", this, SLOT(slotEditSource()));
     contextMenu.addAction("Processor type", this, SLOT(slotChangeProcessor()));
-    contextMenu.addAction("Edit processor", this, SLOT(slotEditProcessor()));
+    contextMenu.addAction("Edit processor (fixit)", this, SLOT(slotEditProcessor()));
     contextMenu.exec(globalPos);
 }
 

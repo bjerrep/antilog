@@ -4,6 +4,6 @@ clang
 bin
 doxygen
 local
-
+logs
 
 CMakeLists.txt.user*

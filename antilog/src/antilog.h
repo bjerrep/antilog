@@ -13,6 +13,7 @@ class InputItemBase;
 class LogViewTableModel;
 class ExtendedFilterModel;
 class SourceBase;
+class QHostAddress;
 
 namespace Ui
 {
@@ -27,7 +28,8 @@ public:
     explicit AntiLog(QWidget* parent = nullptr);
     ~AntiLog();
 
-    QVector<InputItemBase*> getAllSourcesAndProcessors() const;
+    InputItemVector getAllSourcesAndProcessors() const;
+    void reconfigureUdpSources(QString address, uint16_t port);
 
     FormatSchemes* getFormatSchemeModel();
     GlobalColumnConfig* getGlobalColumnConfig();
