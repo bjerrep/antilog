@@ -64,7 +64,7 @@ QVariant LogViewTableModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole)
     {
         const LogEntryPtr& ret = m_logEntriesVisible.at(index.row());
-        return qVariantFromValue(ret);
+        return QVariant::fromValue(ret);
     }
     else if (role == Qt::FontRole)
     {

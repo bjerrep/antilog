@@ -2,6 +2,8 @@
 #include "ui_columndialog.h"
 #include "columnwidget.h"
 #include "schemecolumn.h"
+#include "rowheightdelegate.h"
+
 
 ColumnDialog::ColumnDialog(GlobalColumnConfig* columnTableFormat, QWidget *parent)
     : QDialog(parent),
@@ -20,7 +22,6 @@ ColumnDialog::~ColumnDialog()
 void ColumnDialog::addWidget(ColumnWidget *columnWidget)
 {
     auto item = new QListWidgetItem(ui->listWidget_columns);
-    item->setSizeHint(QSize(item->sizeHint().width(), columnWidget->getHeight()));
     ui->listWidget_columns->addItem(item);
     ui->listWidget_columns->setItemWidget(item, columnWidget);
     connect(columnWidget, &ColumnWidget::signalColumnWidgetDeleted,
@@ -30,6 +31,7 @@ void ColumnDialog::addWidget(ColumnWidget *columnWidget)
 void ColumnDialog::updateView()
 {
     ui->listWidget_columns->clear();
+    ui->listWidget_columns->setItemDelegate(new RowHeightDelegate(ColumnWidget::getHeight()));
     const auto& formatMap = m_globalColumnConfig->getTableCellFormatMap();
     for (auto it = formatMap.begin(); it != formatMap.end(); it++)
     {
@@ -56,7 +58,7 @@ void ColumnDialog::updateColumnDefinitions()
         auto columnFormat = widget->getColumn();
         if (columnFormat)
         {
-        newColumnList.append(columnFormat);
+            newColumnList.append(columnFormat);
         }
     }
 

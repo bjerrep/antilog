@@ -9,6 +9,7 @@ namespace Ui {
 class ColumnDialog;
 }
 
+
 class ColumnDialog : public QDialog
 {
     Q_OBJECT

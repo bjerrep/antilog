@@ -23,7 +23,7 @@ public:
                  QWidget *parent);
     ~ColumnWidget();
 
-    int getHeight() const;
+    static int getHeight();
     GlobalColumn* getColumn() const;
 
 signals:

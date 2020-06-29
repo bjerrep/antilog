@@ -36,9 +36,9 @@ ColumnWidget::~ColumnWidget()
     delete ui;
 }
 
-int ColumnWidget::getHeight() const
+int ColumnWidget::getHeight()
 {
-    return ui->lineEdit_name->height();
+    return 35;
 }
 
 GlobalColumn *ColumnWidget::getColumn() const
@@ -46,7 +46,7 @@ GlobalColumn *ColumnWidget::getColumn() const
     if (m_deleted)
     {
         return nullptr;
-    };
+    }
     auto columnFormat = new GlobalColumn(m_json);
     columnFormat->setName(ui->lineEdit_name->text());
     columnFormat->setTypeFromString(ui->comboBox_type->currentText());
