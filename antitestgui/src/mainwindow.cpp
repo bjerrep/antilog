@@ -17,7 +17,9 @@
 #include <QtDebug>
 #include <QStandardPaths>
 #include <QDir>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
 #include <QRandomGenerator>
+#endif
 
 
 MainWindow::MainWindow(QWidget* parent) :
