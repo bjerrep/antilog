@@ -93,7 +93,7 @@ int InputDialog::addImageToTable(int row, int column, QString imageResource)
     auto* label = new QLabel();
     label->setAlignment(Qt::AlignCenter);
     label->setPixmap(Statics::pixmapIcon(imageResource));
-    int width = label->pixmap()->width() + 10;
+    int width = label->pixmap(Qt::ReturnByValue).width() + 10;
     m_tableView->setIndexWidget(index, label);
     return width;
 }

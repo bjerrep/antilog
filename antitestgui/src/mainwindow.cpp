@@ -17,6 +17,7 @@
 #include <QtDebug>
 #include <QStandardPaths>
 #include <QDir>
+#include <QRandomGenerator>
 
 
 MainWindow::MainWindow(QWidget* parent) :
@@ -157,7 +158,7 @@ QString MainWindow::getNextMessage()
         if (ui->checkBoxSourcesAndModules->isChecked())
         {
             const int nofModules = 20;
-            int moduleIndex = qrand() / (RAND_MAX/nofModules);
+            int moduleIndex = QRandomGenerator::global()->generate() / (QRandomGenerator::max()/nofModules);
             return QString("module%1 SourcesAndModules - Log message from module%1").arg(moduleIndex);
         }
     }
