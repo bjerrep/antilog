@@ -4,8 +4,12 @@
 #include "column/globalcolumnconfig.h"
 #include "statics.h"
 #include "options.h"
+#include "antilog.h"
 
-OptionsDialog::OptionsDialog(Options& options, QWidget* parent, GlobalColumnConfig* columnTableFormat)
+#include <QFontDialog>
+
+
+OptionsDialog::OptionsDialog(Options& options, AntiLog* parent, GlobalColumnConfig* columnTableFormat)
     : QDialog(parent),
     ui(new Ui::OptionsDialog),
     m_options(options),
@@ -35,4 +39,50 @@ void OptionsDialog::on_editColumns_clicked()
 {
     ColumnDialog dia(m_columnTableFormat);
     dia.exec();
+}
+
+void OptionsDialog::slotCurrentApplicationFontChanged(const QFont &font)
+{
+    m_options.setAppFont(font);
+    emit signalAppFontChanged();
+}
+
+void OptionsDialog::slotCurrentLogViewFontChanged(const QFont &font)
+{
+    m_options.setLogFont(font);
+    emit signalLogViewFontChanged();
+}
+
+void OptionsDialog::on_pushButtonApplicationFont_clicked()
+{
+    bool ok;
+    QFontDialog fontDialog(this);
+
+    // this doesn't work ? why not ?
+    connect(&fontDialog, &QFontDialog::currentFontChanged,
+            this, &OptionsDialog::slotCurrentApplicationFontChanged);
+
+    QFont font = fontDialog.getFont(&ok, Statics::s_options->getAppFont(), this);
+    if (ok)
+    {
+        m_options.setAppFont(font);
+    }
+    emit signalAppFontChanged();
+}
+
+
+void OptionsDialog::on_pushButtonLogViewFont_clicked()
+{
+    bool ok;
+    QFontDialog fontDialog(this);
+
+    connect(&fontDialog, &QFontDialog::currentFontChanged,
+            this, &OptionsDialog::slotCurrentLogViewFontChanged);
+
+    QFont font = fontDialog.getFont(&ok, Statics::s_options->getLogFont(), this);
+    if (ok)
+    {
+        m_options.setLogFont(font);
+    }
+    emit signalLogViewFontChanged();
 }

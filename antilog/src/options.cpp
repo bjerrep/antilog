@@ -18,19 +18,41 @@ void Options::save(QJsonObject& json) const
     opt["numberOfBytesToTail"] = m_numberOfBytesToTail;
     opt["maxRowsInLogModel"] = m_maxRowsInLogModel;
     opt["logThreshold"] = m_logThreshold;
-    opt["logFontFamily"] = m_logFont.family();
-    opt["logFontPoint"] = m_logFont.pointSize();
+
     opt["appFontFamily"] = m_appFont.family();
     opt["appFontPoint"] = m_appFont.pointSize();
+    opt["appFontBold"] = m_appFont.bold();
+    opt["appFontItallic"] = m_appFont.italic();
+
+    opt["logFontFamily"] = m_logFont.family();
+    opt["logFontPoint"] = m_logFont.pointSize();
+    opt["logFontBold"] = m_logFont.bold();
+    opt["logFontItallic"] = m_logFont.italic();
+
     opt["showsource"] = m_showSource;
     json["options"] = opt;
 }
 
-void Options::setLogFont(const QString& family, int point)
+void Options::setAppFont(QFont font)
 {
-    m_logFont = QFont(family, point);
+    m_appFont = font;
+}
+
+QFont& Options::getAppFont()
+{
+    return m_appFont;
+}
+
+void Options::setLogFont(QFont font)
+{
+    m_logFont = font;
     QFontMetrics fontMetrics(m_logFont);
     m_logFontHeight = fontMetrics.height();
+}
+
+QFont& Options::getLogFont()
+{
+    return m_logFont;
 }
 
 QFontMetrics Options::logFontMetrics() const
@@ -62,8 +84,7 @@ void Options::load(const QJsonObject& json)
     if (json.empty() || json["options"].toObject().isEmpty())
     {
         m_appFont = QFont("Noto", 9);
-        setLogFont("Source Code Pro", 9);
-
+        m_logFont = QFont("Noto", 9);
         return;
     }
 
@@ -72,7 +93,13 @@ void Options::load(const QJsonObject& json)
     m_maxRowsInLogModel = opt["maxRowsInLogModel"].toInt();
     m_logThreshold = opt["logThreshold"].toString();
 
-    setLogFont(opt["logFontFamily"].toString(), opt["logFontPoint"].toInt());
     m_appFont = QFont(opt["appFontFamily"].toString(), opt["appFontPoint"].toInt());
+    m_appFont.setBold(opt["appFontBold"].toBool());
+    m_appFont.setItalic(opt["appFontItallic"].toBool());
+
+    m_logFont = QFont(opt["logFontFamily"].toString(), opt["logFontPoint"].toInt());
+    m_logFont.setBold(opt["logFontBold"].toBool());
+    m_logFont.setItalic(opt["logFontItallic"].toBool());
+
     m_showSource = opt["showsource"].toBool();
 }

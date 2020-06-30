@@ -69,6 +69,8 @@ private slots:
     void slotInputWidgetClosed();
     void slotExtendedFiltersModified();
     void slotDeletingModelRows(int count);
+    void slotAppFontChanged();
+    void slotLogViewFontChanged();
 
     void closeEvent (QCloseEvent* event);
     void on_checkBoxScroll_clicked(bool checked);

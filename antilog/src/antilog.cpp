@@ -33,7 +33,7 @@ AntiLog::AntiLog(QWidget* parent) :
     ui->setupUi(this);
     load();
 
-    setFont(Statics::instOptions()->m_appFont);
+    setFont(Statics::instOptions()->getAppFont());
     m_logViewTableModel = new LogViewTableModel(this, m_extendedFilterModel);
     connect(m_logViewTableModel, &LogViewTableModel::newEntriesAdded,
             this, &AntiLog::slotTableUpdated);
@@ -437,9 +437,23 @@ void AntiLog::deleteSelection()
     }
 }
 
+void AntiLog::slotAppFontChanged()
+{
+    setFont(Statics::s_options->getAppFont());
+}
+
+void AntiLog::slotLogViewFontChanged()
+{
+    emit slotRedrawLogView();
+}
+
 void AntiLog::on_setupButton_clicked()
 {
     OptionsDialog optionsDialog(*Statics::s_options, this, Statics::instColumnLibrary());
+    connect(&optionsDialog, &OptionsDialog::signalAppFontChanged,
+            this, &AntiLog::slotAppFontChanged);
+    connect(&optionsDialog, &OptionsDialog::signalLogViewFontChanged,
+            this, &AntiLog::slotLogViewFontChanged);
     optionsDialog.exec();
 }
 

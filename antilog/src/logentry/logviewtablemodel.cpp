@@ -28,7 +28,7 @@ void LogViewDelegate::paint(QPainter* painter,
         doc.setHtml(html);
         painter->save();
         painter->translate(option.rect.topLeft() + QPoint(0, -2));
-        doc.setDefaultFont(Statics::instOptions()->m_logFont);
+        doc.setDefaultFont(Statics::instOptions()->getLogFont());
         doc.drawContents(painter);
         painter->restore();
     }
@@ -68,7 +68,7 @@ QVariant LogViewTableModel::data(const QModelIndex &index, int role) const
     }
     else if (role == Qt::FontRole)
     {
-        return Statics::instOptions()->m_logFont;
+        return Statics::instOptions()->getLogFont();
     }
     return QVariant();
 }
