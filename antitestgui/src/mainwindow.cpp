@@ -158,7 +158,11 @@ QString MainWindow::getNextMessage()
         if (ui->checkBoxSourcesAndModules->isChecked())
         {
             const int nofModules = 20;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
             int moduleIndex = QRandomGenerator::global()->generate() / (QRandomGenerator::max()/nofModules);
+#else
+            int moduleIndex = qrand() / (RAND_MAX/nofModules);
+#endif
             return QString("module%1 SourcesAndModules - Log message from module%1").arg(moduleIndex);
         }
     }
