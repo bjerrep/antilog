@@ -97,9 +97,10 @@ void Options::load(const QJsonObject& json)
     m_appFont.setBold(opt["appFontBold"].toBool());
     m_appFont.setItalic(opt["appFontItallic"].toBool());
 
-    m_logFont = QFont(opt["logFontFamily"].toString(), opt["logFontPoint"].toInt());
-    m_logFont.setBold(opt["logFontBold"].toBool());
-    m_logFont.setItalic(opt["logFontItallic"].toBool());
+    auto logFont = QFont(opt["logFontFamily"].toString(), opt["logFontPoint"].toInt());
+    logFont.setBold(opt["logFontBold"].toBool());
+    logFont.setItalic(opt["logFontItallic"].toBool());
+    setLogFont(logFont);
 
     m_showSource = opt["showsource"].toBool();
 }

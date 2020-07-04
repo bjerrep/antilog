@@ -324,7 +324,7 @@ void AntiLog::updateSourceTrafficMeter()
 void AntiLog::slotSourceTrafficMonitor(SourceBase*, QString, QString)
 {
     int maximum = ui->progressBarTraffic->maximum();
-    m_sourceTrafficValue += maximum;
+    m_sourceTrafficValue += maximum/5;
     m_sourceTrafficValue = m_sourceTrafficValue > maximum + 2 ? maximum + 2 : m_sourceTrafficValue;
     updateSourceTrafficMeter();
 }
@@ -444,6 +444,7 @@ void AntiLog::slotAppFontChanged()
 
 void AntiLog::slotLogViewFontChanged()
 {
+    ui->tableView->verticalHeader()->setDefaultSectionSize(Statics::s_options->m_logFontHeight);
     emit slotRedrawLogView();
 }
 
