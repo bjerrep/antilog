@@ -1,7 +1,7 @@
 #include "inputtableviewmodel.h"
 #include "sourcevisitors.h"
 #include "inputlist.h"
-#include "sourceandprocessor.h"
+#include "input.h"
 
 InputTableViewModel::InputTableViewModel(InputList* inputList, QObject* parent)
     : QAbstractTableModel(parent),
@@ -27,7 +27,7 @@ QVariant InputTableViewModel::data(const QModelIndex &index, int role) const
     }
     if (role == Qt::BackgroundRole)
     {
-        if (m_inputList->getSourceAndProcessor(index.row())->isOn())
+        if (m_inputList->getInput(index.row())->isOn())
             return QColor(235,235,184 + 50 * (index.row() % 2));
         else
             return QColor(255,255,255);
@@ -35,7 +35,7 @@ QVariant InputTableViewModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-int InputTableViewModel::append(SourceAndProcessor* sourceLine)
+int InputTableViewModel::append(Input* sourceLine)
 {
     beginInsertRows(QModelIndex{}, m_inputList->count(), m_inputList->count());
     m_inputList->appendAndConnect(sourceLine);

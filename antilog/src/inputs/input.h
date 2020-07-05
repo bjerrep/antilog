@@ -6,18 +6,18 @@
 #include <QObject>
 #include <QJsonObject>
 
-class SourceAndProcessor : public QObject
+class Input : public QObject
 {
     Q_OBJECT
 
 public:
-    SourceAndProcessor(InputItemBase* source, InputItemBase* processor);
-    SourceAndProcessor(const QJsonObject& json);
-    ~SourceAndProcessor();
+    Input(InputItemBase* source, InputItemBase* processor);
+    Input(const QJsonObject& json);
+    ~Input();
 
     QJsonObject getJson() const;
     bool isOn();
-    void toggleEnable();
+    void enable(bool enable);
     void connectSignalsAndSlots();
     SourceBase* getSourceEntry() { return m_sourceEntry; }
     ProcessorBase* getProcessorEntry() { return m_processorEntry; }

@@ -14,6 +14,8 @@ class LogViewTableModel;
 class ExtendedFilterModel;
 class SourceBase;
 class QHostAddress;
+class AntiLogApi;
+
 
 namespace Ui
 {
@@ -28,11 +30,10 @@ public:
     explicit AntiLog(QWidget* parent = nullptr);
     ~AntiLog();
 
-    InputItemVector getAllSourcesAndProcessors() const;
-    void reconfigureUdpSources(QString address, uint16_t port);
-
+    InputItemVector getAllInputItems() const;
     FormatSchemes* getFormatSchemeModel();
     GlobalColumnConfig* getGlobalColumnConfig();
+    AntiLogApi& api();
 
 private:
     void save() const;
@@ -98,5 +99,8 @@ private:
     int m_firstRowOnDisplay = 0;
     QString m_version;
     FormatSchemes* m_formatSchemes = nullptr;
+    AntiLogApi* m_antiLogApi = nullptr;
+
+    friend class AntiLogApi;
 };
 

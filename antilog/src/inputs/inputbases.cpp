@@ -54,7 +54,7 @@ void InputItemBase::save(QJsonObject& json) const
 
 QString InputItemBase::makeNameUnique(const QString& name) const
 {
-    auto itemBases = Statics::instAntiLog()->getAllSourcesAndProcessors();
+    auto itemBases = Statics::instAntiLog()->getAllInputItems();
     bool success;
 
     for (int i = 1; i < 10; i++)

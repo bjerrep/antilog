@@ -3,7 +3,7 @@
 #include <QAbstractTableModel>
 
 class InputList;
-class SourceAndProcessor;
+class Input;
 
 class InputTableViewModel : public QAbstractTableModel
 {
@@ -15,7 +15,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    int append(SourceAndProcessor* sourceLine);
+    int append(Input* sourceLine);
     void removeRow(int row);
 
 private:

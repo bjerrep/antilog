@@ -1,6 +1,6 @@
 #include "inputlist.h"
 #include "antilog.h"
-#include "sourceandprocessor.h"
+#include "input.h"
 #include "format/formatscheme.h"
 
 #include <QJsonArray>
@@ -12,16 +12,16 @@ InputList::InputList(AntiLog* antiLog)
 
 InputList::~InputList()
 {
-    qDeleteAll(m_sourceAndProcessorList);
+    qDeleteAll(m_inputList);
 }
 
 void InputList::save(QJsonObject& json) const
 {
     QJsonArray inputs;
-    foreach (auto sourceAndProcessor, m_sourceAndProcessorList)
+    foreach (auto input, m_inputList)
     {
-        auto input = sourceAndProcessor->getJson();
-        inputs.append(input);
+        auto json = input->getJson();
+        inputs.append(json);
     }
     json[Statics::Inputs] = inputs;
 }
@@ -30,27 +30,27 @@ void InputList::load(const QJsonObject& json)
 {
     auto inputs = json[Statics::Inputs].toArray();
 
-    foreach (auto input, inputs)
+    foreach (auto jsoninput, inputs)
     {
-        auto jsonObject = input.toObject();
-        auto sourceAndProcessor = new SourceAndProcessor(jsonObject);
-        appendAndConnect(sourceAndProcessor);
+        auto jsonObject = jsoninput.toObject();
+        auto input = new Input(jsonObject);
+        appendAndConnect(input);
     }
     Statics::SystemReady = true;
-    foreach (auto sourceAndProcessor, m_sourceAndProcessorList)
+    foreach (auto input, m_inputList)
     {
-        sourceAndProcessor->slotSystemReady();
+        input->slotSystemReady();
     }
 }
 
 int InputList::count() const
 {
-    return m_sourceAndProcessorList.count();
+    return m_inputList.count();
 }
 
-void InputList::appendAndConnect(SourceAndProcessor* input)
+void InputList::appendAndConnect(Input* input)
 {
-    m_sourceAndProcessorList.append(input);
+    m_inputList.append(input);
     connect(input->getSourceEntry(), &SourceBase::signalNewSourceData,
             m_app, &AntiLog::slotSourceTrafficMonitor);
 
@@ -60,16 +60,16 @@ void InputList::appendAndConnect(SourceAndProcessor* input)
 
 void InputList::removeAt(int index)
 {
-    auto removed = m_sourceAndProcessorList.takeAt(index);
+    auto removed = m_inputList.takeAt(index);
     delete removed;
 }
 
 int InputList::findFormatSchemeUsageCount(const QString& schemeName) const
 {
     int count = 0;
-    foreach (auto sourceAndProcessor, m_sourceAndProcessorList)
+    foreach (auto input, m_inputList)
     {
-        if (sourceAndProcessor->getProcessorEntry()->getScheme()->getName() == schemeName)
+        if (input->getProcessorEntry()->getScheme()->getName() == schemeName)
         {
             ++count;
         }
@@ -77,20 +77,25 @@ int InputList::findFormatSchemeUsageCount(const QString& schemeName) const
     return count;
 }
 
-SourceAndProcessor* InputList::getSourceAndProcessor(int index)
+Input* InputList::getInput(int index)
 {
-    return m_sourceAndProcessorList[index];
+    return m_inputList[index];
 }
 
-SourceAndProcessor* InputList::getSourceAndProcessor(int index) const
+Input* InputList::getInput(int index) const
 {
-    return m_sourceAndProcessorList[index];
+    return m_inputList[index];
 }
 
-InputItemVector InputList::getAllSourcesAndProcessors() const
+InputListType InputList::getAllInputs()
+{
+    return m_inputList;
+}
+
+InputItemVector InputList::getAllItemInputs() const
 {
     InputItemVector list;
-    foreach (auto input, m_sourceAndProcessorList)
+    foreach (auto input, m_inputList)
     {
         list.append(input->getSourceEntry());
         list.append(input->getProcessorEntry());

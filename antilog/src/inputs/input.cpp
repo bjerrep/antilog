@@ -1,17 +1,17 @@
-#include "sourceandprocessor.h"
+#include "input.h"
 #include "sourcevisitors.h"
 #include "inputsources.h"
 
 #include <QThread>
 
-SourceAndProcessor::SourceAndProcessor(InputItemBase* source, InputItemBase* processor)
+Input::Input(InputItemBase* source, InputItemBase* processor)
 {
     m_sourceEntry = static_cast<SourceBase*>(source);
     m_processorEntry = static_cast<ProcessorBase*>(processor);
     connectSignalsAndSlots();
 }
 
-SourceAndProcessor::SourceAndProcessor(const QJsonObject& json)
+Input::Input(const QJsonObject& json)
 {
     auto source = json.value("source").toObject();
     m_sourceEntry = static_cast<SourceBase*>(InputEntryFactory(source));
@@ -20,13 +20,13 @@ SourceAndProcessor::SourceAndProcessor(const QJsonObject& json)
     connectSignalsAndSlots();
 }
 
-SourceAndProcessor::~SourceAndProcessor()
+Input::~Input()
 {
     delete m_sourceEntry;
     delete m_processorEntry;
 }
 
-QJsonObject SourceAndProcessor::getJson() const
+QJsonObject Input::getJson() const
 {
     GetJson getJsonSource;
     m_sourceEntry->accept(&getJsonSource);
@@ -39,52 +39,52 @@ QJsonObject SourceAndProcessor::getJson() const
     return input;
 }
 
-bool SourceAndProcessor::isOn()
+bool Input::isOn()
 {
     return m_sourceEntry->getEnabled();
 }
 
-void SourceAndProcessor::toggleEnable()
+void Input::enable(bool enable)
 {
-    m_sourceEntry->setEnabled(!m_sourceEntry->getEnabled());
+    m_sourceEntry->setEnabled(enable);
 }
 
-void SourceAndProcessor::connectSignalsAndSlots()
+void Input::connectSignalsAndSlots()
 {
     connect(m_sourceEntry, &SourceBase::signalNewSourceData,
-            this, &SourceAndProcessor::slotSourceData,
+            this, &Input::slotSourceData,
             Qt::UniqueConnection);
 
-    connect(this, &SourceAndProcessor::signalDataToProcessor,
+    connect(this, &Input::signalDataToProcessor,
             m_processorEntry, &ProcessorBase::slotNewData,
             Qt::UniqueConnection);
 
-    connect(this, &SourceAndProcessor::signalSystemReady,
+    connect(this, &Input::signalSystemReady,
             m_sourceEntry, &SourceBase::slotSystemReady,
             Qt::QueuedConnection);
 
     connect(m_processorEntry, &ProcessorBase::signalNewProcessorData,
-            this, &SourceAndProcessor::slotProcessorData,
+            this, &Input::slotProcessorData,
             Qt::UniqueConnection);
 }
 
-void SourceAndProcessor::slotProcessorData(ProcessorBase* processor, LogEntryPtr logEntry)
+void Input::slotProcessorData(ProcessorBase* processor, LogEntryPtr logEntry)
 {
     emit signalNewData(processor, logEntry);
 }
 
-void SourceAndProcessor::slotSystemReady()
+void Input::slotSystemReady()
 {
     emit signalSystemReady();
 }
 
-QString SourceAndProcessor::cleanMessage(QString message)
+QString Input::cleanMessage(QString message)
 {
     message = message.replace("\n", " ");
     return message;
 }
 
-void SourceAndProcessor::slotSourceData(SourceBase* source, QString message, QString sourceIdentifier)
+void Input::slotSourceData(SourceBase* source, QString message, QString sourceIdentifier)
 {
     QString cleaned = cleanMessage(message);
     emit signalDataToProcessor(source, cleaned, sourceIdentifier);

@@ -1,0 +1,41 @@
+#include "antilogapi.h"
+#include <QApplication>
+
+// The socalled api is a dedicated class that the application instantiates with the intention
+// of hiding its internals.
+// This main is a combined example for using the api and for testing it..
+//
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+
+    AntiLog antilog;
+    auto api = antilog.api();
+
+    auto inputs = api.getInputs();
+
+    // delete all existing inputs with an UDP source
+    for(auto input : inputs)
+    {
+        UDPSource* source = dynamic_cast<UDPSource*>(input->getSourceEntry());
+        if(source)
+        {
+            api.deleteInput(input);
+        }
+    }
+
+    // add a new input with a UDP source and a pass processor
+    auto sourceUDP = new UDPSource();
+    sourceUDP->setName("apitest");
+    sourceUDP->setAddress("any");
+    sourceUDP->setPort(12345);
+
+    auto processorPass = new PassProcessor();
+
+    auto input = new Input(sourceUDP, processorPass);
+    input->enable(true);
+    api.addInput(input);
+
+    antilog.show();
+    return a.exec();
+}

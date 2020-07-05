@@ -4,7 +4,7 @@
 #include "newinputdialog.h"
 #include "inputtableviewmodel.h"
 #include "sourcevisitors.h"
-#include "sourceandprocessor.h"
+#include "input.h"
 #include "inputlist.h"
 #include "antilog.h"
 
@@ -106,15 +106,15 @@ void InputDialog::redrawRow(int row)
 {
     insertInputItemWidget(row,
                           Column::Source,
-                          m_inputList->getSourceAndProcessor(row)->getSourceEntry());
+                          m_inputList->getInput(row)->getSourceEntry());
 
     addImageToTable(row, Column::Arrow, ":/artwork/artwork/arrow.svg");
 
     insertInputItemWidget(row,
                           Column::Processor,
-                          m_inputList->getSourceAndProcessor(row)->getProcessorEntry());
+                          m_inputList->getInput(row)->getProcessorEntry());
 
-    bool isOn = m_inputList->getSourceAndProcessor(row)->isOn();
+    bool isOn = m_inputList->getInput(row)->isOn();
 
     int width = addImageToTable(row, Column::Enable, isOn ?
                                     ":/artwork/artwork/on.svg" :
@@ -188,25 +188,27 @@ void InputDialog::slotEditProcessor()
 
 void InputDialog::on_tableView_doubleClicked(const QModelIndex& index )
 {
+    auto sap = m_inputList->getInput(index.row());
+
     switch(index.column())
     {
     case Column::Source:
     {
-        auto* sourceEntry = m_inputList->getSourceAndProcessor(index.row())->getSourceEntry();
+        auto* sourceEntry = sap->getSourceEntry();
         GetDialog getDialog(m_antiLog);
         sourceEntry->accept(&getDialog);
         break;
     }
     case Column::Processor:
     {
-        auto* sourceEntry = m_inputList->getSourceAndProcessor(index.row())->getProcessorEntry();
+        auto* sourceEntry = sap->getProcessorEntry();
         GetDialog getDialog(m_antiLog);
         sourceEntry->accept(&getDialog);
         break;
     }
     case Column::Enable:
     {
-        m_inputList->getSourceAndProcessor(index.row())->toggleEnable();
+        sap->enable(!sap->isOn());
         break;
     }
     }
@@ -227,7 +229,7 @@ void InputDialog::on_pushButtonNewInput_clicked()
         int sourceRow = newInputDialog->currentSourceIndex();
         int processorRow = newInputDialog->currentProcessorIndex();
 
-        auto sap = new SourceAndProcessor(sources.takeAt(sourceRow), processors.takeAt(processorRow));
+        auto sap = new Input(sources.takeAt(sourceRow), processors.takeAt(processorRow));
         m_inputTableViewModel->append(sap);
         m_tableView->selectRow(m_inputTableViewModel->rowCount() - 1);
 

@@ -10,6 +10,8 @@
 class InputVisitorBase;
 class FormatScheme;
 
+/// The base class for both source and processor base classes
+///
 class InputItemBase : public QObject
 {
     Q_OBJECT

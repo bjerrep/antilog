@@ -1,7 +1,8 @@
 #include "antilog.h"
+#include "antilogapi.h"
 #include "ui_antilog.h"
 #include "inputs/inputdialog.h"
-#include "inputs/sourceandprocessor.h"
+#include "inputs/input.h"
 #include "inputs/inputsources.h"
 #include "optionsdialog.h"
 #include "extendedfilter/extendedfilterdialog.h"
@@ -64,6 +65,7 @@ AntiLog::AntiLog(QWidget* parent) :
 
     startTimer(400);
     updateSourceTrafficMeter();
+    m_antiLogApi = new AntiLogApi(this);
 }
 
 AntiLog::~AntiLog()
@@ -140,26 +142,14 @@ void AntiLog::load()
     }
 }
 
-InputItemVector AntiLog::getAllSourcesAndProcessors() const
+AntiLogApi& AntiLog::api()
 {
-    return m_inputList.getAllSourcesAndProcessors();
+    return *m_antiLogApi;
 }
 
-// a way for a host app to dynamically configure all udp sources. This is
-// the first go at something that should really be part of an official antilog api.
-// Time will tell if that happens.
-void AntiLog::reconfigureUdpSources(QString address, uint16_t port)
+InputItemVector AntiLog::getAllInputItems() const
 {
-    auto host_address = QHostAddress(address);
-    for(int i=0; i<m_inputList.count(); i++)
-    {
-        UDPSource* source = dynamic_cast<UDPSource*>(m_inputList.getSourceAndProcessor(i)->getSourceEntry());
-        if (source)
-        {
-            source->setAddress(address);
-            source->setPort(port);
-        }
-    }
+    return m_inputList.getAllItemInputs();
 }
 
 FormatSchemes* AntiLog::getFormatSchemeModel()
