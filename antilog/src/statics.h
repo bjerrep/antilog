@@ -16,6 +16,7 @@ namespace Statics
 {
     // Sources
     extern const QString& UDPSourceResource;
+    extern const QString& UDPMulticastSourceResource;
     extern const QString& FileResource;
     extern const QString& DirResource;
 

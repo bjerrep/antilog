@@ -8,6 +8,7 @@
 namespace Statics
 {
     const QString& UDPSourceResource = ":/artwork/artwork/udp.svg";
+    const QString& UDPMulticastSourceResource = ":/artwork/artwork/multicast.svg";
     const QString& FileResource = ":/artwork/artwork/file.svg";
     const QString& DirResource = ":/artwork/artwork/dir.svg";
 

@@ -18,6 +18,7 @@ public:
     void visit(FileSource* fileSource);
     void visit(DirSource* dirSource);
     void visit(UDPSource* udpSource);
+    void visit(UDPMulticastSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
 
@@ -32,6 +33,7 @@ public:
     void visit(FileSource* fileSource);
     void visit(DirSource* dirSource);
     void visit(UDPSource* udpSource);
+    void visit(UDPMulticastSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
 
@@ -47,6 +49,7 @@ public:
     void visit(FileSource* fileSource);
     void visit(DirSource* dirSource);
     void visit(UDPSource* udpSource);
+    void visit(UDPMulticastSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
 };
@@ -61,6 +64,7 @@ public:
     void visit(FileSource* fileSource);
     void visit(DirSource* dirSource);
     void visit(UDPSource* udpSource);
+    void visit(UDPMulticastSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
 
@@ -77,6 +81,7 @@ public:
     void visit(FileSource* fileSource);
     void visit(DirSource* dirSource);
     void visit(UDPSource* udpSource);
+    void visit(UDPMulticastSource* udpSource);
     void visit(PassProcessor* passProcessor);
     void visit(RegexProcessor* regexProcessor);
 

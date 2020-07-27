@@ -1,13 +1,13 @@
 #pragma once
 
 #include "inputbases.h"
+#include "inputsourcesudp.h"
 
 #include <QString>
 #include <QList>
 #include <QJsonObject>
 
 class FileReader;
-class QUdpSocket;
 
 
 class DirSource : public SourceBase
@@ -62,37 +62,6 @@ private:
     void setFilenameAndConfigure(QString filename);
 
     friend class FileSourceDialog;
-};
-
-class UDPSource : public SourceBase
-{
-    Q_OBJECT
-
-public:
-    UDPSource(const QJsonObject& json = QJsonObject());
-    ~UDPSource();
-
-    void save(QJsonObject& json) const override;
-    void accept(InputVisitorBase* v) override;
-    void setEnabled(bool enabled) override;
-    void start();
-    QString getAddress() const;
-    void setAddress(QString address);
-    int getPort() const;
-    void setPort(int port);
-
-private:
-    void openSocket();
-
-private slots:
-    void slotSystemReady() override;
-    void slotNewUdpSocketData();
-
-private:
-    QUdpSocket* m_socket = nullptr;
-    QString m_address = "localhost";
-    int m_port = 12345;
-    QString m_sourceDescriptor;
 };
 
 // ------ Statics -------

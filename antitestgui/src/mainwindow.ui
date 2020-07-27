@@ -22,7 +22,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>10</y>
+      <y>20</y>
       <width>61</width>
       <height>22</height>
      </rect>
@@ -35,8 +35,8 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>40</y>
-      <width>281</width>
+      <y>50</y>
+      <width>141</width>
       <height>22</height>
      </rect>
     </property>
@@ -48,7 +48,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>100</y>
+      <y>190</y>
       <width>101</width>
       <height>22</height>
      </rect>
@@ -56,12 +56,15 @@
     <property name="text">
      <string>Hello world</string>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QCheckBox" name="checkBoxExample1">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>130</y>
+      <y>220</y>
       <width>101</width>
       <height>22</height>
      </rect>
@@ -74,7 +77,7 @@
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>320</y>
+      <y>420</y>
       <width>121</width>
       <height>32</height>
      </rect>
@@ -92,8 +95,8 @@
    <widget class="QListWidget" name="listWidgetPreview">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>61</y>
+      <x>190</x>
+      <y>170</y>
       <width>471</width>
       <height>231</height>
      </rect>
@@ -102,9 +105,9 @@
    <widget class="QLineEdit" name="lineEditFile">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>0</y>
-      <width>481</width>
+      <x>110</x>
+      <y>10</y>
+      <width>441</width>
       <height>32</height>
      </rect>
     </property>
@@ -112,8 +115,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>330</y>
+      <x>30</x>
+      <y>430</y>
       <width>131</width>
       <height>18</height>
      </rect>
@@ -139,7 +142,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>160</y>
+      <y>250</y>
       <width>88</width>
       <height>22</height>
      </rect>
@@ -152,7 +155,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>260</y>
+      <y>350</y>
       <width>121</width>
       <height>22</height>
      </rect>
@@ -165,7 +168,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>190</y>
+      <y>280</y>
       <width>161</width>
       <height>22</height>
      </rect>
@@ -177,14 +180,92 @@
    <widget class="QPushButton" name="pushButtonDeleteFile">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>0</y>
+      <x>560</x>
+      <y>10</y>
       <width>88</width>
       <height>34</height>
      </rect>
     </property>
     <property name="text">
      <string>Delete</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxUDP">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>51</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UDP</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditIP">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>80</y>
+      <width>113</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>localhost</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditPort">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>80</y>
+      <width>113</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>12345</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxMulticast">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>81</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Multicast</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditMulticastIP">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>110</y>
+      <width>113</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>239.255.43.21</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditMulticastPort">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>110</y>
+      <width>113</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>12345</string>
     </property>
    </widget>
   </widget>
@@ -194,7 +275,7 @@
      <x>0</x>
      <y>0</y>
      <width>686</width>
-     <height>30</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

@@ -2,6 +2,7 @@
 
 #include <QMainWindow>
 #include <QStringList>
+#include <QUdpSocket>
 
 class QTimer;
 
@@ -22,6 +23,10 @@ private:
     void load();
     QString getConfigFilePath();
     QString getNextMessage();
+    void UDPOpen();
+    void UDPClose();
+    void UDPMulticastOpen();
+    void UDPMulticastClose();
 
 public slots:
     void slotTimerHit();
@@ -30,8 +35,9 @@ private slots:
     void on_pushButton_clicked();
     void on_spinBoxPeriod_valueChanged(int arg1);
     void on_checkBoxAppendSerial_clicked(bool checked);
-
     void on_pushButtonDeleteFile_clicked();
+    void on_checkBoxUDP_clicked(bool checked);
+    void on_checkBoxMulticast_clicked(bool checked);
 
 private:
     Ui::MainWindow* ui;
@@ -45,5 +51,7 @@ private:
     QStringList m_helloworld;
     QStringList m_example1;
     QStringList m_spdlog;
+    QUdpSocket* m_socket = nullptr;
+    QUdpSocket* m_multicastSocket = nullptr;
 };
 

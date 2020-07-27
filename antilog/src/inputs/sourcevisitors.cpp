@@ -4,6 +4,7 @@
 #include "passprocessordialog.h"
 #include "regexprocessordialog.h"
 #include "udpsourcedialog.h"
+#include "udpmulticastsourcedialog.h"
 #include "ui_inputwidget.h"
 
 void GetName::visit(FileSource* visitor)
@@ -17,6 +18,11 @@ void GetName::visit(DirSource* visitor)
 }
 
 void GetName::visit(UDPSource* visitor)
+{
+    m_name = visitor->getName();
+}
+
+void GetName::visit(UDPMulticastSource* visitor)
 {
     m_name = visitor->getName();
 }
@@ -44,6 +50,11 @@ void GetJson::visit(DirSource* visitor)
 }
 
 void GetJson::visit(UDPSource* visitor)
+{
+    visitor->save(m_json);
+}
+
+void GetJson::visit(UDPMulticastSource* visitor)
 {
     visitor->save(m_json);
 }
@@ -77,6 +88,11 @@ void GetLabel::visit(DirSource*)
 void GetLabel::visit(UDPSource*)
 {
     Statics::widgetIcon(Statics::UDPSourceResource, this);
+}
+
+void GetLabel::visit(UDPMulticastSource*)
+{
+    Statics::widgetIcon(Statics::UDPMulticastSourceResource, this);
 }
 
 void GetLabel::visit(PassProcessor*)
@@ -130,6 +146,13 @@ void GetInputDialogWidget::visit(UDPSource* udpSource)
     ui->labelDetail->setText(udpSource->getDescription());
 }
 
+void GetInputDialogWidget::visit(UDPMulticastSource* udpSource)
+{
+    ui->labelIcon->setPixmap(Statics::pixmapIcon(Statics::UDPMulticastSourceResource));
+    ui->labelName->setText(udpSource->getName());
+    ui->labelDetail->setText(udpSource->getDescription());
+}
+
 void GetInputDialogWidget::visit(PassProcessor* passProcessor)
 {
     ui->labelIcon->setPixmap(Statics::pixmapIcon(Statics::PassProcessorResource));
@@ -164,6 +187,11 @@ void GetDialog::visit(DirSource* visitor)
 void GetDialog::visit(UDPSource* visitor)
 {
     UdpSourceDialog temp(visitor, m_antiLog);
+}
+
+void GetDialog::visit(UDPMulticastSource* visitor)
+{
+    UdpMulticastSourceDialog temp(visitor, m_antiLog);
 }
 
 void GetDialog::visit(PassProcessor* visitor)

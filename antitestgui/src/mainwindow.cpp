@@ -17,6 +17,7 @@
 #include <QtDebug>
 #include <QStandardPaths>
 #include <QDir>
+#include <QUdpSocket>
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
 #include <QRandomGenerator>
 #endif
@@ -99,7 +100,10 @@ void MainWindow::load()
 
 void MainWindow::slotTimerHit()
 {
-    if (!ui->checkBoxFile->isChecked() && !ui->checkBoxStdout->isChecked())
+    if (!ui->checkBoxFile->isChecked() &&
+        !ui->checkBoxStdout->isChecked() &&
+        !ui->checkBoxUDP->isChecked() &&
+        !ui->checkBoxMulticast->isChecked())
     {
         return;
     }
@@ -126,6 +130,30 @@ void MainWindow::slotTimerHit()
     if (ui->checkBoxStdout->isChecked())
     {
         std::cout << message.toStdString() << '\n';
+    }
+
+    if (ui->checkBoxUDP->isChecked() && m_socket)
+    {
+        QHostAddress host_address;
+        QString host = ui->lineEditIP->text();
+        if (host == "localhost")
+            host_address = QHostAddress::LocalHost;
+        else
+            host_address = QHostAddress(host);
+        uint16_t port = ui->lineEditPort->text().toUInt();
+        m_socket->writeDatagram(message.toLatin1(), host_address, port);
+    }
+
+    if (ui->checkBoxMulticast->isChecked() && m_multicastSocket)
+    {
+        QHostAddress host_address;
+        QString host = ui->lineEditMulticastIP->text();
+        if (host == "localhost")
+            host_address = QHostAddress::LocalHost;
+        else
+            host_address = QHostAddress(host);
+        uint16_t port = ui->lineEditMulticastPort->text().toUInt();
+        m_multicastSocket->writeDatagram(message.toLatin1(), host_address, port);
     }
 
     if (ui->spinBoxPeriod->value() >= 10)
@@ -197,4 +225,69 @@ void MainWindow::on_checkBoxAppendSerial_clicked(bool checked)
 void MainWindow::on_pushButtonDeleteFile_clicked()
 {
     QFile::remove(ui->lineEditFile->text());
+}
+
+void MainWindow::UDPClose()
+{
+    if (m_socket)
+    {
+        m_socket->reset();
+        m_socket->close();
+        delete m_socket;
+        m_socket = nullptr;
+    }
+}
+
+void MainWindow::UDPOpen()
+{
+    if (m_socket)
+    {
+        UDPClose();
+    }
+    m_socket = new QUdpSocket;
+}
+
+void MainWindow::UDPMulticastClose()
+{
+    if (m_multicastSocket)
+    {
+        m_multicastSocket->reset();
+        m_multicastSocket->close();
+        delete m_multicastSocket;
+        m_multicastSocket = nullptr;
+    }
+}
+
+void MainWindow::UDPMulticastOpen()
+{
+    if (m_multicastSocket)
+    {
+        UDPMulticastClose();
+    }
+    m_multicastSocket = new QUdpSocket;
+    m_multicastSocket->bind(QHostAddress(QHostAddress::AnyIPv4), 0);
+}
+
+void MainWindow::on_checkBoxUDP_clicked(bool checked)
+{
+    if (checked)
+    {
+        UDPOpen();
+    }
+    else
+    {
+        UDPClose();
+    }
+}
+
+void MainWindow::on_checkBoxMulticast_clicked(bool checked)
+{
+    if (checked)
+    {
+        UDPMulticastOpen();
+    }
+    else
+    {
+        UDPMulticastClose();
+    }
 }

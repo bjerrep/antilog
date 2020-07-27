@@ -3,6 +3,7 @@
         <file>artwork/file.svg</file>
         <file>artwork/tcp.svg</file>
         <file>artwork/udp.svg</file>
+        <file>artwork/multicast.svg</file>
         <file>artwork/pass.svg</file>
         <file>artwork/arrow.svg</file>
         <file>artwork/off.svg</file>
