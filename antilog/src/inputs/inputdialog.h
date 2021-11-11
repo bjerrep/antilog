@@ -15,13 +15,6 @@ class InputTableView : public QTableView
 {
 public:
     InputTableView(QWidget* parent);
-
-    void setImageWidths(int width);
-
-    void resizeEvent(QResizeEvent* event);
-
-private:
-    int m_imageWidths = 0;
 };
 
 

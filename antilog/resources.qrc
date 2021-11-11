@@ -19,6 +19,7 @@
         <file>artwork/b_cancel.svg</file>
         <file>artwork/dir.svg</file>
         <file>artwork/clear.svg</file>
+        <file>artwork/icon.png</file>
     </qresource>
     <qresource prefix="/">
         <file>artwork/clear.svg</file>

@@ -75,6 +75,8 @@ private slots:
 
     void closeEvent (QCloseEvent* event);
     void on_checkBoxScroll_clicked(bool checked);
+    void resizeEvent(QResizeEvent *event);
+
     void on_pushButtonFormat_clicked();
     void on_setupButton_clicked();
     void on_pushButtonInputs_clicked();

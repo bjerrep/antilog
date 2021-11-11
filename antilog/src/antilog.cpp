@@ -193,6 +193,12 @@ void AntiLog::keyPressEvent(QKeyEvent* keyEvent)
     QWidget::keyPressEvent(keyEvent);
 }
 
+void AntiLog::resizeEvent(QResizeEvent *event)
+{
+    Statics::instOptions()->m_maxSourcePixelWidth = event->size().width() / 5;
+    m_logViewTableModel->redrawVisibleRows();
+}
+
 /// Automatically enable scroll-to-end if the user scrolled to the last model row
 /// and automatically disable scroll-to-end if last model row isn't visible.
 ///
@@ -307,15 +313,16 @@ void AntiLog::refreshLogView()
 
 void AntiLog::updateSourceTrafficMeter()
 {
-    int maximum = ui->progressBarTraffic->maximum();
-    ui->progressBarTraffic->setValue(m_sourceTrafficValue > maximum ? maximum : m_sourceTrafficValue);
+    const int height = ui->trafficMeter->height();
+    ui->trafficLine->setFixedHeight(m_sourceTrafficValue);
+    ui->trafficLine->setGeometry(0, height - m_sourceTrafficValue, ui->trafficMeter->width(), height);
 }
 
 void AntiLog::slotSourceTrafficMonitor(SourceBase*, QString, QString)
 {
-    int maximum = ui->progressBarTraffic->maximum();
-    m_sourceTrafficValue += maximum/5;
-    m_sourceTrafficValue = m_sourceTrafficValue > maximum + 2 ? maximum + 2 : m_sourceTrafficValue;
+    const int height = ui->trafficMeter->height();
+    m_sourceTrafficValue += height / 4;
+    m_sourceTrafficValue = std::min(height, m_sourceTrafficValue);
     updateSourceTrafficMeter();
 }
 

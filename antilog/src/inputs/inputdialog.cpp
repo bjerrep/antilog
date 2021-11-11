@@ -15,6 +15,7 @@
 #include <QResizeEvent>
 #include <QLabel>
 
+
 InputTableView::InputTableView(QWidget *parent) : QTableView(parent)
 {
     setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -22,23 +23,9 @@ InputTableView::InputTableView(QWidget *parent) : QTableView(parent)
 
     horizontalHeader()->hide();
     verticalHeader()->hide();
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 }
-
-void InputTableView::setImageWidths(int width)
-{
-    m_imageWidths = width;
-}
-
-void InputTableView::resizeEvent(QResizeEvent *event)
-{
-    int width = (event->size().width() - 2 * m_imageWidths) / 2;
-    setColumnWidth(0, width);
-    setColumnWidth(1, m_imageWidths);
-    setColumnWidth(2, width);
-    setColumnWidth(3, m_imageWidths);
-    QTableView::resizeEvent(event);
-}
-
 
 
 InputDialog::InputDialog(InputList* inputList, AntiLog* antiLog) :
@@ -57,8 +44,6 @@ InputDialog::InputDialog(InputList* inputList, AntiLog* antiLog) :
     ui->verticalLayout->insertWidget(0, m_tableView);
     m_tableView->setModel(m_inputTableViewModel);
 
-    redrawTable();
-
     connect(m_tableView, &InputTableView::doubleClicked, this, &InputDialog::on_tableView_doubleClicked);
 
     // vertical size
@@ -69,6 +54,9 @@ InputDialog::InputDialog(InputList* inputList, AntiLog* antiLog) :
 
     m_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(m_tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotShowContextMenu(QPoint)));
+    m_tableView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContentsOnFirstShow);
+
+    redrawTable();
 }
 
 InputDialog::~InputDialog()
@@ -84,6 +72,7 @@ int InputDialog::insertInputItemWidget(int row, int column, InputItemBase* input
     inputItem->accept(getWidget);
     m_tableView->setIndexWidget(index, getWidget);
     int width = getWidget->width();
+    m_tableView->setColumnWidth(column, width);
     return width;
 }
 
@@ -99,36 +88,37 @@ int InputDialog::addImageToTable(int row, int column, QString imageResource)
     int width = label->pixmap()->width() + 10;
 #endif
     m_tableView->setIndexWidget(index, label);
+    m_tableView->setColumnWidth(column, width);
     return width;
 }
 
 void InputDialog::redrawRow(int row)
 {
-    insertInputItemWidget(row,
+    int w0 = insertInputItemWidget(row,
                           Column::Source,
                           m_inputList->getInput(row)->getSourceEntry());
 
-    addImageToTable(row, Column::Arrow, ":/artwork/artwork/arrow.svg");
+    int w1 = addImageToTable(row, Column::Arrow, ":/artwork/artwork/arrow.svg");
 
-    insertInputItemWidget(row,
+    int w2 = insertInputItemWidget(row,
                           Column::Processor,
                           m_inputList->getInput(row)->getProcessorEntry());
 
     bool isOn = m_inputList->getInput(row)->isOn();
 
-    int width = addImageToTable(row, Column::Enable, isOn ?
+    int w3 = addImageToTable(row, Column::Enable, isOn ?
                                     ":/artwork/artwork/on.svg" :
                                     ":/artwork/artwork/off.svg");
-
-    m_tableView->setImageWidths(width);
 
     for(int i = 0; i < m_inputTableViewModel->columnCount(); i++)
     {
         QModelIndex index = m_inputTableViewModel->index(row, i);
         m_tableView->indexWidget(index)->setEnabled(isOn);
     }
-    QResizeEvent firstEntryFailsRedraw = QResizeEvent(m_tableView->size(), m_tableView->size());
-    m_tableView->resizeEvent(&firstEntryFailsRedraw);
+
+    int vertSize = w0 + w1 + w2 + w3 + m_tableView->verticalScrollBar()->width() + 2;
+
+    m_tableView->setFixedWidth(vertSize);
 }
 
 void InputDialog::redrawTable()

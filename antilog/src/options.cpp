@@ -69,11 +69,25 @@ int Options::logFontWidth(int length) const
 #endif
 }
 
+int Options::logFontWidth(const QString& text) const
+{
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    return logFontMetrics().horizontalAdvance(text);
+#else
+    return logFontMetrics().width(text);
+#endif
+}
+
 int Options::getSourceStringMaxWidth(int size)
 {
-    if (size > m_sourceDataWidth && m_sourceDataWidth < MAX_WIDTH)
+    if (size > MAX_SOURCE_WIDTH)
     {
-        m_sourceDataWidth = qMin(size, MAX_WIDTH);
+        m_sourceDataWidth = MAX_SOURCE_WIDTH;
+        emit signalInvalidated();
+    }
+    else if (size > m_sourceDataWidth)
+    {
+        m_sourceDataWidth = size;
         emit signalInvalidated();
     }
     return m_sourceDataWidth;

@@ -6,8 +6,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5Widgets)
-find_package(Qt5Network)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Network REQUIRED)
 
 file(GLOB_RECURSE src src/*.cpp src/*.h src/*.ui *.qrc)
 
@@ -35,6 +35,7 @@ endif()
 add_definitions(
     -DQT_USE_FAST_CONCATENATION
     -DQT_USE_FAST_OPERATOR_PLUS
+    -DQTDESIGNER_EXPORT_WIDGETS
     )
 
 target_link_libraries(

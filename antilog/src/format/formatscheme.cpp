@@ -146,6 +146,7 @@ QString FormatScheme::tableHtml(
     {
         css = "<style>" + css + "</style>";
     }
+
     html = "<html>" + css + "<table><tr>" + sourceData + html + "</tr></table></html>";
     return html;
 }
@@ -174,10 +175,23 @@ QString FormatScheme::getTableRowHtml(const QStringList& logEntries, QString sou
 {
     if (!sourceName.isEmpty())
     {
-        int sourceWidth = Statics::instOptions()->getSourceStringMaxWidth(sourceName.size());
-        sourceName = sourceName.left(sourceWidth);
-        int widthInPixels = Statics::instOptions()->logFontWidth(sourceWidth);
-        sourceName = QString("<td width=%1><b><small>%2</small></b></td>").arg(widthInPixels).arg(sourceName);
+        int widthInPixels = Statics::instOptions()->logFontWidth(sourceName);
+
+        int maxWidth = Statics::instOptions()->m_maxSourcePixelWidth;
+
+        if (widthInPixels > maxWidth)
+        {
+            int textLen = sourceName.length() * maxWidth / widthInPixels;
+            sourceName = sourceName.left(textLen - 4) + "...";
+            Statics::instOptions()->m_currentSourcePixelWidth = maxWidth;
+        }
+        else if (widthInPixels > Statics::instOptions()->m_currentSourcePixelWidth)
+        {
+            Statics::instOptions()->m_currentSourcePixelWidth = widthInPixels;
+        }
+
+        sourceName = QString("<td width=%1><b><small>%2</small></b></td>")\
+                     .arg(Statics::instOptions()->m_currentSourcePixelWidth).arg(sourceName);
     }
 
     QString html = tableHtml(logEntries,

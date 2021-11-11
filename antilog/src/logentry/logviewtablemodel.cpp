@@ -28,7 +28,7 @@ void LogViewDelegate::paint(QPainter* painter,
         doc.setHtml(html);
         painter->save();
         // a naive attempt to have a nice looking vertical alignment of the log messages
-        int verticalOffset = Statics::s_options->m_logFontHeight / 5;
+        int verticalOffset = Statics::s_options->m_logFontHeight / 4;
         painter->translate(option.rect.topLeft() + QPoint(0, -verticalOffset));
         doc.setDefaultFont(Statics::instOptions()->getLogFont());
         doc.drawContents(painter);
